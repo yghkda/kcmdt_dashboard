@@ -8,10 +8,9 @@ const ISSUE_ADDRESS = "0xd5A62Dd28BF16229b4Dd9687DECC233548B9AA95";
 const REDEEM_ADDRESS = "0xe257fe24611CfabCa4a48869C1222D1cC2602E70";
 const DECIMALS = 18n;
 const SCALE = 10n ** DECIMALS;
-const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const ERC20_TOTAL_SUPPLY = "0x18160ddd";
 const ERC20_BALANCE_OF = "0x70a08231";
-const LOG_BLOCK_CHUNK = 2000;
+const TRANSFER_PAGE_SIZE = "0x3e8";
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -39,7 +38,8 @@ async function rpc(method, params) {
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
   });
   if (!response.ok) {
-    throw new Error(`RPC ${method} failed with HTTP ${response.status}`);
+    const detail = await response.text();
+    throw new Error(`RPC ${method} failed with HTTP ${response.status}: ${detail}`);
   }
   const payload = await response.json();
   if (payload.error) {
@@ -74,14 +74,6 @@ function formatPercent(part, total) {
     return 0;
   }
   return Number((((part * 10000n) / total)).toString()) / 100;
-}
-
-function toTopicAddress(address) {
-  return `0x${address.toLowerCase().replace(/^0x/, "").padStart(64, "0")}`;
-}
-
-function sliceTopicAddress(topic) {
-  return `0x${topic.slice(-40)}`.toLowerCase();
 }
 
 function encodeAddressCall(selector, address) {
@@ -128,54 +120,47 @@ async function findStartBlock(latestBlockNumber, cutoffTimestamp) {
   return low;
 }
 
-async function getTransferLogs(fromBlock, toBlock) {
-  const logs = [];
-
-  async function fetchRange(rangeStart, rangeEnd, chunkSize) {
-    try {
-      const result = await rpc("eth_getLogs", [
-        {
-          address: TOKEN_ADDRESS,
-          fromBlock: `0x${rangeStart.toString(16)}`,
-          toBlock: `0x${rangeEnd.toString(16)}`,
-          topics: [TRANSFER_TOPIC]
-        }
-      ]);
-      logs.push(...result);
-    } catch (error) {
-      if (!(error instanceof Error) || !error.message.includes("HTTP 400")) {
-        throw error;
-      }
-      if (rangeStart === rangeEnd) {
-        throw new Error(`eth_getLogs rejected single block ${rangeStart}`);
-      }
-      const nextChunk = Math.max(100, Math.floor(chunkSize / 2));
-      if (nextChunk === chunkSize && chunkSize === 100) {
-        throw error;
-      }
-      for (let start = rangeStart; start <= rangeEnd; start += nextChunk) {
-        const end = Math.min(start + nextChunk - 1, rangeEnd);
-        await fetchRange(start, end, nextChunk);
-      }
-    }
+function parseTransferAmount(transfer) {
+  if (transfer.rawContract?.value) {
+    return BigInt(transfer.rawContract.value);
   }
-
-  for (let start = fromBlock; start <= toBlock; start += LOG_BLOCK_CHUNK) {
-    const end = Math.min(start + LOG_BLOCK_CHUNK - 1, toBlock);
-    await fetchRange(start, end, LOG_BLOCK_CHUNK);
+  if (transfer.value !== undefined && transfer.value !== null) {
+    const normalized = String(transfer.value);
+    const [wholePart, fractionPart = ""] = normalized.split(".");
+    const whole = BigInt(wholePart || "0") * SCALE;
+    const fraction = BigInt((fractionPart + "0".repeat(Number(DECIMALS))).slice(0, Number(DECIMALS)) || "0");
+    return whole + fraction;
   }
-
-  return logs;
+  return 0n;
 }
 
-async function getBlockTimestamps(blockNumbers) {
-  const unique = [...new Set(blockNumbers)];
-  const timestamps = new Map();
-  await Promise.all(unique.map(async (blockNumber) => {
-    const block = await getBlockByNumber(blockNumber);
-    timestamps.set(blockNumber, Number(hexToBigInt(block.timestamp)));
-  }));
-  return timestamps;
+async function getAssetTransfers(fromBlock, toBlock) {
+  const transfers = [];
+  let pageKey;
+
+  while (true) {
+    const result = await rpc("alchemy_getAssetTransfers", [
+      {
+        fromBlock: `0x${fromBlock.toString(16)}`,
+        toBlock: `0x${toBlock.toString(16)}`,
+        category: ["erc20"],
+        contractAddresses: [TOKEN_ADDRESS],
+        withMetadata: true,
+        excludeZeroValue: false,
+        maxCount: TRANSFER_PAGE_SIZE,
+        order: "desc",
+        ...(pageKey ? { pageKey } : {})
+      }
+    ]);
+
+    transfers.push(...(result.transfers || []));
+    if (!result.pageKey) {
+      break;
+    }
+    pageKey = result.pageKey;
+  }
+
+  return transfers;
 }
 
 async function readChainData() {
@@ -191,8 +176,7 @@ async function readChainData() {
   const latestTimestamp = Number(hexToBigInt(latestBlockData.timestamp));
   const cutoffTimestamp = latestTimestamp - 24 * 60 * 60;
   const startBlock = await findStartBlock(latestBlock, cutoffTimestamp);
-  const logs = await getTransferLogs(startBlock, latestBlock);
-  const blockTimestamps = await getBlockTimestamps(logs.map((log) => Number(hexToBigInt(log.blockNumber))));
+  const transfers = await getAssetTransfers(startBlock, latestBlock);
 
   const totalSupply = hexToBigInt(totalSupplyHex);
   const issueBalance = hexToBigInt(issueBalanceHex);
@@ -208,12 +192,13 @@ async function readChainData() {
   let redeemInbound = 0n;
   let redeemOutbound = 0n;
 
-  for (const log of logs) {
-    const from = sliceTopicAddress(log.topics[1]);
-    const to = sliceTopicAddress(log.topics[2]);
-    const amount = hexToBigInt(log.data);
-    const blockNumber = Number(hexToBigInt(log.blockNumber));
-    const timestamp = blockTimestamps.get(blockNumber);
+  for (const transfer of transfers) {
+    const from = String(transfer.from || ZERO_ADDRESS).toLowerCase();
+    const to = String(transfer.to || ZERO_ADDRESS).toLowerCase();
+    const amount = parseTransferAmount(transfer);
+    const timestamp = transfer.metadata?.blockTimestamp
+      ? Math.floor(new Date(transfer.metadata.blockTimestamp).getTime() / 1000)
+      : latestTimestamp;
     volume += amount;
 
     if (from === ZERO_ADDRESS) {
@@ -241,7 +226,7 @@ async function readChainData() {
       from,
       to,
       amount: formatToken(amount),
-      hash: log.transactionHash
+      hash: transfer.hash
     });
   }
 
@@ -254,7 +239,7 @@ async function readChainData() {
     issueBalance,
     redeemBalance,
     circulatingBalance,
-    transferCount: logs.length,
+    transferCount: transfers.length,
     minted,
     burned,
     volume,
