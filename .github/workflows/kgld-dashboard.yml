@@ -1,0 +1,57 @@
+name: KGLD Daily Dashboard
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TZ: Asia/Seoul
+      ALCHEMY_ETH_MAINNET_URL: ${{ secrets.ALCHEMY_ETH_MAINNET_URL }}
+      KGLD_TELEGRAM_TOKEN: ${{ secrets.KGLD_TELEGRAM_TOKEN }}
+      KGLD_TELEGRAM_CHAT_ID: ${{ secrets.KGLD_TELEGRAM_CHAT_ID }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Update dashboard data
+        run: npm run update-dashboard
+
+      - name: Render dashboard image
+        run: npm run render-dashboard
+
+      - name: Bundle dashboard files
+        run: |
+          cd outputs/kgld-dashboard
+          zip -r kgld-dashboard-html.zip index.html styles.css app.js dashboard-data.js
+
+      - name: Send Telegram message
+        run: npm run send-telegram
+
+      - name: Commit refreshed dashboard data
+        run: |
+          git config user.name "codex-automation"
+          git config user.email "codex-automation@users.noreply.github.com"
+          git add outputs/kgld-dashboard/dashboard-data.js
+          if git diff --cached --quiet; then
+            echo "No dashboard data changes to commit."
+          else
+            git commit -m "Update KGLD dashboard data"
+            git push
+          fi

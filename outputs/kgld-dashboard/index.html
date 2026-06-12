@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>KGLD Daily Onchain Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">K</div>
+        <div>
+          <p class="eyebrow">ONCHAIN OPERATIONS</p>
+          <h1>KGLD Daily Dashboard</h1>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="live-dot"></span>
+        <span id="updated-at"></span>
+      </div>
+    </header>
+
+    <section class="hero panel">
+      <div>
+        <div class="hero-label">현재 운영 상태</div>
+        <div class="status-line">
+          <span id="status-badge" class="status-badge"></span>
+          <span class="network-pill">ETH MAINNET</span>
+        </div>
+        <p id="status-message" class="hero-message"></p>
+        <div class="contract-links">
+          <a id="token-link" target="_blank" rel="noreferrer">Token</a>
+          <a id="issue-link" target="_blank" rel="noreferrer">Issue</a>
+          <a id="redeem-link" target="_blank" rel="noreferrer">Redeem</a>
+        </div>
+      </div>
+      <div class="hero-orbit" aria-hidden="true">
+        <div class="orbit-ring ring-one"></div>
+        <div class="orbit-ring ring-two"></div>
+        <div class="orbit-core">
+          <span>KGLD</span>
+          <strong id="hero-supply"></strong>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SNAPSHOT</p>
+          <h2>핵심 지표</h2>
+        </div>
+        <span id="period-label" class="subtle-pill"></span>
+      </div>
+      <div id="kpi-grid" class="kpi-grid"></div>
+    </section>
+
+    <section class="split-grid">
+      <article class="panel allocation-card">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">SUPPLY</p>
+            <h2>공급 분포</h2>
+          </div>
+          <span class="block-label" id="block-label"></span>
+        </div>
+        <div class="allocation-visual">
+          <div class="donut" id="donut">
+            <div class="donut-center">
+              <strong>1.2049</strong>
+              <span>Total KGLD</span>
+            </div>
+          </div>
+          <div id="balance-list" class="balance-list"></div>
+        </div>
+      </article>
+
+      <article class="panel activity-card">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">OPERATIONS</p>
+            <h2>컨트랙트 활동</h2>
+          </div>
+        </div>
+        <div id="activity-list" class="activity-list"></div>
+      </article>
+    </section>
+
+    <section class="split-grid lower-grid">
+      <article class="panel">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">MONITOR</p>
+            <h2>위험 모니터</h2>
+          </div>
+        </div>
+        <div id="risk-list" class="risk-list"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">NEXT</p>
+            <h2>권장 조치</h2>
+          </div>
+        </div>
+        <div id="action-list" class="action-list"></div>
+      </article>
+    </section>
+
+    <section class="panel transaction-panel">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">TRANSACTION FEED</p>
+          <h2>최근 거래</h2>
+        </div>
+        <span class="count-pill" id="transaction-count"></span>
+      </div>
+      <div id="transaction-content"></div>
+    </section>
+
+    <footer>
+      <span>Powered by Alchemy MCP</span>
+      <span>운영 판단 전 컨트랙트 권한과 내부 원장을 함께 확인하세요.</span>
+    </footer>
+  </main>
+
+  <script src="dashboard-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "kgld-dashboard-automation",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "update-dashboard": "node work/update-kgld-dashboard.mjs",
+    "render-dashboard": "node work/render-dashboard.js outputs/kgld-dashboard/index.html outputs/kgld-dashboard/kgld-daily-dashboard.png",
+    "send-telegram": "node work/send-telegram.js"
+  },
+  "dependencies": {
+    "playwright": "^1.54.2"
+  }
+}
