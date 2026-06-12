@@ -80,15 +80,17 @@ body::before {
 
 .brand-mark {
   display: grid;
-  width: 48px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
   place-items: center;
-  color: #182018;
-  background: linear-gradient(145deg, var(--gold-bright), #a9832e);
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(218, 189, 98, 0.15);
-  font-size: 22px;
-  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 h1, h2, p { margin: 0; }
