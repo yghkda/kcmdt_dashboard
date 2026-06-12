@@ -11,6 +11,7 @@ const SCALE = 10n ** DECIMALS;
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const ERC20_TOTAL_SUPPLY = "0x18160ddd";
 const ERC20_BALANCE_OF = "0x70a08231";
+const LOG_BLOCK_CHUNK = 2000;
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -128,15 +129,43 @@ async function findStartBlock(latestBlockNumber, cutoffTimestamp) {
 }
 
 async function getTransferLogs(fromBlock, toBlock) {
-  const result = await rpc("eth_getLogs", [
-    {
-      address: TOKEN_ADDRESS,
-      fromBlock: `0x${fromBlock.toString(16)}`,
-      toBlock: `0x${toBlock.toString(16)}`,
-      topics: [TRANSFER_TOPIC]
+  const logs = [];
+
+  async function fetchRange(rangeStart, rangeEnd, chunkSize) {
+    try {
+      const result = await rpc("eth_getLogs", [
+        {
+          address: TOKEN_ADDRESS,
+          fromBlock: `0x${rangeStart.toString(16)}`,
+          toBlock: `0x${rangeEnd.toString(16)}`,
+          topics: [TRANSFER_TOPIC]
+        }
+      ]);
+      logs.push(...result);
+    } catch (error) {
+      if (!(error instanceof Error) || !error.message.includes("HTTP 400")) {
+        throw error;
+      }
+      if (rangeStart === rangeEnd) {
+        throw new Error(`eth_getLogs rejected single block ${rangeStart}`);
+      }
+      const nextChunk = Math.max(100, Math.floor(chunkSize / 2));
+      if (nextChunk === chunkSize && chunkSize === 100) {
+        throw error;
+      }
+      for (let start = rangeStart; start <= rangeEnd; start += nextChunk) {
+        const end = Math.min(start + nextChunk - 1, rangeEnd);
+        await fetchRange(start, end, nextChunk);
+      }
     }
-  ]);
-  return result;
+  }
+
+  for (let start = fromBlock; start <= toBlock; start += LOG_BLOCK_CHUNK) {
+    const end = Math.min(start + LOG_BLOCK_CHUNK - 1, toBlock);
+    await fetchRange(start, end, LOG_BLOCK_CHUNK);
+  }
+
+  return logs;
 }
 
 async function getBlockTimestamps(blockNumbers) {
