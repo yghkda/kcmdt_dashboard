@@ -4,10 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "7 0 * * *"
-<<<<<<< HEAD
-=======
     - cron: "17 0 * * *"
->>>>>>> a58f53d (Add backup schedule for KGLD dashboard)
 
 jobs:
   dashboard:
