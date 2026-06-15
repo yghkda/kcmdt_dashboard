@@ -37,7 +37,7 @@ jobs:
       - name: Bundle dashboard files
         run: |
           cd outputs/kgld-dashboard
-          zip -r kgld-dashboard-html.zip index.html styles.css app.js dashboard-data.js
+          zip -r kgld-dashboard-html.zip index.html styles.css app.js dashboard-data.js assets
 
       - name: Send Telegram message
         run: npm run send-telegram

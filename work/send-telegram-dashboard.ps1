@@ -53,12 +53,19 @@ try {
         Remove-Item -LiteralPath $bundlePath -Force
     }
     $bundleFiles = @(
-        (Join-Path $DashboardDirectory "index.html"),
-        (Join-Path $DashboardDirectory "styles.css"),
-        (Join-Path $DashboardDirectory "app.js"),
-        (Join-Path $DashboardDirectory "dashboard-data.js")
+        "index.html",
+        "styles.css",
+        "app.js",
+        "dashboard-data.js",
+        "assets"
     )
-    Compress-Archive -LiteralPath $bundleFiles -DestinationPath $bundlePath -CompressionLevel Optimal
+    Push-Location $DashboardDirectory
+    try {
+        Compress-Archive -Path $bundleFiles -DestinationPath $bundlePath -CompressionLevel Optimal
+    }
+    finally {
+        Pop-Location
+    }
 
     $python = "C:\Users\yghan\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
     $telegramScript = Join-Path $PSScriptRoot "send-telegram.py"
