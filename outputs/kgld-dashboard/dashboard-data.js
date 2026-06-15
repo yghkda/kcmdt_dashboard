@@ -1,8 +1,8 @@
 window.KGLD_DASHBOARD_DATA = {
-  "updatedAt": "2026-06-14 11:46:22 KST",
+  "updatedAt": "2026-06-15 11:27:45 KST",
   "period": "최근 24시간",
   "network": "Ethereum Mainnet",
-  "latestBlock": 25312830,
+  "latestBlock": 25319906,
   "status": "정상",
   "statusLevel": "normal",
   "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 0건. 발행 0 KGLD, 소각 0 KGLD. Issue 및 Redeem 관련 신규 이동 없음. 추정: Issue 잔액은 발행 자산 보관 및 배포 대기 물량을 포함할 수 있습니다.",
