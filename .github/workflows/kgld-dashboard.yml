@@ -2,11 +2,6 @@ name: KGLD Daily Dashboard
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "7 9 * * *"
-      timezone: "Asia/Seoul"
-    - cron: "17 9 * * *"
-      timezone: "Asia/Seoul"
 
 jobs:
   dashboard:
@@ -22,80 +17,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Decide whether this scheduled run should execute
-        id: preflight
-        run: |
-          node <<'EOF'
-          const fs = require("node:fs");
-          const eventName = process.env.GITHUB_EVENT_NAME;
-          const outputPath = process.env.GITHUB_OUTPUT;
-          const today = new Intl.DateTimeFormat("sv-SE", {
-            timeZone: "Asia/Seoul",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-          }).format(new Date());
-          let shouldRun = "true";
-          let reason = "No existing same-day dashboard snapshot.";
-
-          if (eventName === "schedule") {
-            try {
-              const script = fs.readFileSync("outputs/kgld-dashboard/dashboard-data.js", "utf8");
-              const match = script.match(/"updatedAt":\s*"(\d{4}-\d{2}-\d{2}) /);
-              if (match && match[1] === today) {
-                shouldRun = "false";
-                reason = `Scheduled backup skipped because dashboard-data.js already has today's KST date (${today}).`;
-              }
-            } catch (error) {
-              reason = `Proceeding because preflight could not read dashboard-data.js: ${error.message}`;
-            }
-          } else {
-            reason = `Proceeding because event is ${eventName}.`;
-          }
-
-          fs.appendFileSync(outputPath, `should_run=${shouldRun}\n`);
-          fs.appendFileSync(outputPath, `reason<<__EOF__\n${reason}\n__EOF__\n`);
-          console.log(reason);
-          EOF
-
-      - name: Stop duplicate scheduled rerun
-        if: steps.preflight.outputs.should_run != 'true'
-        run: echo "${{ steps.preflight.outputs.reason }}"
-
       - name: Setup Node
-        if: steps.preflight.outputs.should_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: Install dependencies
-        if: steps.preflight.outputs.should_run == 'true'
         run: npm install
 
       - name: Install Playwright Chromium
-        if: steps.preflight.outputs.should_run == 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Update dashboard data
-        if: steps.preflight.outputs.should_run == 'true'
         run: npm run update-dashboard
 
       - name: Render dashboard image
-        if: steps.preflight.outputs.should_run == 'true'
         run: npm run render-dashboard
 
       - name: Bundle dashboard files
-        if: steps.preflight.outputs.should_run == 'true'
         run: |
           cd outputs/kgld-dashboard
           zip -r kgld-dashboard-html.zip index.html styles.css app.js dashboard-data.js
 
       - name: Send Telegram message
-        if: steps.preflight.outputs.should_run == 'true'
         run: npm run send-telegram
 
       - name: Commit refreshed dashboard data
-        if: steps.preflight.outputs.should_run == 'true'
         run: |
           git config user.name "codex-automation"
           git config user.email "codex-automation@users.noreply.github.com"
