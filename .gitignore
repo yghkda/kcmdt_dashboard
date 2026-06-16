@@ -1,0 +1,5 @@
+work/telegram/
+work/edge-headless-profile/
+work/__pycache__/
+outputs/kgld-dashboard/*.zip
+outputs/kgld-dashboard/*.png
