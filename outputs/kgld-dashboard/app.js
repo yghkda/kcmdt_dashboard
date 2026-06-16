@@ -33,6 +33,7 @@ const minted = getKpi("발행") || data.kpis[3];
 const burned = getKpi("소각") || data.kpis[4];
 const issueShare = getKpi("Issue 보관 비중") || data.kpis[5];
 const statusCopy = splitStatusMessage(data.statusMessage);
+const circulatingValue = data.balances.circulating.value;
 
 document.getElementById("updated-at").textContent = `업데이트 ${data.updatedAt}`;
 document.getElementById("period-label").textContent = data.period;
@@ -42,6 +43,9 @@ document.getElementById("status-badge").classList.add(data.statusLevel);
 document.getElementById("observed-message").textContent = statusCopy.observed;
 document.getElementById("inference-message").textContent = statusCopy.inference;
 document.getElementById("hero-supply").textContent = `${totalSupply.value} KGLD`;
+document.getElementById("hero-issue-balance").textContent = `${formatToken(data.balances.issue.value)} KGLD`;
+document.getElementById("hero-redeem-balance").textContent = `${formatToken(data.balances.redeem.value)} KGLD`;
+document.getElementById("supply-meter-fill").style.width = `${Math.min(100, data.balances.issue.percentage)}%`;
 document.getElementById("donut-total").textContent = totalSupply.value;
 
 const issuePct = data.balances.issue.percentage;
@@ -50,20 +54,56 @@ const redeemEndPct = issuePct + redeemPct;
 document.getElementById("donut").style.background = `conic-gradient(
   var(--gold) 0 ${issuePct}%,
   var(--mint) ${issuePct}% ${redeemEndPct}%,
-  #345048 ${redeemEndPct}% 100%
+  var(--slate) ${redeemEndPct}% 100%
 )`;
 
 document.getElementById("hero-brief").innerHTML = [
-  ["총공급량", `${totalSupply.value} ${totalSupply.unit}`],
   ["24h 전송", `${transferCount.value}${transferCount.unit}`],
   ["발행 / 소각", `${minted.value} / ${burned.value} KGLD`],
-  ["Issue 보관", `${issueShare.value}${issueShare.unit}`]
+  ["Issue 보관", `${issueShare.value}${issueShare.unit}`],
+  ["유통 추정", `${formatToken(circulatingValue)} KGLD`]
 ].map(([label, value]) => `
   <div class="brief-chip">
     <span>${label}</span>
     <strong>${value}</strong>
   </div>
 `).join("");
+
+document.querySelectorAll("[data-scroll-target]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const target = document.getElementById(button.dataset.scrollTarget);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+});
+
+const copyButton = document.getElementById("copy-summary");
+copyButton.addEventListener("click", async () => {
+  const summary = [
+    `KGLD ${data.period} 온체인 요약`,
+    `상태: ${data.status}`,
+    `총공급량: ${totalSupply.value} ${totalSupply.unit}`,
+    `24시간 전송: ${transferCount.value}${transferCount.unit}`,
+    `발행/소각: ${minted.value}/${burned.value} KGLD`,
+    `Issue 보관: ${formatToken(data.balances.issue.value)} KGLD (${issueShare.value}${issueShare.unit})`,
+    `Redeem 잔액: ${formatToken(data.balances.redeem.value)} KGLD`,
+    `업데이트: ${data.updatedAt}`
+  ].join("\n");
+
+  try {
+    await navigator.clipboard.writeText(summary);
+    copyButton.textContent = "복사 완료";
+    copyButton.classList.add("copied");
+  } catch {
+    copyButton.textContent = "복사 실패";
+  }
+
+  window.setTimeout(() => {
+    copyButton.textContent = "요약 복사";
+    copyButton.classList.remove("copied");
+  }, 1600);
+});
 
 [
   ["token-link", "token", data.contracts.token],
@@ -75,8 +115,17 @@ document.getElementById("hero-brief").innerHTML = [
   link.textContent += ` ${shortAddress(address)} ↗`;
 });
 
-document.getElementById("kpi-grid").innerHTML = data.kpis.map((kpi, index) => `
-  <article class="kpi-card ${kpi.tone} ${index < 2 ? "primary" : ""}">
+const kpiDisplay = [
+  getKpi("24시간 거래량"),
+  getKpi("발행"),
+  getKpi("소각"),
+  { label: "Redeem 잔액", value: formatToken(data.balances.redeem.value), unit: "KGLD", change: "0", tone: data.balances.redeem.value > 0 ? "watch" : "neutral" },
+  { label: "기타 유통", value: formatToken(circulatingValue), unit: "KGLD", change: "0", tone: circulatingValue > 0 ? "watch" : "neutral" },
+  issueShare
+].filter(Boolean);
+
+document.getElementById("kpi-grid").innerHTML = kpiDisplay.map((kpi, index) => `
+  <article class="kpi-card ${kpi.tone} ${index === 0 ? "primary" : ""}">
     <div class="kpi-label">${kpi.label}</div>
     <div class="kpi-value">${kpi.value}<span class="kpi-unit">${kpi.unit}</span></div>
     <div class="kpi-change">${kpi.change === "0" ? "- 변동 없음" : kpi.change}</div>
@@ -96,6 +145,34 @@ document.getElementById("balance-list").innerHTML = balanceConfig.map(([name, it
     <span class="balance-value">${formatToken(item.value)} KGLD<span>${item.percentage.toFixed(2)}% · 변동 없음</span></span>
   </div>
 `).join("");
+
+const donut = document.getElementById("donut");
+const donutTooltip = document.getElementById("donut-tooltip");
+const donutSegments = [
+  ["Issue 보관", data.balances.issue, "발행 자산 보관 및 배포 대기 물량"],
+  ["Redeem 잔액", data.balances.redeem, "상환 관련 컨트랙트 잔액"],
+  ["기타 유통", data.balances.circulating, "Issue/Redeem 외 주소 보유량"]
+];
+
+donut.addEventListener("mousemove", (event) => {
+  const rect = donut.getBoundingClientRect();
+  const x = event.clientX - rect.left - rect.width / 2;
+  const y = event.clientY - rect.top - rect.height / 2;
+  const angle = (Math.atan2(y, x) * 180 / Math.PI + 450) % 360;
+  const pct = angle / 360 * 100;
+  const segment = pct <= issuePct
+    ? donutSegments[0]
+    : pct <= redeemEndPct
+      ? donutSegments[1]
+      : donutSegments[2];
+  const [label, item, note] = segment;
+  donutTooltip.innerHTML = `<strong>${label} · ${item.percentage.toFixed(2)}%</strong><span>${formatToken(item.value)} KGLD · ${note}</span>`;
+  donutTooltip.classList.add("visible");
+});
+
+donut.addEventListener("mouseleave", () => {
+  donutTooltip.classList.remove("visible");
+});
 
 const activityConfig = [
   ["Issue · 발행 자산 보관", data.activity.issue],

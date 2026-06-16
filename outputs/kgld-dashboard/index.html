@@ -54,14 +54,31 @@
           <a id="issue-link" target="_blank" rel="noreferrer">Issue</a>
           <a id="redeem-link" target="_blank" rel="noreferrer">Redeem</a>
         </div>
+        <div class="hero-actions">
+          <button type="button" data-scroll-target="supply-section">공급 분포 보기</button>
+          <button type="button" data-scroll-target="transaction-section">최근 거래 보기</button>
+          <button type="button" id="copy-summary">요약 복사</button>
+        </div>
       </div>
-      <div class="hero-orbit" aria-hidden="true">
-        <div class="orbit-ring ring-one"></div>
-        <div class="orbit-ring ring-two"></div>
-        <div class="orbit-core">
-          <span>KGLD</span>
+      <div class="hero-supply-card">
+        <div class="supply-card-head">
+          <span>SUPPLY CUSTODY</span>
           <strong id="hero-supply"></strong>
         </div>
+        <div class="supply-meter" aria-hidden="true">
+          <span id="supply-meter-fill"></span>
+        </div>
+        <div class="supply-breakdown">
+          <div>
+            <span>Issue 보관</span>
+            <strong id="hero-issue-balance"></strong>
+          </div>
+          <div>
+            <span>Redeem 잔액</span>
+            <strong id="hero-redeem-balance"></strong>
+          </div>
+        </div>
+        <p>Issue 컨트랙트가 발행 자산 보관 및 배포 대기 물량을 관리하는 구조입니다.</p>
       </div>
     </section>
 
@@ -76,7 +93,7 @@
       <div id="kpi-grid" class="kpi-grid"></div>
     </section>
 
-    <section class="split-grid">
+    <section class="split-grid" id="supply-section">
       <article class="panel allocation-card">
         <div class="section-heading compact">
           <div>
@@ -87,6 +104,7 @@
         </div>
         <div class="allocation-visual">
           <div class="donut" id="donut">
+            <div id="donut-tooltip" class="donut-tooltip"></div>
             <div class="donut-center">
               <strong id="donut-total"></strong>
               <span>Total KGLD</span>
@@ -129,7 +147,7 @@
       </article>
     </section>
 
-    <section class="panel transaction-panel">
+    <section class="panel transaction-panel" id="transaction-section">
       <div class="section-heading compact">
         <div>
           <p class="eyebrow">TRANSACTION FEED</p>
