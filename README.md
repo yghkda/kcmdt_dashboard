@@ -20,7 +20,19 @@ It performs these steps:
 3. Render `outputs/kgld-dashboard/kgld-daily-dashboard.png`.
 4. Bundle the dashboard HTML files into `outputs/kgld-dashboard/kgld-dashboard-html.zip`.
 5. Send the summary, image, and bundle to Telegram.
-6. Commit the refreshed dashboard data back to the repository.
+6. Deploy `outputs/kgld-dashboard` to GitHub Pages.
+7. Commit the refreshed dashboard data back to the repository.
+
+## GitHub Pages
+
+Configure the repository in `Settings > Pages` with `Source: GitHub Actions`.
+The workflow deploys the dashboard after each successful run.
+
+Expected public URL:
+
+```text
+https://yghkda.github.io/kcmdt_dashboard/
+```
 
 ## External Schedule
 

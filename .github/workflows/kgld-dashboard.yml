@@ -8,6 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-pages.outputs.page_url }}
     env:
       TZ: Asia/Seoul
       ALCHEMY_ETH_MAINNET_URL: ${{ secrets.ALCHEMY_ETH_MAINNET_URL }}
@@ -41,6 +46,18 @@ jobs:
 
       - name: Send Telegram message
         run: npm run send-telegram
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: outputs/kgld-dashboard
+
+      - name: Deploy to GitHub Pages
+        id: deploy-pages
+        uses: actions/deploy-pages@v4
 
       - name: Commit refreshed dashboard data
         run: |
