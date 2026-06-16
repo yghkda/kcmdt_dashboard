@@ -73,7 +73,7 @@ function formatPercent(part, total) {
   if (total === 0n) {
     return 0;
   }
-  return Number((((part * 10000n) / total)).toString()) / 100;
+  return Number(((part * 10000n) / total).toString()) / 100;
 }
 
 function encodeAddressCall(selector, address) {
@@ -100,8 +100,7 @@ function asKstString(date) {
 }
 
 async function getBlockByNumber(blockNumber) {
-  const hex = `0x${blockNumber.toString(16)}`;
-  return rpc("eth_getBlockByNumber", [hex, false]);
+  return rpc("eth_getBlockByNumber", [`0x${blockNumber.toString(16)}`, false]);
 }
 
 async function findStartBlock(latestBlockNumber, cutoffTimestamp) {
@@ -199,26 +198,14 @@ async function readChainData() {
     const timestamp = transfer.metadata?.blockTimestamp
       ? Math.floor(new Date(transfer.metadata.blockTimestamp).getTime() / 1000)
       : latestTimestamp;
-    volume += amount;
 
-    if (from === ZERO_ADDRESS) {
-      minted += amount;
-    }
-    if (to === ZERO_ADDRESS) {
-      burned += amount;
-    }
-    if (to === ISSUE_ADDRESS.toLowerCase()) {
-      issueInbound += amount;
-    }
-    if (from === ISSUE_ADDRESS.toLowerCase()) {
-      issueOutbound += amount;
-    }
-    if (to === REDEEM_ADDRESS.toLowerCase()) {
-      redeemInbound += amount;
-    }
-    if (from === REDEEM_ADDRESS.toLowerCase()) {
-      redeemOutbound += amount;
-    }
+    volume += amount;
+    if (from === ZERO_ADDRESS) minted += amount;
+    if (to === ZERO_ADDRESS) burned += amount;
+    if (to === ISSUE_ADDRESS.toLowerCase()) issueInbound += amount;
+    if (from === ISSUE_ADDRESS.toLowerCase()) issueOutbound += amount;
+    if (to === REDEEM_ADDRESS.toLowerCase()) redeemInbound += amount;
+    if (from === REDEEM_ADDRESS.toLowerCase()) redeemOutbound += amount;
 
     transactions.push({
       time: asKstString(new Date(timestamp * 1000)),
@@ -252,13 +239,13 @@ async function readChainData() {
 }
 
 function buildStatus(data) {
-  const facts = [];
+  const facts = [
+    `최근 24시간 KGLD Transfer ${data.transferCount}건`,
+    `발행 ${formatToken(data.minted)} KGLD, 소각 ${formatToken(data.burned)} KGLD`
+  ];
   const inferences = [];
   let status = "정상";
   let statusLevel = "normal";
-
-  facts.push(`최근 24시간 KGLD Transfer ${data.transferCount}건`);
-  facts.push(`발행 ${formatToken(data.minted)} KGLD, 소각 ${formatToken(data.burned)} KGLD`);
 
   if (data.transferCount === 0) {
     facts.push("Issue 및 Redeem 관련 신규 이동 없음");
@@ -271,7 +258,7 @@ function buildStatus(data) {
   if (issueShare >= 50) {
     status = "집중 관찰";
     statusLevel = "watch";
-    inferences.push("Issue 컨트랙트가 발행 자산의 과반을 보관 중이어서 운영 배포 흐름 집중도가 높습니다.");
+    inferences.push("Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다.");
   } else {
     inferences.push("Issue 잔액은 발행 자산 보관 및 배포 대기 물량을 포함할 수 있습니다.");
   }
@@ -279,7 +266,7 @@ function buildStatus(data) {
   if (data.minted > 0n || data.burned > 0n) {
     status = "공급 변동";
     statusLevel = "watch";
-    inferences.push("최근 24시간 공급량 변동이 발생해 발행·소각 사유 점검이 필요합니다.");
+    inferences.push("최근 24시간 공급량 변동이 발생했으므로 발행·소각 트랜잭션과 운영 사유를 대조해야 합니다.");
   }
 
   return {

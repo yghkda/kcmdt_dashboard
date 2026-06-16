@@ -38,7 +38,17 @@
           <span id="status-badge" class="status-badge"></span>
           <span class="network-pill">ETH MAINNET</span>
         </div>
-        <p id="status-message" class="hero-message"></p>
+        <div id="hero-brief" class="hero-brief"></div>
+        <div class="insight-stack">
+          <div class="insight-block">
+            <span>관찰 사실</span>
+            <p id="observed-message"></p>
+          </div>
+          <div class="insight-block inference">
+            <span>운영 판단</span>
+            <p id="inference-message"></p>
+          </div>
+        </div>
         <div class="contract-links">
           <a id="token-link" target="_blank" rel="noreferrer">Token</a>
           <a id="issue-link" target="_blank" rel="noreferrer">Issue</a>
@@ -78,7 +88,7 @@
         <div class="allocation-visual">
           <div class="donut" id="donut">
             <div class="donut-center">
-              <strong>1.2049</strong>
+              <strong id="donut-total"></strong>
               <span>Total KGLD</span>
             </div>
           </div>
@@ -131,8 +141,8 @@
     </section>
 
     <footer>
-      <span>Powered by Alchemy MCP</span>
-      <span>운영 판단 전 컨트랙트 권한과 내부 원장을 함께 확인하세요.</span>
+      <span>Powered by Alchemy</span>
+      <span>운영 판단은 온체인 관찰 값과 사전 정의된 모니터링 규칙을 기준으로 표시됩니다.</span>
     </footer>
   </main>
 
