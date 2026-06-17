@@ -1,8 +1,8 @@
 window.KGLD_DASHBOARD_DATA = {
-  "updatedAt": "2026-06-16 16:51:13 KST",
+  "updatedAt": "2026-06-17 09:07:55 KST",
   "period": "최근 24시간",
   "network": "Ethereum Mainnet",
-  "latestBlock": 25328699,
+  "latestBlock": 25333575,
   "status": "공급 변동",
   "statusLevel": "watch",
   "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 1건. 발행 246 KGLD, 소각 0 KGLD. Issue 유입 246 / 유출 0 KGLD. Redeem 유입 0 / 유출 0 KGLD. 추정: Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다. 최근 24시간 공급량 변동이 발생했으므로 발행·소각 트랜잭션과 운영 사유를 대조해야 합니다.",
