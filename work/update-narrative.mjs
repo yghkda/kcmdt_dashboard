@@ -165,6 +165,21 @@ function fallbackNarrative(reason = "시장 내러티브 데이터 수집 대기
   return {
     generatedAt: asKstString(new Date()),
     source: "fallback",
+    todayActionBrief: {
+      title: "Today's Action Brief",
+      status: "unknown",
+      headline: "시장 내러티브 데이터 수집 대기 중입니다.",
+      operationsAction: "상단 온체인 지표를 기준으로 Issue/Redeem 잔액을 우선 확인하세요.",
+      marketingAction: "narrative cache 갱신 후 콘텐츠 메시지를 확정하세요.",
+      riskAction: "fallback 상태에서는 대형 이동 판단을 보류하세요.",
+      doNotDo: [
+        "미확인 상장/거래소명 언급",
+        "거래량 우위 또는 시장 선도 표현",
+        "수익률 또는 가격 상승 암시",
+        "무조건 상환 보장 표현"
+      ],
+      confidence: "low"
+    },
     marketWeather: {
       title: "Market Weather for KGLD",
       stablecoinWeather: "unknown",
@@ -716,6 +731,77 @@ function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorP
   };
 }
 
+function buildTodayActionBrief(narrative) {
+  const market = narrative.marketWeather || {};
+  const radar = narrative.tokenizedGoldRadar || {};
+  const rwa = narrative.rwaSectorPulse || {};
+  const trend = narrative.narrativeTrend || {};
+  const idea = narrative.contentIdea || {};
+  const kgldActivity = narrative.observed?.kgldActivity || radar.tokens?.KGLD?.activity || "unknown";
+  const gasWeather = market.gasWeather || rwa.signals?.gas?.status || "unknown";
+  const hasLargeTransfer = Boolean(
+    radar.tokens?.KGLD?.largeTransferDetected ||
+    radar.tokens?.PAXG?.largeTransferDetected ||
+    radar.tokens?.XAUT?.largeTransferDetected ||
+    (trend.notableLargeTransferDays || 0) > 0
+  );
+  const goldMood = radar.marketMood || rwa.signals?.tokenizedGold?.status || "unknown";
+  const trendAccumulating = trend.trendMood === "unknown" || trend.confidence === "low";
+  const doNotDo = [
+    "미확인 상장/거래소명 언급",
+    "거래량 우위 또는 시장 선도 표현",
+    "수익률 또는 가격 상승 암시",
+    "무조건 상환 보장 표현"
+  ];
+
+  let status = "unknown";
+  let headline = "오늘의 액션 판단을 위한 narrative 데이터가 아직 제한적입니다.";
+  let operationsAction = "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.";
+  let marketingAction = "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요.";
+  let riskAction = "새로운 대형 이동이나 관리자성 이벤트가 관찰되는지 확인하세요.";
+  let confidence = trendAccumulating ? "low" : "medium";
+
+  if (trendAccumulating) {
+    status = "unknown";
+    headline = "추세 데이터가 축적 중이며, 현재는 단일 스냅샷 기반으로 보수적으로 해석합니다.";
+  }
+
+  if (kgldActivity === "quiet" && ["low", "normal"].includes(gasWeather) && !hasLargeTransfer) {
+    status = "normal";
+    headline = "KGLD는 조용한 온체인 상태를 유지하고 있으며, 신뢰 메시지를 정리하기 좋은 구간입니다.";
+    operationsAction = "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.";
+    marketingAction = "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요.";
+    riskAction = "대형 이동이나 관리자성 이벤트가 없으면 추가 조치는 필요하지 않습니다.";
+    confidence = trendAccumulating ? "low" : "medium";
+  }
+
+  if (["observed", "sample_full", "notable", "active", "volatile"].includes(goldMood)) {
+    marketingAction = `${marketingAction} PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고하세요.`;
+  }
+
+  if (hasLargeTransfer) {
+    status = "watch";
+    headline = "일부 대형 이동 관찰 신호가 있어 관련 TX와 주소 맥락 확인이 필요합니다.";
+    riskAction = "대형 이동 TX와 관련 주소 라벨을 확인하세요.";
+    confidence = "medium";
+  }
+
+  if (idea.contentAngle && status !== "watch") {
+    marketingAction = `${marketingAction} 오늘의 콘텐츠 각도는 '${idea.contentAngle}'로 정리할 수 있습니다.`;
+  }
+
+  return {
+    title: "Today's Action Brief",
+    status,
+    headline,
+    operationsAction,
+    marketingAction,
+    riskAction,
+    doNotDo,
+    confidence
+  };
+}
+
 async function readJsonFile(filePath, fallbackValue) {
   try {
     return JSON.parse(await fs.readFile(filePath, "utf8"));
@@ -1075,6 +1161,7 @@ async function main() {
     rwaSectorPulse: narrative.rwaSectorPulse,
     narrativeTrend: narrative.narrativeTrend
   });
+  narrative.todayActionBrief = buildTodayActionBrief(narrative);
   await writeNarrativeCache(narrative);
   console.log(`[narrative] Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
   console.log(`[narrative] Updated narrative history snapshots: ${history.snapshots.length}`);

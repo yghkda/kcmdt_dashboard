@@ -1,25 +1,40 @@
 {
-  "generatedAt": "2026-06-18 23:52:12 KST",
-  "source": "alchemy",
+  "generatedAt": "2026-06-19 00:10:48 KST",
+  "source": "fallback",
+  "todayActionBrief": {
+    "title": "Today's Action Brief",
+    "status": "unknown",
+    "headline": "추세 데이터가 축적 중이며, 현재는 단일 스냅샷 기반으로 보수적으로 해석합니다.",
+    "operationsAction": "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.",
+    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. 오늘의 콘텐츠 각도는 'RWA transparency over hype'로 정리할 수 있습니다.",
+    "riskAction": "새로운 대형 이동이나 관리자성 이벤트가 관찰되는지 확인하세요.",
+    "doNotDo": [
+      "미확인 상장/거래소명 언급",
+      "거래량 우위 또는 시장 선도 표현",
+      "수익률 또는 가격 상승 암시",
+      "무조건 상환 보장 표현"
+    ],
+    "confidence": "low"
+  },
   "marketWeather": {
     "title": "Market Weather for KGLD",
-    "stablecoinWeather": "sample_full",
-    "goldTokenWeather": "sample_full",
-    "rwaWeather": "limited_data",
-    "gasWeather": "low",
-    "todayPositioning": "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
-    "contentAngle": "Gold as a quiet onchain asset",
-    "confidence": "medium"
+    "stablecoinWeather": "unknown",
+    "goldTokenWeather": "unknown",
+    "rwaWeather": "unknown",
+    "gasWeather": "unknown",
+    "todayPositioning": "시장 내러티브 데이터 수집 대기 중",
+    "contentAngle": "상단 온체인 지표는 정상이며, Market Weather는 다음 narrative cache 갱신 후 표시됩니다.",
+    "confidence": "low"
   },
   "contentIdea": {
     "title": "KGLD Content Desk",
-    "contentAngle": "Gold as a quiet onchain asset",
-    "oneLineInsight": "KGLD가 조용할수록 메시지는 속도보다 실물 기반 신뢰와 검증 가능성에 집중하는 편이 적합합니다.",
-    "xPostEnglish": "Not every onchain asset needs to move fast. Some are built to make real-world value easier to verify.",
-    "xPostKorean": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. KGLD는 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 쪽이 더 적합합니다.",
-    "internalNote": "PAXG/XAUT 전송 샘플은 카테고리 관찰 신호로만 활용하세요. KGLD의 상장, 거래량 우위, 파트너십을 암시하지 않습니다.",
+    "contentAngle": "RWA transparency over hype",
+    "oneLineInsight": "온체인 흐름이 관찰될 때도 KGLD 메시지는 과장보다 검증 가능한 운영 구조에 두는 편이 적합합니다.",
+    "xPostEnglish": "For RWAs, the strongest signal is not noise. It is a structure people can verify.",
+    "xPostKorean": "RWA에서 중요한 것은 과장된 활동이 아니라 검증 가능한 구조입니다. KGLD는 운영 투명성과 상환 가능성을 중심으로 설명하는 편이 적합합니다.",
+    "internalNote": "외부 금 토큰 샘플이 제한적이므로 KGLD 자체의 준비자산, 상환 UX, 운영 투명성 메시지를 우선 검토하세요.",
     "landingCopy": "KGLD is designed to bring real-world value onchain with a focus on reserve visibility, redemption context, and operational transparency.",
-    "whyNow": "KGLD activity는 quiet로 관찰됩니다. gas 상태는 low입니다. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로 참고할 수 있습니다. RWA sector signal은 limited_data, 7-day trend는 unknown입니다.",
+    "whyNow": "KGLD activity는 unknown로 관찰됩니다. gas 상태는 unknown입니다. tokenized gold signal은 unknown입니다. RWA sector signal은 limited_data, 7-day trend는 unknown입니다.",
     "complianceCaution": [
       "상환 가능성은 정책과 조건 범위 안에서만 표현하세요.",
       "PAXG/XAUT 관찰 신호를 KGLD 수요 또는 가격 흐름으로 해석하지 마세요.",
@@ -34,30 +49,28 @@
   },
   "tokenizedGoldRadar": {
     "title": "Tokenized Gold Radar",
-    "headline": "PAXG와 XAUT의 최근 전송 샘플이 확인되었고, KGLD는 조용한 상태입니다.",
-    "marketMood": "sample_full",
-    "kgldAngle": "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.",
+    "headline": "시장 내러티브 데이터 수집 대기 중",
+    "marketMood": "unknown",
+    "kgldAngle": "상단 온체인 지표는 정상이며, Tokenized Gold Radar는 다음 narrative cache 갱신 후 표시됩니다.",
     "observations": [
-      "KGLD: 최근 관찰 범위 내 Transfer 없음",
-      "PAXG/XAUT : 최근 전송 샘플 확인",
-      "대형 이동 기준에 해당하는 이벤트는 제한적"
+      "KGLD/PAXG/XAUT 비교 데이터 수집 대기 중"
     ],
-    "operatorAction": "시장 활성도를 단정하지 말고, 금 기반 토큰 카테고리의 관찰 신호로만 참고하세요.",
-    "confidence": "medium",
+    "operatorAction": "다음 narrative cache 갱신 후 tokenized gold 비교 신호를 확인하세요.",
+    "confidence": "low",
     "tokens": {
       "KGLD": {
-        "activity": "quiet",
+        "activity": "unknown",
         "transferCount": 0,
         "largeTransferDetected": false
       },
       "PAXG": {
-        "activity": "sample_full",
-        "transferCount": 10,
+        "activity": "unknown",
+        "transferCount": 0,
         "largeTransferDetected": false
       },
       "XAUT": {
-        "activity": "sample_full",
-        "transferCount": 10,
+        "activity": "unknown",
+        "transferCount": 0,
         "largeTransferDetected": false
       }
     }
@@ -65,53 +78,46 @@
   "rwaSectorPulse": {
     "title": "RWA Sector Pulse",
     "sectorMood": "limited_data",
-    "headline": "금 기반 토큰과 스테이블코인 전송 샘플은 확인되었지만, RWA 섹터 전체 판단에는 추가 데이터가 필요합니다.",
-    "kgldPositioning": "KGLD는 섹터 과열 신호보다 준비자산·상환 UX·운영 투명성 중심 메시지가 적합합니다.",
+    "headline": "시장 내러티브 데이터 수집 대기 중",
+    "kgldPositioning": "상단 온체인 지표는 정상이며, RWA Sector Pulse는 다음 narrative cache 갱신 후 표시됩니다.",
     "evidence": [
-      "Tokenized gold: sample_full sample signal",
-      "Stablecoins: sample_full sample signal (USDC 10, USDT 10)",
-      "Gas condition: low"
+      "tokenized gold, stablecoin, gas 일부 신호만 우선 관찰합니다.",
+      "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
     ],
     "contentIdea": "RWA transparency over hype",
-    "confidence": "medium",
+    "confidence": "low",
     "signals": {
       "tokenizedGold": {
-        "status": "sample_full",
+        "status": "unknown",
         "source": "tokenizedGoldRadar"
       },
       "stablecoins": {
-        "status": "sample_full",
-        "usdcTransferCount": 10,
-        "usdtTransferCount": 10
+        "status": "unknown",
+        "usdcTransferCount": 0,
+        "usdtTransferCount": 0
       },
       "gas": {
-        "status": "low"
+        "status": "unknown"
       },
       "rwaProtocols": {
         "status": "limited_data",
-        "note": "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
+        "note": "Dune/The Graph 또는 protocol-specific 데이터 연결 전입니다."
       }
     }
   },
   "diagnostics": {
     "generatedBy": "update-narrative.mjs",
-    "hasAlchemyUrl": true,
-    "usedFallback": false,
-    "errors": [],
+    "hasAlchemyUrl": false,
+    "usedFallback": true,
+    "errors": [
+      "Missing ALCHEMY_ETH_MAINNET_URL or ALCHEMY_API_KEY",
+      "gasPrice: Missing ALCHEMY_ETH_MAINNET_URL or ALCHEMY_API_KEY",
+      "blockNumber: Missing ALCHEMY_ETH_MAINNET_URL or ALCHEMY_API_KEY"
+    ],
     "rpcChecks": {
-      "blockNumber": "ok",
-      "gasPrice": "ok",
-      "PAXG": "ok",
-      "KGLD": "ok",
-      "XAUT": "ok",
-      "USDT": "ok",
-      "USDC": "ok"
+      "gasPrice": "failed",
+      "blockNumber": "failed"
     }
-  },
-  "observed": {
-    "kgldTransferSampleSize": 0,
-    "kgldActivity": "quiet",
-    "kgldObservedVolume": "0 KGLD"
   },
   "narrativeTrend": {
     "title": "7-Day Narrative Trend",

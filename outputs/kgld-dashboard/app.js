@@ -49,6 +49,21 @@ const fallbackNarrative = {
     contentAngle: "MCP 데이터 연결 후 업데이트가 필요합니다.",
     confidence: "low"
   },
+  todayActionBrief: {
+    title: "Today's Action Brief",
+    status: "unknown",
+    headline: "시장 내러티브 데이터 수집 대기 중입니다.",
+    operationsAction: "상단 온체인 지표를 기준으로 Issue/Redeem 잔액을 우선 확인하세요.",
+    marketingAction: "narrative cache 갱신 후 콘텐츠 메시지를 확정하세요.",
+    riskAction: "fallback 상태에서는 대형 이동 판단을 보류하세요.",
+    doNotDo: [
+      "미확인 상장/거래소명 언급",
+      "거래량 우위 또는 시장 선도 표현",
+      "수익률 또는 가격 상승 암시",
+      "무조건 상환 보장 표현"
+    ],
+    confidence: "low"
+  },
   contentIdea: {
     title: "KGLD Content Desk",
     contentAngle: "insufficient_data",
@@ -328,6 +343,7 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
   const rwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
   const trend = narrative.narrativeTrend || fallbackNarrative.narrativeTrend;
+  const actionBrief = narrative.todayActionBrief || fallbackNarrative.todayActionBrief;
   const cacheTime = narrative.generatedAt || "unknown";
   const diagnostics = narrative.diagnostics || (narrative.source === "fallback" ? fallbackNarrative.diagnostics : {});
   const isPending = narrative.source !== "alchemy" && diagnostics?.usedFallback === true;
@@ -354,6 +370,32 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   } : market;
 
   document.getElementById("narrative-cache-time").textContent = `Last generated: ${cacheTime}`;
+  const displayedActionBrief = isPending ? fallbackNarrative.todayActionBrief : actionBrief;
+  const actionStatus = document.getElementById("today-action-status");
+  actionStatus.textContent = displayedActionBrief.status || "unknown";
+  actionStatus.className = `action-status-pill ${displayedActionBrief.status || "unknown"}`;
+  document.getElementById("today-action-brief-content").innerHTML = `
+    <p class="action-brief-headline">${displayedActionBrief.headline}</p>
+    <div class="action-pill-grid">
+      <div class="action-pill">
+        <span>Operations</span>
+        <strong>${displayedActionBrief.operationsAction}</strong>
+      </div>
+      <div class="action-pill">
+        <span>Marketing</span>
+        <strong>${displayedActionBrief.marketingAction}</strong>
+      </div>
+      <div class="action-pill">
+        <span>Risk</span>
+        <strong>${displayedActionBrief.riskAction}</strong>
+      </div>
+    </div>
+    <details class="do-not-do-compact">
+      <summary>Do Not Say</summary>
+      ${(displayedActionBrief.doNotDo || []).map((item) => `<em>${item}</em>`).join("")}
+    </details>
+    <div class="action-brief-meta">confidence: ${displayedActionBrief.confidence || "low"}</div>
+  `;
   document.getElementById("market-weather-content").innerHTML = `
     <div class="weather-badges">
       <span class="weather-badge ${market.stablecoinWeather}">Stablecoin · ${weatherLabel[market.stablecoinWeather] || market.stablecoinWeather}</span>
