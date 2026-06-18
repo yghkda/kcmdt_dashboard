@@ -1,4 +1,5 @@
 const data = window.KGLD_DASHBOARD_DATA;
+const appBaseUrl = new URL(".", document.currentScript?.src || window.location.href);
 
 const shortAddress = (address) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 const etherscan = (type, value) => `https://etherscan.io/${type}/${value}`;
@@ -446,7 +447,7 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
 };
 
 const narrativeCacheUrl = () => {
-  const url = new URL("./data/narrative-cache.json", window.location.href);
+  const url = new URL("data/narrative-cache.json", appBaseUrl);
   url.searchParams.set("v", Date.now().toString());
   return url.toString();
 };
