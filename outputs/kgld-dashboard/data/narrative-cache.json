@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-06-18 16:22:04 KST",
+  "source": "fallback",
+  "marketWeather": {
+    "title": "Market Weather for KGLD",
+    "stablecoinWeather": "unknown",
+    "goldTokenWeather": "unknown",
+    "rwaWeather": "unknown",
+    "gasWeather": "unknown",
+    "todayPositioning": "데이터를 불러오지 못했습니다.",
+    "contentAngle": "Real asset trust onchain",
+    "confidence": "low"
+  },
+  "contentIdea": {
+    "title": "KGLD Content Idea",
+    "contentAngle": "Real asset trust onchain",
+    "oneLineInsight": "RWA 프로젝트의 신뢰는 과장된 활동보다 검증 가능한 구조에서 시작됩니다.",
+    "tweetDraftEnglish": "Real-world assets do not need hype to matter. They need structure, transparency, and trust.",
+    "tweetDraftKorean": "RWA의 신뢰는 과장된 활동보다 검증 가능한 구조에서 시작됩니다.",
+    "whyNow": "실시간 내러티브 데이터를 충분히 확인하지 못해 보수적인 fallback 메시지를 표시합니다.",
+    "doNotSay": [
+      "KGLD is widely traded",
+      "KGLD is listed on a specific exchange unless confirmed",
+      "Guaranteed gold redemption without policy conditions",
+      "Investment return or price appreciation"
+    ]
+  }
+}

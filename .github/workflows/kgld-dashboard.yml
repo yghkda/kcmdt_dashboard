@@ -36,13 +36,19 @@ jobs:
       - name: Update dashboard data
         run: npm run update-dashboard
 
+      - name: Update narrative cache
+        run: npm run narrative:update
+
+      - name: Stamp dashboard assets
+        run: npm run stamp-assets
+
       - name: Render dashboard image
         run: npm run render-dashboard
 
       - name: Bundle dashboard files
         run: |
           cd outputs/kgld-dashboard
-          zip -r kgld-dashboard-html.zip index.html styles.css app.js dashboard-data.js assets
+          zip -r kgld-dashboard-html.zip index.html styles.css app.js dashboard-data.js assets data
 
       - name: Send Telegram message
         run: npm run send-telegram
@@ -63,7 +69,7 @@ jobs:
         run: |
           git config user.name "codex-automation"
           git config user.email "codex-automation@users.noreply.github.com"
-          git add outputs/kgld-dashboard/dashboard-data.js
+          git add outputs/kgld-dashboard/dashboard-data.js data/narrative-cache.json outputs/kgld-dashboard/data/narrative-cache.json
           if git diff --cached --quiet; then
             echo "No dashboard data changes to commit."
           else

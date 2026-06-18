@@ -17,11 +17,41 @@ It performs these steps:
 
 1. Fetch KGLD onchain data from Ethereum mainnet via Alchemy.
 2. Refresh `outputs/kgld-dashboard/dashboard-data.js`.
-3. Render `outputs/kgld-dashboard/kgld-daily-dashboard.png`.
-4. Bundle the dashboard HTML files into `outputs/kgld-dashboard/kgld-dashboard-html.zip`.
-5. Send the summary, image, and bundle to Telegram.
-6. Deploy `outputs/kgld-dashboard` to GitHub Pages.
-7. Commit the refreshed dashboard data back to the repository.
+3. Refresh `data/narrative-cache.json` and `outputs/kgld-dashboard/data/narrative-cache.json`.
+4. Render `outputs/kgld-dashboard/kgld-daily-dashboard.png`.
+5. Bundle the dashboard HTML files into `outputs/kgld-dashboard/kgld-dashboard-html.zip`.
+6. Send the summary, image, and bundle to Telegram.
+7. Deploy `outputs/kgld-dashboard` to GitHub Pages.
+8. Commit the refreshed dashboard data and narrative cache back to the repository.
+
+## Narrative Cache
+
+The Market Weather and Content Idea cards are static-page friendly. The browser
+does not call Alchemy or expose API keys. Instead, local runs or GitHub Actions
+refresh the cache first:
+
+```bash
+npm run narrative:update
+```
+
+This command uses only minimal read-only Alchemy calls: current gas and up to 20
+recent KGLD ERC-20 transfers. If the lookup fails, it writes a safe fallback
+cache with `unknown` weather and `low` confidence. The dashboard's
+`Reload Narrative`/`Refresh Narrative` button only re-fetches the already
+generated JSON from `outputs/kgld-dashboard/data/narrative-cache.json`.
+
+To prepare and validate the static dashboard locally without exposing API keys
+in the browser:
+
+```bash
+npm run build
+```
+
+Full onchain dashboard data refresh remains available as:
+
+```bash
+npm run update-dashboard
+```
 
 ## GitHub Pages
 

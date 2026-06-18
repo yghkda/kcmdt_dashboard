@@ -27,6 +27,30 @@ const splitStatusMessage = (message) => {
 };
 
 const getKpi = (label) => data.kpis.find((item) => item.label === label);
+const fallbackNarrative = {
+  generatedAt: "unknown",
+  source: "fallback",
+  status: "unknown",
+  marketWeather: {
+    title: "Market Weather for KGLD",
+    stablecoinWeather: "unknown",
+    goldTokenWeather: "unknown",
+    rwaWeather: "unknown",
+    gasWeather: "unknown",
+    todayPositioning: "데이터를 불러오지 못했습니다.",
+    contentAngle: "MCP 데이터 연결 후 업데이트가 필요합니다.",
+    confidence: "low"
+  },
+  contentIdea: {
+    title: "KGLD Content Idea",
+    contentAngle: "insufficient_data",
+    oneLineInsight: "데이터가 부족하면 추정하지 않고 unknown 상태로 유지합니다.",
+    tweetDraftEnglish: "Narrative data is not available yet.",
+    tweetDraftKorean: "내러티브 데이터가 아직 준비되지 않았습니다.",
+    whyNow: "캐시 데이터를 불러오지 못했습니다.",
+    doNotSay: ["미확인 상장, 파트너십, 거래소 협력 언급", "시장 리더 또는 기관 채택 단정", "준비자산 검증 없는 과장 표현"]
+  }
+};
 const totalSupply = getKpi("총공급량") || data.kpis[0];
 const transferCount = getKpi("24시간 전송") || data.kpis[1];
 const minted = getKpi("발행") || data.kpis[3];
@@ -205,6 +229,82 @@ document.getElementById("action-list").innerHTML = data.actions.map((action) => 
     <span class="action-text">${action.text}</span>
   </div>
 `).join("");
+
+const weatherLabel = {
+  sunny: "맑음",
+  cloudy: "흐림",
+  stormy: "거침",
+  quiet: "조용",
+  low: "낮음",
+  normal: "보통",
+  high: "높음",
+  unknown: "unknown"
+};
+
+const renderNarrativeCards = (narrative) => {
+  const market = narrative.marketWeather || fallbackNarrative.marketWeather;
+  const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
+  const cacheTime = narrative.generatedAt || "unknown";
+
+  document.getElementById("narrative-cache-time").textContent = `Last generated: ${cacheTime}`;
+  document.getElementById("market-weather-content").innerHTML = `
+    <div class="weather-badges">
+      <span class="weather-badge ${market.stablecoinWeather}">Stablecoin · ${weatherLabel[market.stablecoinWeather] || market.stablecoinWeather}</span>
+      <span class="weather-badge ${market.goldTokenWeather}">Gold Token · ${weatherLabel[market.goldTokenWeather] || market.goldTokenWeather}</span>
+      <span class="weather-badge ${market.rwaWeather}">RWA · ${weatherLabel[market.rwaWeather] || market.rwaWeather}</span>
+      <span class="weather-badge ${market.gasWeather}">Gas · ${weatherLabel[market.gasWeather] || market.gasWeather}</span>
+    </div>
+    <p class="weather-positioning">${market.todayPositioning}</p>
+    <div class="briefing-note">
+      <span>왜 중요한가</span>
+      <strong>${market.contentAngle}</strong>
+      <em>source: ${narrative.source || "fallback"} · confidence: ${market.confidence}</em>
+    </div>
+  `;
+
+  document.getElementById("content-idea-content").innerHTML = `
+    <div class="content-angle">${idea.contentAngle}</div>
+    <p class="one-line-insight">${idea.oneLineInsight}</p>
+    <div class="tweet-box">
+      <span>EN draft</span>
+      <p>${idea.tweetDraftEnglish}</p>
+    </div>
+    <div class="tweet-box korean">
+      <span>KR draft</span>
+      <p>${idea.tweetDraftKorean}</p>
+    </div>
+    <div class="briefing-note">
+      <span>why now</span>
+      <strong>${idea.whyNow}</strong>
+    </div>
+    <div class="do-not-say">
+      <span>Do not say</span>
+      ${(idea.doNotSay || []).map((item) => `<em>${item}</em>`).join("")}
+    </div>
+  `;
+};
+
+const loadNarrativeCache = async () => {
+  try {
+    const response = await fetch(`data/narrative-cache.json?ts=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`cache HTTP ${response.status}`);
+    }
+    const narrative = await response.json();
+    renderNarrativeCards(narrative);
+  } catch {
+    renderNarrativeCards(fallbackNarrative);
+  }
+};
+
+document.getElementById("refresh-narrative").addEventListener("click", async () => {
+  const button = document.getElementById("refresh-narrative");
+  button.textContent = "Reloading...";
+  await loadNarrativeCache();
+  button.textContent = "Reload Narrative";
+});
+
+loadNarrativeCache();
 
 document.getElementById("transaction-count").textContent = `${data.transactions.length}건`;
 document.getElementById("transaction-content").innerHTML = data.transactions.length
