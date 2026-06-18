@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18 23:09:51 KST",
+  "generatedAt": "2026-06-18 23:22:39 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
@@ -94,8 +94,8 @@
     "rpcChecks": {
       "blockNumber": "ok",
       "gasPrice": "ok",
-      "PAXG": "ok",
       "KGLD": "ok",
+      "PAXG": "ok",
       "XAUT": "ok",
       "USDC": "ok",
       "USDT": "ok"
