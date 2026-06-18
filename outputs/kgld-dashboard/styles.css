@@ -571,13 +571,14 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
 
 .narrative-lab {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.85fr) minmax(320px, 0.9fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
 
 .market-weather-card,
 .tokenized-gold-card,
+.rwa-sector-card,
 .content-idea-card {
   min-height: 330px;
   padding: 28px;
@@ -812,6 +813,82 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
 }
 
 .gold-observations span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.sector-mood {
+  display: inline-flex;
+  border: 1px solid rgba(218, 189, 98, 0.24);
+  background: rgba(218, 189, 98, 0.08);
+  color: var(--gold-bright);
+  border-radius: 999px;
+  padding: 8px 11px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.sector-mood.unknown,
+.sector-mood.limited_data {
+  border-color: rgba(232,179,90,.18);
+  background: rgba(232,179,90,.07);
+  color: var(--warning);
+}
+
+.rwa-headline {
+  margin-top: 15px;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.32;
+  letter-spacing: -0.045em;
+}
+
+.rwa-positioning {
+  margin-top: 12px;
+  color: #cbd7d2;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.rwa-signal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.rwa-signal-grid div {
+  border: 1px solid rgba(255,255,255,.055);
+  background: rgba(255,255,255,.02);
+  border-radius: 14px;
+  padding: 11px 12px;
+}
+
+.rwa-signal-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.rwa-signal-grid strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--gold-bright);
+  font-size: 12px;
+}
+
+.rwa-evidence {
+  display: grid;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.rwa-evidence span {
   color: var(--muted);
   font-size: 11px;
   line-height: 1.4;

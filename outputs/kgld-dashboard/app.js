@@ -63,6 +63,21 @@ const fallbackNarrative = {
       PAXG: { activity: "unknown", transferCount: 0, largeTransferDetected: false },
       XAUT: { activity: "unknown", transferCount: 0, largeTransferDetected: false }
     }
+  },
+  rwaSectorPulse: {
+    title: "RWA Sector Pulse",
+    sectorMood: "limited_data",
+    headline: "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.",
+    kgldPositioning: "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.",
+    evidence: ["tokenized gold, stablecoin, gas 일부 신호만 우선 관찰합니다."],
+    contentIdea: "RWA transparency over hype",
+    confidence: "low",
+    signals: {
+      tokenizedGold: { status: "unknown", source: "tokenizedGoldRadar" },
+      stablecoins: { status: "unknown", usdcTransferCount: 0, usdtTransferCount: 0 },
+      gas: { status: "unknown" },
+      rwaProtocols: { status: "limited_data", note: "Dune/The Graph 또는 protocol-specific 데이터 연결 전입니다." }
+    }
   }
 };
 const totalSupply = getKpi("총공급량") || data.kpis[0];
@@ -259,6 +274,7 @@ const renderNarrativeCards = (narrative) => {
   const market = narrative.marketWeather || fallbackNarrative.marketWeather;
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
   const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
+  const rwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
   const cacheTime = narrative.generatedAt || "unknown";
 
   document.getElementById("narrative-cache-time").textContent = `Last generated: ${cacheTime}`;
@@ -299,6 +315,26 @@ const renderNarrativeCards = (narrative) => {
       <span>operator action</span>
       <strong>${radar.operatorAction}</strong>
       <em>mood: ${radar.marketMood} · confidence: ${radar.confidence}</em>
+    </div>
+  `;
+
+  document.getElementById("rwa-sector-content").innerHTML = `
+    <div class="sector-mood ${rwa.sectorMood}">${rwa.sectorMood}</div>
+    <p class="rwa-headline">${rwa.headline}</p>
+    <p class="rwa-positioning">${rwa.kgldPositioning}</p>
+    <div class="rwa-signal-grid">
+      <div><span>Tokenized Gold</span><strong>${rwa.signals?.tokenizedGold?.status || "unknown"}</strong></div>
+      <div><span>Stablecoins</span><strong>${rwa.signals?.stablecoins?.status || "unknown"}</strong></div>
+      <div><span>Gas</span><strong>${rwa.signals?.gas?.status || "unknown"}</strong></div>
+      <div><span>RWA Protocols</span><strong>${rwa.signals?.rwaProtocols?.status || "unknown"}</strong></div>
+    </div>
+    <div class="rwa-evidence">
+      ${(rwa.evidence || []).slice(0, 3).map((item) => `<span>${item}</span>`).join("")}
+    </div>
+    <div class="briefing-note">
+      <span>content idea</span>
+      <strong>${rwa.contentIdea}</strong>
+      <em>confidence: ${rwa.confidence}</em>
     </div>
   `;
 

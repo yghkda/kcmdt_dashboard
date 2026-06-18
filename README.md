@@ -35,9 +35,15 @@ npm run narrative:update
 ```
 
 This command uses only minimal read-only Alchemy calls: current gas and up to 10
-recent ERC-20 transfers each for KGLD, PAXG, and XAUT. If the lookup fails, it writes a safe fallback
+recent ERC-20 transfers each for KGLD, PAXG, XAUT, USDC, and USDT. If the lookup fails, it writes a safe fallback
 cache with `unknown` weather and `low` confidence. Individual token lookup
-failures are isolated to that token where possible. The dashboard's
+failures are isolated to that token where possible.
+
+The RWA Sector Pulse card currently uses a lightweight watchlist only:
+tokenized gold activity, USDC/USDT activity as a stablecoin liquidity proxy, and
+gas condition. Protocol-specific RWA data such as Ondo, BUIDL, tokenized
+treasury, or DeFi RWA protocol flows is intentionally marked `limited_data`
+until a future Dune or The Graph integration is added. The dashboard's
 `Reload Narrative`/`Refresh Narrative` button only re-fetches the already
 generated JSON from `outputs/kgld-dashboard/data/narrative-cache.json`.
 

@@ -9,12 +9,17 @@ const TOKENIZED_GOLD_TOKENS = {
   PAXG: "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
   XAUT: "0x68749665FF8D2d112Fa859AA293F07A622782F38"
 };
+const STABLECOIN_TOKENS = {
+  USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  USDT: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+};
 const ISSUE_ADDRESS = "0xd5A62Dd28BF16229b4Dd9687DECC233548B9AA95".toLowerCase();
 const REDEEM_ADDRESS = "0xe257fe24611CfabCa4a48869C1222D1cC2602E70".toLowerCase();
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const SCALE = 10n ** 18n;
 const TOKEN_TRANSFER_LIMIT_HEX = "0xa";
 const LARGE_TRANSFER_THRESHOLD = 100;
+const LARGE_STABLECOIN_TRANSFER_THRESHOLD = 1_000_000;
 
 function getRpcUrl() {
   if (process.env.ALCHEMY_ETH_MAINNET_URL) return process.env.ALCHEMY_ETH_MAINNET_URL;
@@ -97,6 +102,39 @@ function fallbackGoldRadar() {
   };
 }
 
+function fallbackRwaSectorPulse() {
+  return {
+    title: "RWA Sector Pulse",
+    sectorMood: "limited_data",
+    headline: "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.",
+    kgldPositioning: "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.",
+    evidence: [
+      "tokenized gold, stablecoin, gas 일부 신호만 우선 관찰합니다.",
+      "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
+    ],
+    contentIdea: "RWA transparency over hype",
+    confidence: "low",
+    signals: {
+      tokenizedGold: {
+        status: "unknown",
+        source: "tokenizedGoldRadar"
+      },
+      stablecoins: {
+        status: "unknown",
+        usdcTransferCount: 0,
+        usdtTransferCount: 0
+      },
+      gas: {
+        status: "unknown"
+      },
+      rwaProtocols: {
+        status: "limited_data",
+        note: "Dune/The Graph 또는 protocol-specific 데이터 연결 전입니다."
+      }
+    }
+  };
+}
+
 function fallbackNarrative(reason = "데이터를 불러오지 못했습니다.") {
   return {
     generatedAt: asKstString(new Date()),
@@ -125,7 +163,8 @@ function fallbackNarrative(reason = "데이터를 불러오지 못했습니다."
         "Investment return or price appreciation"
       ]
     },
-    tokenizedGoldRadar: fallbackGoldRadar()
+    tokenizedGoldRadar: fallbackGoldRadar(),
+    rwaSectorPulse: fallbackRwaSectorPulse()
   };
 }
 
@@ -169,6 +208,29 @@ function classifyTokenTransfers(transfers) {
     transferCount: transfers.length,
     largeTransferDetected
   };
+}
+
+function classifyStablecoinTransfers(transfers) {
+  if (!transfers) {
+    return {
+      activity: "unknown",
+      transferCount: 0,
+      largeTransferDetected: false
+    };
+  }
+  return {
+    activity: transfers.length > 0 ? "active" : "quiet",
+    transferCount: transfers.length,
+    largeTransferDetected: transfers.some((transfer) => transferValueNumber(transfer) >= LARGE_STABLECOIN_TRANSFER_THRESHOLD)
+  };
+}
+
+function classifyStablecoinStatus(states) {
+  const values = Object.values(states);
+  if (values.every((state) => state.activity === "unknown")) return "unknown";
+  if (values.some((state) => state.largeTransferDetected)) return "volatile";
+  if (values.some((state) => state.activity === "active")) return "active";
+  return "quiet";
 }
 
 function classifyGoldMarketMood(tokens) {
@@ -229,7 +291,66 @@ function buildTokenizedGoldRadar(tokens) {
   };
 }
 
-function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar }) {
+function buildRwaSectorPulse({ tokenizedGoldRadar, stablecoinStates, gasWeather }) {
+  const stablecoinStatus = classifyStablecoinStatus(stablecoinStates);
+  const goldStatus = tokenizedGoldRadar.marketMood || "unknown";
+
+  let sectorMood = "limited_data";
+  let headline = "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.";
+  let kgldPositioning = "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.";
+  let contentIdea = "RWA transparency over hype";
+  let confidence = "low";
+
+  if (goldStatus === "active" || goldStatus === "volatile") {
+    headline = "금 기반 토큰 활동이 평소보다 활발하게 관찰됩니다.";
+    kgldPositioning = "KGLD는 tokenized gold 카테고리 내 비교 가능한 자산으로 포지셔닝할 수 있습니다.";
+    contentIdea = "Tokenized gold as a verifiable RWA category";
+    confidence = "medium";
+  } else if (goldStatus === "quiet" && stablecoinStatus === "active") {
+    headline = "스테이블코인 움직임은 있으나 금 기반 토큰 활동은 제한적입니다.";
+    kgldPositioning = "KGLD는 거래량 경쟁보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.";
+    contentIdea = "Real asset trust when liquidity moves elsewhere";
+    confidence = "medium";
+  } else if (goldStatus === "unknown" && stablecoinStatus === "unknown") {
+    headline = "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.";
+  }
+
+  const evidence = [
+    `Tokenized gold signal: ${goldStatus}`,
+    `Stablecoin proxy: ${stablecoinStatus} (USDC ${stablecoinStates.USDC.transferCount}, USDT ${stablecoinStates.USDT.transferCount})`,
+    `Gas condition: ${gasWeather}`
+  ];
+
+  return {
+    title: "RWA Sector Pulse",
+    sectorMood,
+    headline,
+    kgldPositioning,
+    evidence: evidence.slice(0, 3),
+    contentIdea,
+    confidence,
+    signals: {
+      tokenizedGold: {
+        status: goldStatus,
+        source: "tokenizedGoldRadar"
+      },
+      stablecoins: {
+        status: stablecoinStatus,
+        usdcTransferCount: stablecoinStates.USDC.transferCount,
+        usdtTransferCount: stablecoinStates.USDT.transferCount
+      },
+      gas: {
+        status: gasWeather
+      },
+      rwaProtocols: {
+        status: "limited_data",
+        note: "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
+      }
+    }
+  };
+}
+
+function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPulse }) {
   const activity = classifyKgldActivity(transfers);
   const hasUnknowns = gasWeather === "unknown";
   const generatedAt = asKstString(new Date());
@@ -294,6 +415,7 @@ function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar }) {
       ]
     },
     tokenizedGoldRadar,
+    rwaSectorPulse,
     observed: {
       kgldTransferSampleSize: transfers.length,
       kgldActivity: activity.state,
@@ -332,16 +454,31 @@ async function fetchMinimalNarrativeInputs() {
     const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName });
     return [tokenName, transfers];
   }));
+  const stablecoinTransferEntries = await Promise.all(Object.entries(STABLECOIN_TOKENS).map(async ([tokenName, address]) => {
+    const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName });
+    return [tokenName, transfers];
+  }));
   const tokenTransfers = Object.fromEntries(tokenTransferEntries);
+  const stablecoinTransfers = Object.fromEntries(stablecoinTransferEntries);
   const tokenStates = Object.fromEntries(Object.entries(tokenTransfers).map(([tokenName, transfers]) => [
     tokenName,
     transfers ? classifyTokenTransfers(transfers) : unknownTokenState()
   ]));
+  const stablecoinStates = Object.fromEntries(Object.entries(stablecoinTransfers).map(([tokenName, transfers]) => [
+    tokenName,
+    classifyStablecoinTransfers(transfers)
+  ]));
+  const tokenizedGoldRadar = buildTokenizedGoldRadar(tokenStates);
 
   return {
     gasWeather: classifyGas(BigInt(gasHex)),
     transfers: tokenTransfers.KGLD || [],
-    tokenizedGoldRadar: buildTokenizedGoldRadar(tokenStates)
+    tokenizedGoldRadar,
+    rwaSectorPulse: buildRwaSectorPulse({
+      tokenizedGoldRadar,
+      stablecoinStates,
+      gasWeather: classifyGas(BigInt(gasHex))
+    })
   };
 }
 
