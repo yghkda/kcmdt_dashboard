@@ -300,21 +300,25 @@ const pendingNarrativeCopy = {
   description: "상단 온체인 지표는 정상이며, Market Weather는 다음 narrative cache 갱신 후 표시됩니다."
 };
 
-const renderNarrativeCards = (narrative) => {
+const renderNarrativeCards = (narrative, loadMeta = {}) => {
   const market = narrative.marketWeather || fallbackNarrative.marketWeather;
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
   const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
   const rwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
   const cacheTime = narrative.generatedAt || "unknown";
-  const diagnostics = narrative.diagnostics || fallbackNarrative.diagnostics;
-  const isPending = narrative.source === "fallback" || diagnostics?.usedFallback === true;
+  const diagnostics = narrative.diagnostics || (narrative.source === "fallback" ? fallbackNarrative.diagnostics : {});
+  const isPending = narrative.source !== "alchemy" && diagnostics?.usedFallback === true;
   const diagnosticsErrors = Array.isArray(diagnostics?.errors) ? diagnostics.errors.filter(Boolean) : [];
-  const diagnosticsDetails = diagnosticsErrors.length ? `
+  const diagnosticsDetails = `
     <details class="diagnostic-details">
       <summary>developer diagnostics</summary>
-      <code>${diagnosticsErrors.map(escapeHtml).join(" / ")}</code>
+      <code>url: ${escapeHtml(loadMeta.url || "unknown")}</code>
+      <code>source: ${escapeHtml(narrative.source || "unknown")}</code>
+      <code>generatedAt: ${escapeHtml(cacheTime)}</code>
+      <code>usedFallback: ${escapeHtml(String(diagnostics?.usedFallback ?? "unknown"))}</code>
+      ${diagnosticsErrors.length ? `<code>errors: ${diagnosticsErrors.map(escapeHtml).join(" / ")}</code>` : ""}
     </details>
-  ` : "";
+  `;
   const displayedMarket = isPending ? {
     ...market,
     stablecoinWeather: "unknown",
@@ -342,6 +346,24 @@ const renderNarrativeCards = (narrative) => {
     </div>
   `;
 
+  const marketPanel = document.getElementById("market-weather-content");
+  const weatherBadges = marketPanel.querySelectorAll(".weather-badge");
+  [
+    ["Stablecoin", displayedMarket.stablecoinWeather],
+    ["Gold Token", displayedMarket.goldTokenWeather],
+    ["RWA", displayedMarket.rwaWeather],
+    ["Gas", displayedMarket.gasWeather]
+  ].forEach(([label, value], index) => {
+    if (weatherBadges[index]) {
+      weatherBadges[index].className = `weather-badge ${value}`;
+      weatherBadges[index].textContent = `${label} · ${weatherLabel[value] || value}`;
+    }
+  });
+  marketPanel.querySelector(".weather-positioning").textContent = displayedMarket.todayPositioning;
+  marketPanel.querySelector(".briefing-note strong").textContent = displayedMarket.contentAngle;
+  marketPanel.querySelector(".briefing-note em").textContent = `source: ${narrative.source || "fallback"} · confidence: ${displayedMarket.confidence}`;
+  marketPanel.insertAdjacentHTML("beforeend", diagnosticsDetails);
+
   if (isPending) {
     const marketContainer = document.getElementById("market-weather-content");
     marketContainer.insertAdjacentHTML("afterbegin", `
@@ -354,9 +376,6 @@ const renderNarrativeCards = (narrative) => {
     marketContainer.querySelector(".weather-positioning").textContent = pendingNarrativeCopy.headline;
     marketContainer.querySelector(".briefing-note strong").textContent = pendingNarrativeCopy.description;
     marketContainer.querySelector(".briefing-note em").textContent = `source: ${narrative.source || "fallback"} · confidence: low`;
-    if (diagnosticsDetails) {
-      marketContainer.insertAdjacentHTML("beforeend", diagnosticsDetails);
-    }
   }
 
   document.getElementById("tokenized-gold-content").innerHTML = `
@@ -426,16 +445,28 @@ const renderNarrativeCards = (narrative) => {
   `;
 };
 
+const narrativeCacheUrl = () => {
+  const url = new URL("./data/narrative-cache.json", window.location.href);
+  url.searchParams.set("v", Date.now().toString());
+  return url.toString();
+};
+
 const loadNarrativeCache = async () => {
+  const url = narrativeCacheUrl();
   try {
-    const response = await fetch(`data/narrative-cache.json?ts=${Date.now()}`, { cache: "no-store" });
+    console.log("Loaded narrative cache URL:", url);
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`cache HTTP ${response.status}`);
     }
     const narrative = await response.json();
-    renderNarrativeCards(narrative);
-  } catch {
-    renderNarrativeCards(fallbackNarrative);
+    console.log("loaded source:", narrative.source || "unknown");
+    console.log("loaded generatedAt:", narrative.generatedAt || "unknown");
+    console.log("usedFallback:", narrative.diagnostics?.usedFallback);
+    renderNarrativeCards(narrative, { url });
+  } catch (error) {
+    console.warn("Narrative cache load failed:", error);
+    renderNarrativeCards(fallbackNarrative, { url });
   }
 };
 

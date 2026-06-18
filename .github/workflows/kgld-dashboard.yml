@@ -39,6 +39,9 @@ jobs:
       - name: Update narrative cache
         run: npm run narrative:update
 
+      - name: Verify narrative cache for deploy
+        run: node work/verify-narrative-cache.mjs
+
       - name: Stamp dashboard assets
         run: npm run stamp-assets
 
