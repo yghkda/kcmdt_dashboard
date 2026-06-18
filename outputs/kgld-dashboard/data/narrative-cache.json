@@ -105,5 +105,17 @@
     "kgldTransferSampleSize": 0,
     "kgldActivity": "quiet",
     "kgldObservedVolume": "0 KGLD"
+  },
+  "narrativeTrend": {
+    "title": "7-Day Narrative Trend",
+    "headline": "7일 추세 판단을 위한 데이터가 아직 충분하지 않습니다.",
+    "kgldQuietStreak": 1,
+    "goldTokenObservedDays": 1,
+    "stablecoinObservedDays": 1,
+    "gasLowDays": 1,
+    "notableLargeTransferDays": 0,
+    "trendMood": "unknown",
+    "kgldImplication": "추세 데이터 축적 중입니다. 단일 스냅샷보다 며칠간의 반복 신호가 쌓인 뒤 판단합니다.",
+    "confidence": "low"
   }
 }

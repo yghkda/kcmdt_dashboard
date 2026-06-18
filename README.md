@@ -17,12 +17,12 @@ It performs these steps:
 
 1. Fetch KGLD onchain data from Ethereum mainnet via Alchemy.
 2. Refresh `outputs/kgld-dashboard/dashboard-data.js`.
-3. Refresh `data/narrative-cache.json` and `outputs/kgld-dashboard/data/narrative-cache.json`.
+3. Refresh `data/narrative-cache.json`, `data/narrative-history.json`, and their deployable copies under `outputs/kgld-dashboard/data`.
 4. Render `outputs/kgld-dashboard/kgld-daily-dashboard.png`.
 5. Bundle the dashboard HTML files into `outputs/kgld-dashboard/kgld-dashboard-html.zip`.
 6. Send the summary, image, and bundle to Telegram.
 7. Deploy `outputs/kgld-dashboard` to GitHub Pages.
-8. Commit the refreshed dashboard data and narrative cache back to the repository.
+8. Commit the refreshed dashboard data, narrative cache, and narrative history back to the repository.
 
 ## Narrative Cache
 
@@ -46,6 +46,20 @@ treasury, or DeFi RWA protocol flows is intentionally marked `limited_data`
 until a future Dune or The Graph integration is added. The dashboard's
 `Reload Narrative`/`Refresh Narrative` button only re-fetches the already
 generated JSON from `outputs/kgld-dashboard/data/narrative-cache.json`.
+
+## Narrative History
+
+`npm run narrative:update` also updates `data/narrative-history.json` and
+`outputs/kgld-dashboard/data/narrative-history.json`. GitHub Actions reads the
+existing history file, appends the latest successful Alchemy snapshot, replaces
+any duplicate snapshot for the same KST date, and keeps only the most recent 30
+snapshots.
+
+The latest cache includes a compact `narrativeTrend` object derived from the
+most recent seven snapshots. It tracks KGLD quiet streak, observed PAXG/XAUT
+days, observed USDC/USDT days, gas-low days, and notable large-transfer days.
+If fewer than three snapshots exist, the dashboard shows the 7-day trend card as
+`추세 데이터 축적 중` rather than making a directional claim.
 
 To prepare and validate the static dashboard locally without exposing API keys
 in the browser:

@@ -3,6 +3,8 @@ import path from "node:path";
 
 const ROOT_CACHE_PATH = path.resolve("data/narrative-cache.json");
 const DASHBOARD_CACHE_PATH = path.resolve("outputs/kgld-dashboard/data/narrative-cache.json");
+const ROOT_HISTORY_PATH = path.resolve("data/narrative-history.json");
+const DASHBOARD_HISTORY_PATH = path.resolve("outputs/kgld-dashboard/data/narrative-history.json");
 const TOKEN_ADDRESS = "0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE";
 const TOKENIZED_GOLD_TOKENS = {
   KGLD: TOKEN_ADDRESS,
@@ -660,6 +662,171 @@ function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar,
   };
 }
 
+async function readJsonFile(filePath, fallbackValue) {
+  try {
+    return JSON.parse(await fs.readFile(filePath, "utf8"));
+  } catch {
+    return fallbackValue;
+  }
+}
+
+function normalizeHistory(value) {
+  if (Array.isArray(value)) return { snapshots: value };
+  if (value && Array.isArray(value.snapshots)) return value;
+  return { snapshots: [] };
+}
+
+function stablecoinSnapshot(rwaSectorPulse, symbol) {
+  const stablecoins = rwaSectorPulse?.signals?.stablecoins || {};
+  const key = `${symbol.toLowerCase()}TransferCount`;
+  return {
+    status: stablecoins.status || "unknown",
+    transferCount: Number(stablecoins[key] || 0)
+  };
+}
+
+function buildHistorySnapshot(narrative) {
+  const radarTokens = narrative.tokenizedGoldRadar?.tokens || {};
+  const rwaSignals = narrative.rwaSectorPulse?.signals || {};
+
+  return {
+    generatedAt: narrative.generatedAt || asKstString(new Date()),
+    source: narrative.source || "unknown",
+    signals: {
+      KGLD: radarTokens.KGLD || unknownTokenState(),
+      PAXG: radarTokens.PAXG || unknownTokenState(),
+      XAUT: radarTokens.XAUT || unknownTokenState(),
+      USDC: stablecoinSnapshot(narrative.rwaSectorPulse, "USDC"),
+      USDT: stablecoinSnapshot(narrative.rwaSectorPulse, "USDT"),
+      gas: {
+        status: rwaSignals.gas?.status || narrative.marketWeather?.gasWeather || "unknown"
+      }
+    },
+    summary: {
+      marketWeather: narrative.marketWeather?.todayPositioning || "",
+      tokenizedGoldMood: narrative.tokenizedGoldRadar?.marketMood || "unknown",
+      rwaSectorMood: narrative.rwaSectorPulse?.sectorMood || "unknown",
+      contentAngle: narrative.contentIdea?.contentAngle || ""
+    }
+  };
+}
+
+function snapshotDateKey(snapshot) {
+  return String(snapshot.generatedAt || "").slice(0, 10) || "unknown";
+}
+
+function shouldAppendHistory(narrative) {
+  return narrative.source === "alchemy" && narrative.diagnostics?.usedFallback !== true;
+}
+
+function updateHistorySnapshots(history, narrative) {
+  const normalized = normalizeHistory(history);
+  if (!shouldAppendHistory(narrative)) {
+    return normalized.snapshots.slice(-30);
+  }
+
+  const snapshot = buildHistorySnapshot(narrative);
+  const snapshotKey = snapshotDateKey(snapshot);
+  const withoutDuplicate = normalized.snapshots.filter((item) => snapshotDateKey(item) !== snapshotKey);
+  return [...withoutDuplicate, snapshot].slice(-30);
+}
+
+function isObservedStatus(value) {
+  return ["observed", "sample_full", "notable", "active", "volatile"].includes(value);
+}
+
+function countRecent(snapshots, predicate) {
+  return snapshots.reduce((count, snapshot) => count + (predicate(snapshot) ? 1 : 0), 0);
+}
+
+function kgldQuietStreak(snapshots) {
+  let streak = 0;
+  for (let index = snapshots.length - 1; index >= 0; index -= 1) {
+    if (snapshots[index]?.signals?.KGLD?.activity === "quiet") {
+      streak += 1;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+function buildNarrativeTrend(history) {
+  const recent = normalizeHistory(history).snapshots.slice(-7);
+
+  if (recent.length < 3) {
+    return {
+      title: "7-Day Narrative Trend",
+      headline: "7일 추세 판단을 위한 데이터가 아직 충분하지 않습니다.",
+      kgldQuietStreak: kgldQuietStreak(recent),
+      goldTokenObservedDays: countRecent(recent, (snapshot) => isObservedStatus(snapshot.signals?.PAXG?.activity) || isObservedStatus(snapshot.signals?.XAUT?.activity)),
+      stablecoinObservedDays: countRecent(recent, (snapshot) => isObservedStatus(snapshot.signals?.USDC?.status) || isObservedStatus(snapshot.signals?.USDT?.status)),
+      gasLowDays: countRecent(recent, (snapshot) => snapshot.signals?.gas?.status === "low"),
+      notableLargeTransferDays: countRecent(recent, (snapshot) => Boolean(snapshot.signals?.KGLD?.largeTransferDetected || snapshot.signals?.PAXG?.largeTransferDetected || snapshot.signals?.XAUT?.largeTransferDetected)),
+      trendMood: "unknown",
+      kgldImplication: "추세 데이터 축적 중입니다. 단일 스냅샷보다 며칠간의 반복 신호가 쌓인 뒤 판단합니다.",
+      confidence: "low"
+    };
+  }
+
+  const quietStreak = kgldQuietStreak(recent);
+  const goldObserved = countRecent(recent, (snapshot) => isObservedStatus(snapshot.signals?.PAXG?.activity) || isObservedStatus(snapshot.signals?.XAUT?.activity));
+  const stablecoinObserved = countRecent(recent, (snapshot) => isObservedStatus(snapshot.signals?.USDC?.status) || isObservedStatus(snapshot.signals?.USDT?.status));
+  const gasLow = countRecent(recent, (snapshot) => snapshot.signals?.gas?.status === "low");
+  const notableDays = countRecent(recent, (snapshot) => Boolean(snapshot.signals?.KGLD?.largeTransferDetected || snapshot.signals?.PAXG?.largeTransferDetected || snapshot.signals?.XAUT?.largeTransferDetected));
+
+  const headlineParts = [];
+  if (quietStreak >= 3) {
+    headlineParts.push("KGLD는 최근 며칠간 조용한 온체인 상태를 유지하고 있습니다.");
+  }
+  if (goldObserved >= 3) {
+    headlineParts.push("금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다.");
+  }
+  if (gasLow >= 3) {
+    headlineParts.push("온체인 실행 비용은 비교적 안정적인 구간입니다.");
+  }
+
+  let trendMood = "mixed";
+  if (notableDays > 0) {
+    trendMood = "active";
+  } else if (quietStreak >= 3 && goldObserved < 3 && stablecoinObserved < 3) {
+    trendMood = "quiet";
+  } else if (goldObserved >= 3 || stablecoinObserved >= 3) {
+    trendMood = "building";
+  }
+
+  return {
+    title: "7-Day Narrative Trend",
+    headline: headlineParts.length ? headlineParts.join(" ") : "최근 7개 스냅샷은 혼합된 신호를 보여주며, 단정적 해석은 아직 이릅니다.",
+    kgldQuietStreak: quietStreak,
+    goldTokenObservedDays: goldObserved,
+    stablecoinObservedDays: stablecoinObserved,
+    gasLowDays: gasLow,
+    notableLargeTransferDays: notableDays,
+    trendMood,
+    kgldImplication: quietStreak >= 3
+      ? "거래 활성도보다 준비자산·상환·운영 투명성 메시지를 유지하기 좋은 구간입니다."
+      : "단일 전송 샘플보다 반복되는 준비자산·상환·운영 투명성 메시지의 일관성이 중요합니다.",
+    confidence: recent.length >= 7 ? "high" : "medium"
+  };
+}
+
+async function updateNarrativeHistory(narrative) {
+  try {
+    const currentHistory = normalizeHistory(await readJsonFile(ROOT_HISTORY_PATH, { snapshots: [] }));
+    const snapshots = updateHistorySnapshots(currentHistory, narrative);
+    const history = {
+      updatedAt: asKstString(new Date()),
+      snapshots
+    };
+    await writeNarrativeHistory(history);
+    return history;
+  } catch (error) {
+    console.warn(`[narrative] History update skipped: ${error.message}`);
+    return normalizeHistory(await readJsonFile(ROOT_HISTORY_PATH, { snapshots: [] }));
+  }
+}
+
 async function fetchTokenTransfers({ address, fromBlock, tokenName, diagnostics }) {
   try {
     logStep(`Fetching ${tokenName} transfers with maxCount ${TOKEN_TRANSFER_LIMIT_HEX}.`);
@@ -753,6 +920,16 @@ async function writeNarrativeCache(data) {
   ]);
 }
 
+async function writeNarrativeHistory(data) {
+  const serialized = `${JSON.stringify(data, null, 2)}\n`;
+  await fs.mkdir(path.dirname(ROOT_HISTORY_PATH), { recursive: true });
+  await fs.mkdir(path.dirname(DASHBOARD_HISTORY_PATH), { recursive: true });
+  await Promise.all([
+    fs.writeFile(ROOT_HISTORY_PATH, serialized, "utf8"),
+    fs.writeFile(DASHBOARD_HISTORY_PATH, serialized, "utf8")
+  ]);
+}
+
 async function main() {
   let narrative;
   const diagnostics = createDiagnostics();
@@ -765,8 +942,11 @@ async function main() {
     console.warn(`[narrative] Narrative update fallback: ${error.message}`);
     narrative = fallbackNarrative("시장 내러티브 데이터 수집 대기 중", diagnostics);
   }
+  const history = await updateNarrativeHistory(narrative);
+  narrative.narrativeTrend = buildNarrativeTrend(history);
   await writeNarrativeCache(narrative);
   console.log(`[narrative] Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
+  console.log(`[narrative] Updated narrative history snapshots: ${history.snapshots.length}`);
   console.log(`[narrative] Diagnostics: ${JSON.stringify(narrative.diagnostics)}`);
 }
 

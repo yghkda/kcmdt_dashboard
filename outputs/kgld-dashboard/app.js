@@ -86,6 +86,18 @@ const fallbackNarrative = {
       gas: { status: "unknown" },
       rwaProtocols: { status: "limited_data", note: "Dune/The Graph 또는 protocol-specific 데이터 연결 전입니다." }
     }
+  },
+  narrativeTrend: {
+    title: "7-Day Narrative Trend",
+    headline: "추세 데이터 축적 중",
+    kgldQuietStreak: 0,
+    goldTokenObservedDays: 0,
+    stablecoinObservedDays: 0,
+    gasLowDays: 0,
+    notableLargeTransferDays: 0,
+    trendMood: "unknown",
+    kgldImplication: "7일 추세 판단을 위한 history snapshot이 아직 충분하지 않습니다.",
+    confidence: "low"
   }
 };
 const totalSupply = getKpi("총공급량") || data.kpis[0];
@@ -306,6 +318,7 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
   const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
   const rwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
+  const trend = narrative.narrativeTrend || fallbackNarrative.narrativeTrend;
   const cacheTime = narrative.generatedAt || "unknown";
   const diagnostics = narrative.diagnostics || (narrative.source === "fallback" ? fallbackNarrative.diagnostics : {});
   const isPending = narrative.source !== "alchemy" && diagnostics?.usedFallback === true;
@@ -442,6 +455,22 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
     <div class="do-not-say">
       <span>Do not say</span>
       ${(idea.doNotSay || []).map((item) => `<em>${item}</em>`).join("")}
+    </div>
+  `;
+
+  document.getElementById("narrative-trend-content").innerHTML = `
+    <div class="trend-mood ${trend.trendMood || "unknown"}">${trend.trendMood || "unknown"}</div>
+    <p class="trend-headline">${trend.headline || "추세 데이터 축적 중"}</p>
+    <div class="trend-metric-grid">
+      <div><span>KGLD Quiet Streak</span><strong>${trend.kgldQuietStreak ?? 0}</strong></div>
+      <div><span>Gold Token Observed Days</span><strong>${trend.goldTokenObservedDays ?? 0}</strong></div>
+      <div><span>Stablecoin Observed Days</span><strong>${trend.stablecoinObservedDays ?? 0}</strong></div>
+      <div><span>Gas Low Days</span><strong>${trend.gasLowDays ?? 0}</strong></div>
+    </div>
+    <div class="briefing-note">
+      <span>KGLD implication</span>
+      <strong>${trend.kgldImplication || "추세 데이터 축적 중입니다."}</strong>
+      <em>large-transfer days: ${trend.notableLargeTransferDays ?? 0} · confidence: ${trend.confidence || "low"}</em>
     </div>
   `;
 };
