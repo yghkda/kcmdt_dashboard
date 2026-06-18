@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-18 17:39:04 KST",
+  "generatedAt": "2026-06-18 17:56:25 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
-    "stablecoinWeather": "unknown",
-    "goldTokenWeather": "quiet",
-    "rwaWeather": "unknown",
+    "stablecoinWeather": "sample_full",
+    "goldTokenWeather": "sample_full",
+    "rwaWeather": "limited_data",
     "gasWeather": "low",
     "todayPositioning": "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
     "contentAngle": "Gold as a quiet onchain asset",
@@ -14,10 +14,10 @@
   "contentIdea": {
     "title": "KGLD Content Idea",
     "contentAngle": "Gold as a quiet onchain asset",
-    "oneLineInsight": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 실물 기반 자산은 설명 가능성과 신뢰가 중요합니다.",
+    "oneLineInsight": "시장 샘플이 관찰되더라도 KGLD 메시지는 거래량보다 실물 기반 신뢰와 상환 가능성에 두는 편이 적합합니다.",
     "tweetDraftEnglish": "Not every onchain asset needs to move fast. Some are built to make real-world trust easier to verify.",
-    "tweetDraftKorean": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 실물 기반 자산은 설명 가능성과 신뢰가 중요합니다.",
-    "whyNow": "최근 KGLD Transfer가 조용하고 gas 상태가 low로 관찰되어, 거래 활성도보다 신뢰 메시지가 더 적합합니다.",
+    "tweetDraftKorean": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 어떤 자산은 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 데 의미가 있습니다.",
+    "whyNow": "최근 KGLD activity는 quiet로 관찰됩니다. gas 상태는 low입니다. PAXG/XAUT 전송 샘플이 확인되었습니다.",
     "doNotSay": [
       "KGLD is widely traded",
       "KGLD is listed on a specific exchange unless confirmed",
@@ -27,15 +27,15 @@
   },
   "tokenizedGoldRadar": {
     "title": "Tokenized Gold Radar",
-    "headline": "일부 금 기반 토큰에서 최근 Transfer 활동이 관찰됩니다.",
-    "marketMood": "active",
-    "kgldAngle": "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 운영 투명성과 준비자산 설명력을 함께 보여주는 접근이 적합합니다.",
+    "headline": "PAXG와 XAUT의 최근 전송 샘플이 확인되었고, KGLD는 조용한 상태입니다.",
+    "marketMood": "sample_full",
+    "kgldAngle": "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.",
     "observations": [
-      "활동 감지: PAXG, XAUT",
-      "100 토큰 이상 대형 이동 후보는 제한적입니다.",
-      "KGLD/PAXG/XAUT 샘플 조회가 완료되었습니다."
+      "KGLD: 최근 관찰 범위 내 Transfer 없음",
+      "PAXG/XAUT : 최근 전송 샘플 확인",
+      "대형 이동 기준에 해당하는 이벤트는 제한적"
     ],
-    "operatorAction": "PAXG/XAUT 활동을 시장 관심 신호로 참고하되 KGLD의 미확인 상장·거래 우위 표현은 피하세요.",
+    "operatorAction": "시장 활성도를 단정하지 말고, 금 기반 토큰 카테고리의 관찰 신호로만 참고하세요.",
     "confidence": "medium",
     "tokens": {
       "KGLD": {
@@ -44,12 +44,12 @@
         "largeTransferDetected": false
       },
       "PAXG": {
-        "activity": "active",
+        "activity": "sample_full",
         "transferCount": 10,
         "largeTransferDetected": false
       },
       "XAUT": {
-        "activity": "active",
+        "activity": "sample_full",
         "transferCount": 10,
         "largeTransferDetected": false
       }
@@ -58,22 +58,22 @@
   "rwaSectorPulse": {
     "title": "RWA Sector Pulse",
     "sectorMood": "limited_data",
-    "headline": "금 기반 토큰 활동이 평소보다 활발하게 관찰됩니다.",
-    "kgldPositioning": "KGLD는 tokenized gold 카테고리 내 비교 가능한 자산으로 포지셔닝할 수 있습니다.",
+    "headline": "금 기반 토큰과 스테이블코인 전송 샘플은 확인되었지만, RWA 섹터 전체 판단에는 추가 데이터가 필요합니다.",
+    "kgldPositioning": "KGLD는 섹터 과열 신호보다 준비자산·상환 UX·운영 투명성 중심 메시지가 적합합니다.",
     "evidence": [
-      "Tokenized gold signal: active",
-      "Stablecoin proxy: active (USDC 10, USDT 10)",
+      "Tokenized gold: sample_full sample signal",
+      "Stablecoins: sample_full sample signal (USDC 10, USDT 10)",
       "Gas condition: low"
     ],
-    "contentIdea": "Tokenized gold as a verifiable RWA category",
+    "contentIdea": "RWA transparency over hype",
     "confidence": "medium",
     "signals": {
       "tokenizedGold": {
-        "status": "active",
+        "status": "sample_full",
         "source": "tokenizedGoldRadar"
       },
       "stablecoins": {
-        "status": "active",
+        "status": "sample_full",
         "usdcTransferCount": 10,
         "usdtTransferCount": 10
       },
@@ -94,8 +94,8 @@
     "rpcChecks": {
       "blockNumber": "ok",
       "gasPrice": "ok",
-      "PAXG": "ok",
       "KGLD": "ok",
+      "PAXG": "ok",
       "XAUT": "ok",
       "USDC": "ok",
       "USDT": "ok"
