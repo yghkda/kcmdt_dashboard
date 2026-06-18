@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-06-18 17:04:47 KST",
+  "generatedAt": "2026-06-18 17:17:53 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
     "stablecoinWeather": "unknown",
-    "goldTokenWeather": "unknown",
+    "goldTokenWeather": "quiet",
     "rwaWeather": "unknown",
-    "gasWeather": "unknown",
-    "todayPositioning": "데이터를 불러오지 못했습니다.",
-    "contentAngle": "Real asset trust onchain",
-    "confidence": "low"
+    "gasWeather": "low",
+    "todayPositioning": "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
+    "contentAngle": "Gold as a quiet onchain asset",
+    "confidence": "medium"
   },
   "contentIdea": {
     "title": "KGLD Content Idea",
-    "contentAngle": "Real asset trust onchain",
-    "oneLineInsight": "RWA 프로젝트의 신뢰는 과장된 활동보다 검증 가능한 구조에서 시작됩니다.",
-    "tweetDraftEnglish": "Real-world assets do not need hype to matter. They need structure, transparency, and trust.",
-    "tweetDraftKorean": "RWA의 신뢰는 과장된 활동보다 검증 가능한 구조에서 시작됩니다.",
-    "whyNow": "실시간 내러티브 데이터를 충분히 확인하지 못해 보수적인 fallback 메시지를 표시합니다.",
+    "contentAngle": "Gold as a quiet onchain asset",
+    "oneLineInsight": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 실물 기반 자산은 설명 가능성과 신뢰가 중요합니다.",
+    "tweetDraftEnglish": "Not every onchain asset needs to move fast. Some are built to make real-world trust easier to verify.",
+    "tweetDraftKorean": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 실물 기반 자산은 설명 가능성과 신뢰가 중요합니다.",
+    "whyNow": "최근 KGLD Transfer가 조용하고 gas 상태가 low로 관찰되어, 거래 활성도보다 신뢰 메시지가 더 적합합니다.",
     "doNotSay": [
       "KGLD is widely traded",
       "KGLD is listed on a specific exchange unless confirmed",
@@ -58,31 +58,37 @@
   "rwaSectorPulse": {
     "title": "RWA Sector Pulse",
     "sectorMood": "limited_data",
-    "headline": "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.",
-    "kgldPositioning": "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.",
+    "headline": "금 기반 토큰 활동이 평소보다 활발하게 관찰됩니다.",
+    "kgldPositioning": "KGLD는 tokenized gold 카테고리 내 비교 가능한 자산으로 포지셔닝할 수 있습니다.",
     "evidence": [
-      "tokenized gold, stablecoin, gas 일부 신호만 우선 관찰합니다.",
-      "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
+      "Tokenized gold signal: active",
+      "Stablecoin proxy: active (USDC 10, USDT 10)",
+      "Gas condition: low"
     ],
-    "contentIdea": "RWA transparency over hype",
-    "confidence": "low",
+    "contentIdea": "Tokenized gold as a verifiable RWA category",
+    "confidence": "medium",
     "signals": {
       "tokenizedGold": {
-        "status": "unknown",
+        "status": "active",
         "source": "tokenizedGoldRadar"
       },
       "stablecoins": {
-        "status": "unknown",
-        "usdcTransferCount": 0,
-        "usdtTransferCount": 0
+        "status": "active",
+        "usdcTransferCount": 10,
+        "usdtTransferCount": 10
       },
       "gas": {
-        "status": "unknown"
+        "status": "low"
       },
       "rwaProtocols": {
         "status": "limited_data",
-        "note": "Dune/The Graph 또는 protocol-specific 데이터 연결 전입니다."
+        "note": "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
       }
     }
+  },
+  "observed": {
+    "kgldTransferSampleSize": 0,
+    "kgldActivity": "quiet",
+    "kgldObservedVolume": "0 KGLD"
   }
 }
