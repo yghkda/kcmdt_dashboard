@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18 16:50:17 KST",
+  "generatedAt": "2026-06-18 17:04:47 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
@@ -27,28 +27,30 @@
   },
   "tokenizedGoldRadar": {
     "title": "Tokenized Gold Radar",
-    "headline": "금 토큰 시장 데이터를 불러오지 못했습니다.",
-    "marketMood": "unknown",
-    "kgldAngle": "KGLD는 확인되지 않은 외부 시장 분위기를 추정하지 않고, 준비자산·상환 가능성·실물 기반 신뢰 메시지를 유지합니다.",
+    "headline": "일부 금 기반 토큰에서 최근 Transfer 활동이 관찰됩니다.",
+    "marketMood": "active",
+    "kgldAngle": "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 운영 투명성과 준비자산 설명력을 함께 보여주는 접근이 적합합니다.",
     "observations": [
-      "PAXG/XAUT/KGLD 비교 데이터가 아직 준비되지 않았습니다."
+      "활동 감지: PAXG, XAUT",
+      "100 토큰 이상 대형 이동 후보는 제한적입니다.",
+      "KGLD/PAXG/XAUT 샘플 조회가 완료되었습니다."
     ],
-    "operatorAction": "Alchemy 캐시 갱신 상태를 확인하고, 데이터가 충분할 때만 시장 분위기를 해석하세요.",
-    "confidence": "low",
+    "operatorAction": "PAXG/XAUT 활동을 시장 관심 신호로 참고하되 KGLD의 미확인 상장·거래 우위 표현은 피하세요.",
+    "confidence": "medium",
     "tokens": {
       "KGLD": {
-        "activity": "unknown",
+        "activity": "quiet",
         "transferCount": 0,
         "largeTransferDetected": false
       },
       "PAXG": {
-        "activity": "unknown",
-        "transferCount": 0,
+        "activity": "active",
+        "transferCount": 10,
         "largeTransferDetected": false
       },
       "XAUT": {
-        "activity": "unknown",
-        "transferCount": 0,
+        "activity": "active",
+        "transferCount": 10,
         "largeTransferDetected": false
       }
     }
