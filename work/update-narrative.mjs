@@ -4,10 +4,17 @@ import path from "node:path";
 const ROOT_CACHE_PATH = path.resolve("data/narrative-cache.json");
 const DASHBOARD_CACHE_PATH = path.resolve("outputs/kgld-dashboard/data/narrative-cache.json");
 const TOKEN_ADDRESS = "0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE";
+const TOKENIZED_GOLD_TOKENS = {
+  KGLD: TOKEN_ADDRESS,
+  PAXG: "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
+  XAUT: "0x68749665FF8D2d112Fa859AA293F07A622782F38"
+};
 const ISSUE_ADDRESS = "0xd5A62Dd28BF16229b4Dd9687DECC233548B9AA95".toLowerCase();
 const REDEEM_ADDRESS = "0xe257fe24611CfabCa4a48869C1222D1cC2602E70".toLowerCase();
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const SCALE = 10n ** 18n;
+const TOKEN_TRANSFER_LIMIT_HEX = "0xa";
+const LARGE_TRANSFER_THRESHOLD = 100;
 
 function getRpcUrl() {
   if (process.env.ALCHEMY_ETH_MAINNET_URL) return process.env.ALCHEMY_ETH_MAINNET_URL;
@@ -57,6 +64,39 @@ function parseTransferAmount(transfer) {
   return BigInt(wholePart || "0") * SCALE + BigInt((fractionPart + "0".repeat(18)).slice(0, 18) || "0");
 }
 
+function transferValueNumber(transfer) {
+  if (transfer.value !== undefined && transfer.value !== null) {
+    const value = Number(transfer.value);
+    return Number.isFinite(value) ? value : 0;
+  }
+  return Number(formatToken(parseTransferAmount(transfer)));
+}
+
+function unknownTokenState() {
+  return {
+    activity: "unknown",
+    transferCount: 0,
+    largeTransferDetected: false
+  };
+}
+
+function fallbackGoldRadar() {
+  return {
+    title: "Tokenized Gold Radar",
+    headline: "금 토큰 시장 데이터를 불러오지 못했습니다.",
+    marketMood: "unknown",
+    kgldAngle: "KGLD는 확인되지 않은 외부 시장 분위기를 추정하지 않고, 준비자산·상환 가능성·실물 기반 신뢰 메시지를 유지합니다.",
+    observations: ["PAXG/XAUT/KGLD 비교 데이터가 아직 준비되지 않았습니다."],
+    operatorAction: "Alchemy 캐시 갱신 상태를 확인하고, 데이터가 충분할 때만 시장 분위기를 해석하세요.",
+    confidence: "low",
+    tokens: {
+      KGLD: unknownTokenState(),
+      PAXG: unknownTokenState(),
+      XAUT: unknownTokenState()
+    }
+  };
+}
+
 function fallbackNarrative(reason = "데이터를 불러오지 못했습니다.") {
   return {
     generatedAt: asKstString(new Date()),
@@ -84,7 +124,8 @@ function fallbackNarrative(reason = "데이터를 불러오지 못했습니다."
         "Guaranteed gold redemption without policy conditions",
         "Investment return or price appreciation"
       ]
-    }
+    },
+    tokenizedGoldRadar: fallbackGoldRadar()
   };
 }
 
@@ -121,7 +162,74 @@ function classifyKgldActivity(transfers) {
   return { state: "active", volume };
 }
 
-function buildNarrative({ gasWeather, transfers }) {
+function classifyTokenTransfers(transfers) {
+  const largeTransferDetected = transfers.some((transfer) => transferValueNumber(transfer) >= LARGE_TRANSFER_THRESHOLD);
+  return {
+    activity: transfers.length > 0 ? "active" : "quiet",
+    transferCount: transfers.length,
+    largeTransferDetected
+  };
+}
+
+function classifyGoldMarketMood(tokens) {
+  const values = Object.values(tokens);
+  if (values.every((token) => token.activity === "unknown")) return "unknown";
+  if (values.some((token) => token.largeTransferDetected)) return "volatile";
+  if (values.some((token) => token.activity === "active")) return "active";
+  return "quiet";
+}
+
+function buildTokenizedGoldRadar(tokens) {
+  const marketMood = classifyGoldMarketMood(tokens);
+  const activeNames = Object.entries(tokens)
+    .filter(([, token]) => token.activity === "active")
+    .map(([name]) => name);
+  const largeNames = Object.entries(tokens)
+    .filter(([, token]) => token.largeTransferDetected)
+    .map(([name]) => name);
+  const unknownNames = Object.entries(tokens)
+    .filter(([, token]) => token.activity === "unknown")
+    .map(([name]) => name);
+
+  let headline = "금 기반 토큰 시장은 전반적으로 조용하게 관찰됩니다.";
+  let kgldAngle = "KGLD는 거래 활성도보다 준비자산·상환 가능성·실물 기반 신뢰 메시지를 강조하기 좋은 구간입니다.";
+  let operatorAction = "KGLD 커뮤니케이션은 과장된 활동성보다 실물 기반 구조와 상환 절차의 설명 가능성에 집중하세요.";
+  let confidence = "medium";
+
+  if (marketMood === "active") {
+    headline = "일부 금 기반 토큰에서 최근 Transfer 활동이 관찰됩니다.";
+    kgldAngle = "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 운영 투명성과 준비자산 설명력을 함께 보여주는 접근이 적합합니다.";
+    operatorAction = "PAXG/XAUT 활동을 시장 관심 신호로 참고하되 KGLD의 미확인 상장·거래 우위 표현은 피하세요.";
+  } else if (marketMood === "volatile") {
+    headline = "금 기반 토큰 일부에서 대형 이동이 관찰되어 시장 해석은 신중해야 합니다.";
+    kgldAngle = "KGLD는 대형 이동의 의도를 단정하지 않고, 실물 기반 신뢰와 상환 가능성 중심의 안정적인 메시지를 유지하는 편이 적합합니다.";
+    operatorAction = "대형 이동을 매수·매도 의도로 표현하지 말고, 준비자산·상환·운영 투명성 메시지를 우선하세요.";
+  } else if (marketMood === "unknown") {
+    headline = "금 토큰 비교 데이터가 충분하지 않습니다.";
+    kgldAngle = "KGLD는 부족한 외부 데이터를 추정하지 않고 기본 신뢰 메시지를 유지합니다.";
+    operatorAction = "PAXG/XAUT 조회 상태를 확인하고, 데이터가 충분해진 뒤 비교 내러티브를 사용하세요.";
+    confidence = "low";
+  }
+
+  const observations = [
+    activeNames.length ? `활동 감지: ${activeNames.join(", ")}` : "최근 샘플에서 뚜렷한 금 토큰 활동은 제한적입니다.",
+    largeNames.length ? `대형 이동 후보: ${largeNames.join(", ")}` : "100 토큰 이상 대형 이동 후보는 제한적입니다.",
+    unknownNames.length ? `조회 제한: ${unknownNames.join(", ")}` : "KGLD/PAXG/XAUT 샘플 조회가 완료되었습니다."
+  ];
+
+  return {
+    title: "Tokenized Gold Radar",
+    headline,
+    marketMood,
+    kgldAngle,
+    observations: observations.slice(0, 3),
+    operatorAction,
+    confidence,
+    tokens
+  };
+}
+
+function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar }) {
   const activity = classifyKgldActivity(transfers);
   const hasUnknowns = gasWeather === "unknown";
   const generatedAt = asKstString(new Date());
@@ -185,12 +293,32 @@ function buildNarrative({ gasWeather, transfers }) {
         "Investment return or price appreciation"
       ]
     },
+    tokenizedGoldRadar,
     observed: {
       kgldTransferSampleSize: transfers.length,
       kgldActivity: activity.state,
       kgldObservedVolume: `${formatToken(activity.volume)} KGLD`
     }
   };
+}
+
+async function fetchTokenTransfers({ address, fromBlock, tokenName }) {
+  try {
+    const result = await rpc("alchemy_getAssetTransfers", [{
+      fromBlock: `0x${fromBlock.toString(16)}`,
+      toBlock: "latest",
+      category: ["erc20"],
+      contractAddresses: [address],
+      withMetadata: true,
+      excludeZeroValue: false,
+      maxCount: TOKEN_TRANSFER_LIMIT_HEX,
+      order: "desc"
+    }]);
+    return result.transfers || [];
+  } catch (error) {
+    console.warn(`${tokenName} transfer lookup fallback: ${error.message}`);
+    return null;
+  }
 }
 
 async function fetchMinimalNarrativeInputs() {
@@ -200,20 +328,20 @@ async function fetchMinimalNarrativeInputs() {
   ]);
   const latestBlock = BigInt(latestBlockHex);
   const fromBlock = latestBlock > 7200n ? latestBlock - 7200n : 0n;
-  const transferResult = await rpc("alchemy_getAssetTransfers", [{
-    fromBlock: `0x${fromBlock.toString(16)}`,
-    toBlock: "latest",
-    category: ["erc20"],
-    contractAddresses: [TOKEN_ADDRESS],
-    withMetadata: true,
-    excludeZeroValue: false,
-    maxCount: "0x14",
-    order: "desc"
-  }]);
+  const tokenTransferEntries = await Promise.all(Object.entries(TOKENIZED_GOLD_TOKENS).map(async ([tokenName, address]) => {
+    const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName });
+    return [tokenName, transfers];
+  }));
+  const tokenTransfers = Object.fromEntries(tokenTransferEntries);
+  const tokenStates = Object.fromEntries(Object.entries(tokenTransfers).map(([tokenName, transfers]) => [
+    tokenName,
+    transfers ? classifyTokenTransfers(transfers) : unknownTokenState()
+  ]));
 
   return {
     gasWeather: classifyGas(BigInt(gasHex)),
-    transfers: transferResult.transfers || []
+    transfers: tokenTransfers.KGLD || [],
+    tokenizedGoldRadar: buildTokenizedGoldRadar(tokenStates)
   };
 }
 

@@ -25,6 +25,34 @@
       "Investment return or price appreciation"
     ]
   },
+  "tokenizedGoldRadar": {
+    "title": "Tokenized Gold Radar",
+    "headline": "금 토큰 시장 데이터를 불러오지 못했습니다.",
+    "marketMood": "unknown",
+    "kgldAngle": "KGLD는 확인되지 않은 외부 시장 분위기를 추정하지 않고, 준비자산·상환 가능성·실물 기반 신뢰 메시지를 유지합니다.",
+    "observations": [
+      "PAXG/XAUT/KGLD 비교 데이터가 아직 준비되지 않았습니다."
+    ],
+    "operatorAction": "Alchemy 캐시 갱신 상태를 확인하고, 데이터가 충분할 때만 시장 분위기를 해석하세요.",
+    "confidence": "low",
+    "tokens": {
+      "KGLD": {
+        "activity": "unknown",
+        "transferCount": 0,
+        "largeTransferDetected": false
+      },
+      "PAXG": {
+        "activity": "unknown",
+        "transferCount": 0,
+        "largeTransferDetected": false
+      },
+      "XAUT": {
+        "activity": "unknown",
+        "transferCount": 0,
+        "largeTransferDetected": false
+      }
+    }
+  },
   "observed": {
     "kgldTransferSampleSize": 0,
     "kgldActivity": "quiet",

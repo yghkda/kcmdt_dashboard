@@ -49,6 +49,20 @@ const fallbackNarrative = {
     tweetDraftKorean: "내러티브 데이터가 아직 준비되지 않았습니다.",
     whyNow: "캐시 데이터를 불러오지 못했습니다.",
     doNotSay: ["미확인 상장, 파트너십, 거래소 협력 언급", "시장 리더 또는 기관 채택 단정", "준비자산 검증 없는 과장 표현"]
+  },
+  tokenizedGoldRadar: {
+    title: "Tokenized Gold Radar",
+    headline: "금 토큰 시장 데이터를 불러오지 못했습니다.",
+    marketMood: "unknown",
+    kgldAngle: "KGLD는 확인되지 않은 외부 시장 분위기를 추정하지 않고, 준비자산·상환 가능성·실물 기반 신뢰 메시지를 유지합니다.",
+    observations: ["KGLD/PAXG/XAUT 비교 데이터가 아직 준비되지 않았습니다."],
+    operatorAction: "캐시 갱신 상태를 확인하세요.",
+    confidence: "low",
+    tokens: {
+      KGLD: { activity: "unknown", transferCount: 0, largeTransferDetected: false },
+      PAXG: { activity: "unknown", transferCount: 0, largeTransferDetected: false },
+      XAUT: { activity: "unknown", transferCount: 0, largeTransferDetected: false }
+    }
   }
 };
 const totalSupply = getKpi("총공급량") || data.kpis[0];
@@ -244,6 +258,7 @@ const weatherLabel = {
 const renderNarrativeCards = (narrative) => {
   const market = narrative.marketWeather || fallbackNarrative.marketWeather;
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
+  const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
   const cacheTime = narrative.generatedAt || "unknown";
 
   document.getElementById("narrative-cache-time").textContent = `Last generated: ${cacheTime}`;
@@ -259,6 +274,31 @@ const renderNarrativeCards = (narrative) => {
       <span>왜 중요한가</span>
       <strong>${market.contentAngle}</strong>
       <em>source: ${narrative.source || "fallback"} · confidence: ${market.confidence}</em>
+    </div>
+  `;
+
+  document.getElementById("tokenized-gold-content").innerHTML = `
+    <p class="gold-radar-headline">${radar.headline}</p>
+    <p class="gold-radar-angle">${radar.kgldAngle}</p>
+    <div class="gold-token-rows">
+      ${["KGLD", "PAXG", "XAUT"].map((symbol) => {
+        const token = radar.tokens?.[symbol] || fallbackNarrative.tokenizedGoldRadar.tokens[symbol];
+        return `
+          <div class="gold-token-row">
+            <strong>${symbol}</strong>
+            <span>${token.transferCount} transfers · large ${token.largeTransferDetected ? "yes" : "no"}</span>
+            <em class="${token.activity}">${token.activity}</em>
+          </div>
+        `;
+      }).join("")}
+    </div>
+    <div class="gold-observations">
+      ${(radar.observations || []).slice(0, 3).map((item) => `<span>${item}</span>`).join("")}
+    </div>
+    <div class="briefing-note">
+      <span>operator action</span>
+      <strong>${radar.operatorAction}</strong>
+      <em>mood: ${radar.marketMood} · confidence: ${radar.confidence}</em>
     </div>
   `;
 

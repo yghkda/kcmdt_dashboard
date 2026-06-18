@@ -34,9 +34,10 @@ refresh the cache first:
 npm run narrative:update
 ```
 
-This command uses only minimal read-only Alchemy calls: current gas and up to 20
-recent KGLD ERC-20 transfers. If the lookup fails, it writes a safe fallback
-cache with `unknown` weather and `low` confidence. The dashboard's
+This command uses only minimal read-only Alchemy calls: current gas and up to 10
+recent ERC-20 transfers each for KGLD, PAXG, and XAUT. If the lookup fails, it writes a safe fallback
+cache with `unknown` weather and `low` confidence. Individual token lookup
+failures are isolated to that token where possible. The dashboard's
 `Reload Narrative`/`Refresh Narrative` button only re-fetches the already
 generated JSON from `outputs/kgld-dashboard/data/narrative-cache.json`.
 
