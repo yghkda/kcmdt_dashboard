@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18 17:17:53 KST",
+  "generatedAt": "2026-06-18 17:39:04 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
@@ -84,6 +84,21 @@
         "status": "limited_data",
         "note": "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
       }
+    }
+  },
+  "diagnostics": {
+    "generatedBy": "update-narrative.mjs",
+    "hasAlchemyUrl": true,
+    "usedFallback": false,
+    "errors": [],
+    "rpcChecks": {
+      "blockNumber": "ok",
+      "gasPrice": "ok",
+      "PAXG": "ok",
+      "KGLD": "ok",
+      "XAUT": "ok",
+      "USDC": "ok",
+      "USDT": "ok"
     }
   },
   "observed": {
