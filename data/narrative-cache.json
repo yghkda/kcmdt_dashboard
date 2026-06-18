@@ -108,7 +108,7 @@
   },
   "narrativeTrend": {
     "title": "7-Day Narrative Trend",
-    "headline": "7일 추세 판단을 위한 데이터가 아직 충분하지 않습니다.",
+    "headline": "7일 추세 판단을 위한 데이터가 아직 축적 중입니다.",
     "kgldQuietStreak": 1,
     "goldTokenObservedDays": 1,
     "stablecoinObservedDays": 1,

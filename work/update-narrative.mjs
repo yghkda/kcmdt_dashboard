@@ -811,6 +811,72 @@ function buildNarrativeTrend(history) {
   };
 }
 
+function buildNarrativeTrendStrict(history) {
+  const recent = normalizeHistory(history).snapshots.slice(-7);
+  const quietStreak = kgldQuietStreak(recent);
+  const goldObserved = countRecent(recent, (snapshot) => isObservedStatus(snapshot.signals?.PAXG?.activity) || isObservedStatus(snapshot.signals?.XAUT?.activity));
+  const stablecoinObserved = countRecent(recent, (snapshot) => isObservedStatus(snapshot.signals?.USDC?.status) || isObservedStatus(snapshot.signals?.USDT?.status));
+  const gasLow = countRecent(recent, (snapshot) => snapshot.signals?.gas?.status === "low");
+  const notableDays = countRecent(recent, (snapshot) => Boolean(snapshot.signals?.KGLD?.largeTransferDetected || snapshot.signals?.PAXG?.largeTransferDetected || snapshot.signals?.XAUT?.largeTransferDetected));
+
+  if (recent.length < 3) {
+    return {
+      title: "7-Day Narrative Trend",
+      headline: "7일 추세 판단을 위한 데이터가 아직 축적 중입니다.",
+      kgldQuietStreak: quietStreak,
+      goldTokenObservedDays: goldObserved,
+      stablecoinObservedDays: stablecoinObserved,
+      gasLowDays: gasLow,
+      notableLargeTransferDays: notableDays,
+      trendMood: "unknown",
+      kgldImplication: "추세 데이터 축적 중입니다. 단일 스냅샷보다 며칠간의 반복 신호가 쌓인 뒤 판단합니다.",
+      confidence: "low"
+    };
+  }
+
+  const headlineParts = [];
+  if (quietStreak >= 3) {
+    headlineParts.push("KGLD는 최근 며칠간 조용한 온체인 상태를 유지하고 있습니다.");
+  }
+  if (goldObserved >= 3) {
+    headlineParts.push("금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다.");
+  }
+  if (notableDays >= 1) {
+    headlineParts.push("일부 대형 이동 관찰일이 포함되어 있습니다.");
+  }
+
+  let trendMood = "mixed";
+  if (notableDays >= 1) {
+    trendMood = "mixed";
+  } else if (quietStreak >= 3) {
+    trendMood = "quiet";
+  } else if (goldObserved >= 3 || stablecoinObserved >= 3) {
+    trendMood = "building";
+  }
+
+  const implicationParts = [
+    quietStreak >= 3
+      ? "거래 활성도보다 준비자산·상환·운영 투명성 메시지를 유지하기 좋은 구간입니다."
+      : "단일 전송 샘플보다 반복되는 준비자산·상환·운영 투명성 메시지의 일관성이 중요합니다."
+  ];
+  if (gasLow >= 3) {
+    implicationParts.push("온체인 실행 비용이 비교적 안정적인 구간입니다.");
+  }
+
+  return {
+    title: "7-Day Narrative Trend",
+    headline: headlineParts.length ? headlineParts.join(" ") : "최근 7개 스냅샷은 혼합된 신호를 보여주며, 단정적 해석은 아직 이릅니다.",
+    kgldQuietStreak: quietStreak,
+    goldTokenObservedDays: goldObserved,
+    stablecoinObservedDays: stablecoinObserved,
+    gasLowDays: gasLow,
+    notableLargeTransferDays: notableDays,
+    trendMood,
+    kgldImplication: implicationParts.join(" "),
+    confidence: recent.length >= 7 ? "high" : "medium"
+  };
+}
+
 async function updateNarrativeHistory(narrative) {
   try {
     const currentHistory = normalizeHistory(await readJsonFile(ROOT_HISTORY_PATH, { snapshots: [] }));
@@ -928,6 +994,10 @@ async function writeNarrativeHistory(data) {
     fs.writeFile(ROOT_HISTORY_PATH, serialized, "utf8"),
     fs.writeFile(DASHBOARD_HISTORY_PATH, serialized, "utf8")
   ]);
+  await Promise.all([
+    fs.readFile(ROOT_HISTORY_PATH, "utf8").then(JSON.parse),
+    fs.readFile(DASHBOARD_HISTORY_PATH, "utf8").then(JSON.parse)
+  ]);
 }
 
 async function main() {
@@ -943,7 +1013,7 @@ async function main() {
     narrative = fallbackNarrative("시장 내러티브 데이터 수집 대기 중", diagnostics);
   }
   const history = await updateNarrativeHistory(narrative);
-  narrative.narrativeTrend = buildNarrativeTrend(history);
+  narrative.narrativeTrend = buildNarrativeTrendStrict(history);
   await writeNarrativeCache(narrative);
   console.log(`[narrative] Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
   console.log(`[narrative] Updated narrative history snapshots: ${history.snapshots.length}`);
