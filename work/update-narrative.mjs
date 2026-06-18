@@ -17,6 +17,7 @@ const ISSUE_ADDRESS = "0xd5A62Dd28BF16229b4Dd9687DECC233548B9AA95".toLowerCase()
 const REDEEM_ADDRESS = "0xe257fe24611CfabCa4a48869C1222D1cC2602E70".toLowerCase();
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const SCALE = 10n ** 18n;
+const TOKEN_TRANSFER_LIMIT = 10;
 const TOKEN_TRANSFER_LIMIT_HEX = "0xa";
 const LARGE_TRANSFER_THRESHOLD = 100;
 const LARGE_STABLECOIN_TRANSFER_THRESHOLD = 1_000_000;
@@ -298,7 +299,7 @@ function buildTokenizedGoldRadar(tokens) {
   }
 
   const observations = [
-    activeNames.length ? `활동 감지: ${activeNames.join(", ")}` : "최근 샘플에서 뚜렷한 금 토큰 활동은 제한적입니다.",
+    activeNames.length ? `전송 샘플 확인: ${activeNames.join(", ")}` : "최근 샘플에서 뚜렷한 금 토큰 활동은 제한적입니다.",
     largeNames.length ? `대형 이동 후보: ${largeNames.join(", ")}` : "100 토큰 이상 대형 이동 후보는 제한적입니다.",
     unknownNames.length ? `조회 제한: ${unknownNames.join(", ")}` : "KGLD/PAXG/XAUT 샘플 조회가 완료되었습니다."
   ];
@@ -326,7 +327,7 @@ function buildRwaSectorPulse({ tokenizedGoldRadar, stablecoinStates, gasWeather 
   let confidence = "low";
 
   if (goldStatus === "active" || goldStatus === "volatile") {
-    headline = "금 기반 토큰 활동이 평소보다 활발하게 관찰됩니다.";
+    headline = "금 기반 토큰 전송 샘플이 확인되지만, 시장 활성도는 단정하지 않습니다.";
     kgldPositioning = "KGLD는 tokenized gold 카테고리 내 비교 가능한 자산으로 포지셔닝할 수 있습니다.";
     contentIdea = "Tokenized gold as a verifiable RWA category";
     confidence = "medium";
@@ -449,6 +450,216 @@ function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPu
   };
 }
 
+function classifyTransferSampleConservative(transfers, largeThreshold) {
+  if (!transfers) {
+    return {
+      activity: "unknown",
+      transferCount: 0,
+      largeTransferDetected: false
+    };
+  }
+
+  const transferCount = transfers.length;
+  const largeTransferDetected = transfers.some((transfer) => transferValueNumber(transfer) >= largeThreshold);
+
+  if (largeTransferDetected) {
+    return { activity: "notable", transferCount, largeTransferDetected };
+  }
+  if (transferCount === 0) {
+    return { activity: "quiet", transferCount, largeTransferDetected };
+  }
+  if (transferCount >= TOKEN_TRANSFER_LIMIT) {
+    return { activity: "sample_full", transferCount, largeTransferDetected };
+  }
+  return { activity: "observed", transferCount, largeTransferDetected };
+}
+
+function classifyTokenTransfersConservative(transfers) {
+  return classifyTransferSampleConservative(transfers, LARGE_TRANSFER_THRESHOLD);
+}
+
+function classifyStablecoinTransfersConservative(transfers) {
+  return classifyTransferSampleConservative(transfers, LARGE_STABLECOIN_TRANSFER_THRESHOLD);
+}
+
+function summarizeConservativeSignal(states) {
+  const values = Object.values(states);
+  if (values.every((state) => state.activity === "unknown")) return "unknown";
+  if (values.some((state) => state.activity === "volatile")) return "volatile";
+  if (values.some((state) => state.activity === "notable")) return "notable";
+  if (values.some((state) => state.activity === "active")) return "active";
+  if (values.some((state) => state.activity === "sample_full")) return "sample_full";
+  if (values.some((state) => state.activity === "observed")) return "observed";
+  return "quiet";
+}
+
+function tokenObservation(symbol, state) {
+  if (!state || state.activity === "unknown") return `${symbol}: 조회 실패 또는 데이터 없음`;
+  if (state.activity === "quiet") return `${symbol}: 최근 관찰 범위 내 Transfer 없음`;
+  if (state.activity === "sample_full") return `${symbol}: 최근 전송 샘플 ${state.transferCount}건 확인`;
+  if (state.activity === "notable") return `${symbol}: 대형 이동 기준에 해당하는 샘플 확인`;
+  if (state.activity === "observed") return `${symbol}: 최근 전송 샘플 ${state.transferCount}건 확인`;
+  return `${symbol}: ${state.activity}`;
+}
+
+function buildTokenizedGoldRadarConservative(tokens) {
+  const marketMood = summarizeConservativeSignal(tokens);
+  const sampleNames = Object.entries(tokens)
+    .filter(([, token]) => token.activity === "observed" || token.activity === "sample_full")
+    .map(([name]) => name);
+  const notableNames = Object.entries(tokens)
+    .filter(([, token]) => token.activity === "notable" || token.activity === "volatile")
+    .map(([name]) => name);
+  const externalSampleNames = sampleNames.filter((name) => name !== "KGLD");
+  const kgldQuiet = tokens.KGLD?.activity === "quiet";
+
+  let headline = "금 기반 토큰 전송 샘플이 제한적으로 관찰됩니다.";
+  let kgldAngle = "KGLD는 거래 활성도 경쟁보다 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.";
+  let operatorAction = "시장 활성도를 단정하지 말고, 금 기반 토큰 카테고리의 관찰 신호로만 참고하세요.";
+  let confidence = marketMood === "unknown" ? "low" : "medium";
+
+  if (kgldQuiet && externalSampleNames.length) {
+    headline = "PAXG와 XAUT의 최근 전송 샘플이 확인되었고, KGLD는 조용한 상태입니다.";
+    kgldAngle = "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.";
+  } else if (marketMood === "notable" || marketMood === "volatile") {
+    headline = "일부 금 기반 토큰에서 대형 이동 기준에 해당하는 샘플이 확인됩니다.";
+    kgldAngle = "KGLD는 대형 이동의 의도를 단정하지 않고, 실물 기반 신뢰와 상환 가능성 중심의 안정적인 메시지를 유지하는 편이 적합합니다.";
+  } else if (marketMood === "unknown") {
+    headline = "금 토큰 비교 데이터를 충분히 확인하지 못했습니다.";
+    kgldAngle = "KGLD는 부족한 외부 데이터를 추정하지 않고 기본 신뢰 메시지를 유지합니다.";
+    operatorAction = "PAXG/XAUT 조회 상태를 확인하고, 데이터가 충분해진 뒤 비교 내러티브를 사용하세요.";
+  } else if (marketMood === "quiet") {
+    headline = "금 기반 토큰 전송 샘플은 전반적으로 조용하게 관찰됩니다.";
+  }
+
+  const observations = [
+    tokenObservation("KGLD", tokens.KGLD),
+    externalSampleNames.length
+      ? `${externalSampleNames.join("/")} : 최근 전송 샘플 확인`
+      : "PAXG/XAUT: 최근 전송 샘플 제한적",
+    notableNames.length
+      ? `대형 이동 기준 해당: ${notableNames.join(", ")}`
+      : "대형 이동 기준에 해당하는 이벤트는 제한적"
+  ];
+
+  return {
+    title: "Tokenized Gold Radar",
+    headline,
+    marketMood,
+    kgldAngle,
+    observations,
+    operatorAction,
+    confidence,
+    tokens
+  };
+}
+
+function buildRwaSectorPulseConservative({ tokenizedGoldRadar, stablecoinStates, gasWeather }) {
+  const stablecoinStatus = summarizeConservativeSignal(stablecoinStates);
+  const goldStatus = tokenizedGoldRadar.marketMood || "unknown";
+
+  let headline = "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.";
+  let kgldPositioning = "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.";
+  let confidence = "low";
+
+  if ((["observed", "sample_full", "notable"].includes(goldStatus)) &&
+      (["observed", "sample_full", "notable"].includes(stablecoinStatus))) {
+    headline = "금 기반 토큰과 스테이블코인 전송 샘플은 확인되었지만, RWA 섹터 전체 판단에는 추가 데이터가 필요합니다.";
+    kgldPositioning = "KGLD는 섹터 과열 신호보다 준비자산·상환 UX·운영 투명성 중심 메시지가 적합합니다.";
+    confidence = "medium";
+  } else if (goldStatus === "notable" || stablecoinStatus === "notable") {
+    headline = "일부 자산에서 대형 이동 기준에 해당하는 샘플이 확인되지만, RWA 섹터 전체 방향성은 단정하지 않습니다.";
+    kgldPositioning = "KGLD는 특정 지갑 의도를 추정하기보다 준비자산·상환 가능성·운영 추적성을 강조하는 편이 적합합니다.";
+    confidence = "medium";
+  }
+
+  return {
+    title: "RWA Sector Pulse",
+    sectorMood: "limited_data",
+    headline,
+    kgldPositioning,
+    evidence: [
+      `Tokenized gold: ${goldStatus} sample signal`,
+      `Stablecoins: ${stablecoinStatus} sample signal (USDC ${stablecoinStates.USDC.transferCount}, USDT ${stablecoinStates.USDT.transferCount})`,
+      `Gas condition: ${gasWeather}`
+    ],
+    contentIdea: "RWA transparency over hype",
+    confidence,
+    signals: {
+      tokenizedGold: {
+        status: goldStatus,
+        source: "tokenizedGoldRadar"
+      },
+      stablecoins: {
+        status: stablecoinStatus,
+        usdcTransferCount: stablecoinStates.USDC.transferCount,
+        usdtTransferCount: stablecoinStates.USDT.transferCount
+      },
+      gas: {
+        status: gasWeather
+      },
+      rwaProtocols: {
+        status: "limited_data",
+        note: "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
+      }
+    }
+  };
+}
+
+function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPulse, diagnostics }) {
+  const activity = classifyKgldActivity(transfers);
+  const generatedAt = asKstString(new Date());
+  const goldTokenWeather = tokenizedGoldRadar.marketMood || "unknown";
+  const stablecoinWeather = rwaSectorPulse.signals?.stablecoins?.status || "unknown";
+  const confidence = gasWeather === "unknown" ? "low" : "medium";
+  const contentAngle = "Gold as a quiet onchain asset";
+  const oneLineInsight = "시장 샘플이 관찰되더라도 KGLD 메시지는 거래량보다 실물 기반 신뢰와 상환 가능성에 두는 편이 적합합니다.";
+  const whyNowParts = [
+    `최근 KGLD activity는 ${activity.state}로 관찰됩니다.`,
+    `gas 상태는 ${gasWeather}입니다.`,
+    goldTokenWeather === "sample_full" || goldTokenWeather === "observed"
+      ? "PAXG/XAUT 전송 샘플이 확인되었습니다."
+      : `tokenized gold signal은 ${goldTokenWeather}입니다.`
+  ];
+
+  return {
+    generatedAt,
+    source: "alchemy",
+    marketWeather: {
+      title: "Market Weather for KGLD",
+      stablecoinWeather,
+      goldTokenWeather,
+      rwaWeather: rwaSectorPulse.sectorMood || "limited_data",
+      gasWeather,
+      todayPositioning: "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
+      contentAngle,
+      confidence
+    },
+    contentIdea: {
+      title: "KGLD Content Idea",
+      contentAngle,
+      oneLineInsight,
+      tweetDraftEnglish: "Not every onchain asset needs to move fast. Some are built to make real-world trust easier to verify.",
+      tweetDraftKorean: "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 어떤 자산은 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 데 의미가 있습니다.",
+      whyNow: whyNowParts.join(" "),
+      doNotSay: [
+        "KGLD is widely traded",
+        "KGLD is listed on a specific exchange unless confirmed",
+        "Guaranteed gold redemption without policy conditions",
+        "Investment return or price appreciation"
+      ]
+    },
+    tokenizedGoldRadar,
+    rwaSectorPulse,
+    diagnostics,
+    observed: {
+      kgldTransferSampleSize: transfers.length,
+      kgldActivity: activity.state,
+      kgldObservedVolume: `${formatToken(activity.volume)} KGLD`
+    }
+  };
+}
+
 async function fetchTokenTransfers({ address, fromBlock, tokenName, diagnostics }) {
   try {
     logStep(`Fetching ${tokenName} transfers with maxCount ${TOKEN_TRANSFER_LIMIT_HEX}.`);
@@ -511,19 +722,19 @@ async function fetchMinimalNarrativeInputs(diagnostics) {
   const stablecoinTransfers = Object.fromEntries(stablecoinTransferEntries);
   const tokenStates = Object.fromEntries(Object.entries(tokenTransfers).map(([tokenName, transfers]) => [
     tokenName,
-    transfers ? classifyTokenTransfers(transfers) : unknownTokenState()
+    transfers ? classifyTokenTransfersConservative(transfers) : unknownTokenState()
   ]));
   const stablecoinStates = Object.fromEntries(Object.entries(stablecoinTransfers).map(([tokenName, transfers]) => [
     tokenName,
-    classifyStablecoinTransfers(transfers)
+    classifyStablecoinTransfersConservative(transfers)
   ]));
-  const tokenizedGoldRadar = buildTokenizedGoldRadar(tokenStates);
+  const tokenizedGoldRadar = buildTokenizedGoldRadarConservative(tokenStates);
 
   return {
     gasWeather: classifyGas(BigInt(gasHex)),
     transfers: tokenTransfers.KGLD || [],
     tokenizedGoldRadar,
-    rwaSectorPulse: buildRwaSectorPulse({
+    rwaSectorPulse: buildRwaSectorPulseConservative({
       tokenizedGoldRadar,
       stablecoinStates,
       gasWeather: classifyGas(BigInt(gasHex))
@@ -548,7 +759,7 @@ async function main() {
   logStep("Starting narrative cache update.");
   try {
     const inputs = await fetchMinimalNarrativeInputs(diagnostics);
-    narrative = buildNarrative(inputs);
+    narrative = buildNarrativeConservative(inputs);
   } catch (error) {
     addDiagnosticError(diagnostics, error.message);
     console.warn(`[narrative] Narrative update fallback: ${error.message}`);

@@ -277,6 +277,15 @@ const weatherLabel = {
   unknown: "unknown"
 };
 
+Object.assign(weatherLabel, {
+  observed: "observed",
+  sample_full: "sample full",
+  notable: "notable",
+  active: "active",
+  volatile: "volatile",
+  limited_data: "limited data"
+});
+
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
   "&": "&amp;",
   "<": "&lt;",
