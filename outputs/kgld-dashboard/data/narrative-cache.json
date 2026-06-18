@@ -12,17 +12,24 @@
     "confidence": "medium"
   },
   "contentIdea": {
-    "title": "KGLD Content Idea",
+    "title": "KGLD Content Desk",
     "contentAngle": "Gold as a quiet onchain asset",
-    "oneLineInsight": "시장 샘플이 관찰되더라도 KGLD 메시지는 거래량보다 실물 기반 신뢰와 상환 가능성에 두는 편이 적합합니다.",
-    "tweetDraftEnglish": "Not every onchain asset needs to move fast. Some are built to make real-world trust easier to verify.",
-    "tweetDraftKorean": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. 어떤 자산은 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 데 의미가 있습니다.",
-    "whyNow": "최근 KGLD activity는 quiet로 관찰됩니다. gas 상태는 low입니다. PAXG/XAUT 전송 샘플이 확인되었습니다.",
+    "oneLineInsight": "KGLD가 조용할수록 메시지는 속도보다 실물 기반 신뢰와 검증 가능성에 집중하는 편이 적합합니다.",
+    "xPostEnglish": "Not every onchain asset needs to move fast. Some are built to make real-world value easier to verify.",
+    "xPostKorean": "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. KGLD는 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 쪽이 더 적합합니다.",
+    "internalNote": "PAXG/XAUT 전송 샘플은 카테고리 관찰 신호로만 활용하세요. KGLD의 상장, 거래량 우위, 파트너십을 암시하지 않습니다.",
+    "landingCopy": "KGLD is designed to bring real-world value onchain with a focus on reserve visibility, redemption context, and operational transparency.",
+    "whyNow": "KGLD activity는 quiet로 관찰됩니다. gas 상태는 low입니다. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로 참고할 수 있습니다. RWA sector signal은 limited_data, 7-day trend는 unknown입니다.",
+    "complianceCaution": [
+      "상환 가능성은 정책과 조건 범위 안에서만 표현하세요.",
+      "PAXG/XAUT 관찰 신호를 KGLD 수요 또는 가격 흐름으로 해석하지 마세요.",
+      "준비자산과 운영 설명은 확인 가능한 자료와 일치해야 합니다."
+    ],
     "doNotSay": [
-      "KGLD is widely traded",
-      "KGLD is listed on a specific exchange unless confirmed",
-      "Guaranteed gold redemption without policy conditions",
-      "Investment return or price appreciation"
+      "미확인 상장/거래소명 언급",
+      "거래량 우위 또는 시장 선도 표현",
+      "수익률 또는 가격 상승 암시",
+      "무조건 상환 보장 표현"
     ]
   },
   "tokenizedGoldRadar": {

@@ -176,17 +176,23 @@ function fallbackNarrative(reason = "시장 내러티브 데이터 수집 대기
       confidence: "low"
     },
     contentIdea: {
-      title: "KGLD Content Idea",
+      title: "KGLD Content Desk",
       contentAngle: "Real asset trust onchain",
       oneLineInsight: "시장 내러티브 데이터 수집 대기 중입니다.",
-      tweetDraftEnglish: "Narrative data is pending. Onchain dashboard metrics remain available.",
-      tweetDraftKorean: "시장 내러티브 데이터는 수집 대기 중이며, 상단 온체인 지표는 정상 표시됩니다.",
+      xPostEnglish: "Narrative data is pending. Onchain dashboard metrics remain available.",
+      xPostKorean: "시장 내러티브 데이터는 수집 대기 중이며, 상단 온체인 지표는 정상 표시됩니다.",
+      internalNote: "narrative cache가 fallback 상태입니다. 콘텐츠 발행 전 다음 자동 갱신 결과를 확인하세요.",
+      landingCopy: "KGLD brings real-world value into an onchain format designed for verification and operational transparency.",
       whyNow: "다음 narrative cache 갱신 후 콘텐츠 아이디어가 표시됩니다.",
+      complianceCaution: [
+        "준비자산, 상환 조건, 운영 정책은 공식 문서와 일치해야 합니다.",
+        "시장 활성도나 거래소 관련 표현은 확인된 근거가 있을 때만 사용하세요."
+      ],
       doNotSay: [
-        "KGLD is widely traded",
-        "KGLD is listed on a specific exchange unless confirmed",
-        "Guaranteed gold redemption without policy conditions",
-        "Investment return or price appreciation"
+        "미확인 상장/거래소명 언급",
+        "거래량 우위 또는 시장 선도 표현",
+        "수익률 또는 가격 상승 암시",
+        "무조건 상환 보장 표현"
       ]
     },
     tokenizedGoldRadar: fallbackGoldRadar(),
@@ -662,6 +668,54 @@ function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar,
   };
 }
 
+function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorPulse, narrativeTrend }) {
+  const goldMood = tokenizedGoldRadar?.marketMood || "unknown";
+  const sectorMood = rwaSectorPulse?.sectorMood || "unknown";
+  const trendMood = narrativeTrend?.trendMood || "unknown";
+  const hasGoldSamples = ["observed", "sample_full", "notable", "active", "volatile"].includes(goldMood);
+  const quietKgld = activity?.state === "quiet";
+  const contentAngle = quietKgld ? "Gold as a quiet onchain asset" : "RWA transparency over hype";
+  const oneLineInsight = quietKgld
+    ? "KGLD가 조용할수록 메시지는 속도보다 실물 기반 신뢰와 검증 가능성에 집중하는 편이 적합합니다."
+    : "온체인 흐름이 관찰될 때도 KGLD 메시지는 과장보다 검증 가능한 운영 구조에 두는 편이 적합합니다.";
+  const whyNowParts = [
+    `KGLD activity는 ${activity?.state || "unknown"}로 관찰됩니다.`,
+    `gas 상태는 ${gasWeather || "unknown"}입니다.`,
+    hasGoldSamples
+      ? "PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로 참고할 수 있습니다."
+      : `tokenized gold signal은 ${goldMood}입니다.`,
+    `RWA sector signal은 ${sectorMood}, 7-day trend는 ${trendMood}입니다.`
+  ];
+
+  return {
+    title: "KGLD Content Desk",
+    contentAngle,
+    oneLineInsight,
+    xPostEnglish: quietKgld
+      ? "Not every onchain asset needs to move fast. Some are built to make real-world value easier to verify."
+      : "For RWAs, the strongest signal is not noise. It is a structure people can verify.",
+    xPostKorean: quietKgld
+      ? "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. KGLD는 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 쪽이 더 적합합니다."
+      : "RWA에서 중요한 것은 과장된 활동이 아니라 검증 가능한 구조입니다. KGLD는 운영 투명성과 상환 가능성을 중심으로 설명하는 편이 적합합니다.",
+    internalNote: hasGoldSamples
+      ? "PAXG/XAUT 전송 샘플은 카테고리 관찰 신호로만 활용하세요. KGLD의 상장, 거래량 우위, 파트너십을 암시하지 않습니다."
+      : "외부 금 토큰 샘플이 제한적이므로 KGLD 자체의 준비자산, 상환 UX, 운영 투명성 메시지를 우선 검토하세요.",
+    landingCopy: "KGLD is designed to bring real-world value onchain with a focus on reserve visibility, redemption context, and operational transparency.",
+    whyNow: whyNowParts.join(" "),
+    complianceCaution: [
+      "상환 가능성은 정책과 조건 범위 안에서만 표현하세요.",
+      "PAXG/XAUT 관찰 신호를 KGLD 수요 또는 가격 흐름으로 해석하지 마세요.",
+      "준비자산과 운영 설명은 확인 가능한 자료와 일치해야 합니다."
+    ],
+    doNotSay: [
+      "미확인 상장/거래소명 언급",
+      "거래량 우위 또는 시장 선도 표현",
+      "수익률 또는 가격 상승 암시",
+      "무조건 상환 보장 표현"
+    ]
+  };
+}
+
 async function readJsonFile(filePath, fallbackValue) {
   try {
     return JSON.parse(await fs.readFile(filePath, "utf8"));
@@ -1014,6 +1068,13 @@ async function main() {
   }
   const history = await updateNarrativeHistory(narrative);
   narrative.narrativeTrend = buildNarrativeTrendStrict(history);
+  narrative.contentIdea = buildContentDesk({
+    activity: { state: narrative.observed?.kgldActivity || "unknown" },
+    gasWeather: narrative.marketWeather?.gasWeather || "unknown",
+    tokenizedGoldRadar: narrative.tokenizedGoldRadar,
+    rwaSectorPulse: narrative.rwaSectorPulse,
+    narrativeTrend: narrative.narrativeTrend
+  });
   await writeNarrativeCache(narrative);
   console.log(`[narrative] Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
   console.log(`[narrative] Updated narrative history snapshots: ${history.snapshots.length}`);

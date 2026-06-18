@@ -50,12 +50,18 @@ const fallbackNarrative = {
     confidence: "low"
   },
   contentIdea: {
-    title: "KGLD Content Idea",
+    title: "KGLD Content Desk",
     contentAngle: "insufficient_data",
     oneLineInsight: "데이터가 부족하면 추정하지 않고 unknown 상태로 유지합니다.",
-    tweetDraftEnglish: "Narrative data is not available yet.",
-    tweetDraftKorean: "내러티브 데이터가 아직 준비되지 않았습니다.",
+    xPostEnglish: "Narrative data is not available yet.",
+    xPostKorean: "내러티브 데이터가 아직 준비되지 않았습니다.",
+    internalNote: "narrative cache가 준비된 뒤 내부 검토용 콘텐츠 메모가 표시됩니다.",
+    landingCopy: "KGLD brings real-world value onchain with a focus on verification and operational transparency.",
     whyNow: "캐시 데이터를 불러오지 못했습니다.",
+    complianceCaution: [
+      "확인되지 않은 상장, 파트너십, 거래소명은 사용하지 마세요.",
+      "상환 관련 표현은 정책과 조건 범위 안에서만 사용하세요."
+    ],
     doNotSay: ["미확인 상장, 파트너십, 거래소 협력 언급", "시장 리더 또는 기관 채택 단정", "준비자산 검증 없는 과장 표현"]
   },
   tokenizedGoldRadar: {
@@ -313,6 +319,9 @@ const pendingNarrativeCopy = {
   description: "상단 온체인 지표는 정상이며, Market Weather는 다음 narrative cache 갱신 후 표시됩니다."
 };
 
+const contentDeskValue = (idea, modernKey, legacyKey, fallbackValue = "") =>
+  idea?.[modernKey] || idea?.[legacyKey] || fallbackValue;
+
 const renderNarrativeCards = (narrative, loadMeta = {}) => {
   const market = narrative.marketWeather || fallbackNarrative.marketWeather;
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
@@ -440,20 +449,37 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   document.getElementById("content-idea-content").innerHTML = `
     <div class="content-angle">${idea.contentAngle}</div>
     <p class="one-line-insight">${idea.oneLineInsight}</p>
-    <div class="tweet-box">
-      <span>EN draft</span>
-      <p>${idea.tweetDraftEnglish}</p>
+    <div class="content-desk-grid">
+      <div class="content-desk-section">
+        <div class="content-desk-head">
+          <span>EN Post</span>
+          <button type="button" class="copy-mini" data-copy-text="${escapeHtml(contentDeskValue(idea, "xPostEnglish", "tweetDraftEnglish"))}">Copy</button>
+        </div>
+        <p>${contentDeskValue(idea, "xPostEnglish", "tweetDraftEnglish")}</p>
+      </div>
+      <div class="content-desk-section korean">
+        <div class="content-desk-head">
+          <span>KR Post</span>
+          <button type="button" class="copy-mini" data-copy-text="${escapeHtml(contentDeskValue(idea, "xPostKorean", "tweetDraftKorean"))}">Copy</button>
+        </div>
+        <p>${contentDeskValue(idea, "xPostKorean", "tweetDraftKorean")}</p>
+      </div>
+      <div class="content-desk-section">
+        <span>Internal Note</span>
+        <p>${idea.internalNote || idea.whyNow}</p>
+      </div>
+      <div class="content-desk-section">
+        <span>Landing Copy</span>
+        <p>${idea.landingCopy || idea.oneLineInsight}</p>
+      </div>
     </div>
-    <div class="tweet-box korean">
-      <span>KR draft</span>
-      <p>${idea.tweetDraftKorean}</p>
-    </div>
-    <div class="briefing-note">
+    <div class="briefing-note content-why-now">
       <span>why now</span>
       <strong>${idea.whyNow}</strong>
     </div>
     <div class="do-not-say">
-      <span>Do not say</span>
+      <span>Caution / Do not say</span>
+      ${(idea.complianceCaution || []).map((item) => `<em>${item}</em>`).join("")}
       ${(idea.doNotSay || []).map((item) => `<em>${item}</em>`).join("")}
     </div>
   `;
@@ -505,6 +531,22 @@ document.getElementById("refresh-narrative").addEventListener("click", async () 
   button.textContent = "Reloading...";
   await loadNarrativeCache();
   button.textContent = "Reload Narrative";
+});
+
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest(".copy-mini");
+  if (!button) return;
+
+  try {
+    await navigator.clipboard.writeText(button.dataset.copyText || "");
+    button.textContent = "Copied";
+  } catch {
+    button.textContent = "Copy failed";
+  }
+
+  window.setTimeout(() => {
+    button.textContent = "Copy";
+  }, 1400);
 });
 
 loadNarrativeCache();
