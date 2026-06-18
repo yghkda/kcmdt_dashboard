@@ -21,14 +21,36 @@ const TOKEN_TRANSFER_LIMIT_HEX = "0xa";
 const LARGE_TRANSFER_THRESHOLD = 100;
 const LARGE_STABLECOIN_TRANSFER_THRESHOLD = 1_000_000;
 
-function getRpcUrl() {
-  if (process.env.ALCHEMY_ETH_MAINNET_URL) return process.env.ALCHEMY_ETH_MAINNET_URL;
-  if (process.env.ALCHEMY_API_KEY) return `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
-  throw new Error("Set ALCHEMY_ETH_MAINNET_URL or ALCHEMY_API_KEY.");
+function createDiagnostics() {
+  return {
+    generatedBy: "update-narrative.mjs",
+    hasAlchemyUrl: Boolean(process.env.ALCHEMY_ETH_MAINNET_URL || process.env.ALCHEMY_API_KEY),
+    usedFallback: false,
+    errors: [],
+    rpcChecks: {}
+  };
 }
 
-async function rpc(method, params) {
-  const response = await fetch(getRpcUrl(), {
+function logStep(message) {
+  console.log(`[narrative] ${message}`);
+}
+
+function addDiagnosticError(diagnostics, message) {
+  if (!diagnostics || !message) return;
+  if (!diagnostics.errors.includes(message)) {
+    diagnostics.errors.push(message);
+  }
+}
+
+function getRpcUrl(diagnostics) {
+  if (process.env.ALCHEMY_ETH_MAINNET_URL) return process.env.ALCHEMY_ETH_MAINNET_URL;
+  if (process.env.ALCHEMY_API_KEY) return `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+  addDiagnosticError(diagnostics, "Missing ALCHEMY_ETH_MAINNET_URL or ALCHEMY_API_KEY");
+  throw new Error("Missing ALCHEMY_ETH_MAINNET_URL or ALCHEMY_API_KEY");
+}
+
+async function rpc(method, params, diagnostics) {
+  const response = await fetch(getRpcUrl(diagnostics), {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
@@ -88,11 +110,11 @@ function unknownTokenState() {
 function fallbackGoldRadar() {
   return {
     title: "Tokenized Gold Radar",
-    headline: "금 토큰 시장 데이터를 불러오지 못했습니다.",
+    headline: "시장 내러티브 데이터 수집 대기 중",
     marketMood: "unknown",
-    kgldAngle: "KGLD는 확인되지 않은 외부 시장 분위기를 추정하지 않고, 준비자산·상환 가능성·실물 기반 신뢰 메시지를 유지합니다.",
-    observations: ["PAXG/XAUT/KGLD 비교 데이터가 아직 준비되지 않았습니다."],
-    operatorAction: "Alchemy 캐시 갱신 상태를 확인하고, 데이터가 충분할 때만 시장 분위기를 해석하세요.",
+    kgldAngle: "상단 온체인 지표는 정상이며, Tokenized Gold Radar는 다음 narrative cache 갱신 후 표시됩니다.",
+    observations: ["KGLD/PAXG/XAUT 비교 데이터 수집 대기 중"],
+    operatorAction: "다음 narrative cache 갱신 후 tokenized gold 비교 신호를 확인하세요.",
     confidence: "low",
     tokens: {
       KGLD: unknownTokenState(),
@@ -106,8 +128,8 @@ function fallbackRwaSectorPulse() {
   return {
     title: "RWA Sector Pulse",
     sectorMood: "limited_data",
-    headline: "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.",
-    kgldPositioning: "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.",
+    headline: "시장 내러티브 데이터 수집 대기 중",
+    kgldPositioning: "상단 온체인 지표는 정상이며, RWA Sector Pulse는 다음 narrative cache 갱신 후 표시됩니다.",
     evidence: [
       "tokenized gold, stablecoin, gas 일부 신호만 우선 관찰합니다.",
       "Ondo, BUIDL, tokenized treasury, DeFi RWA protocol 데이터는 아직 연결 전입니다."
@@ -135,7 +157,8 @@ function fallbackRwaSectorPulse() {
   };
 }
 
-function fallbackNarrative(reason = "데이터를 불러오지 못했습니다.") {
+function fallbackNarrative(reason = "시장 내러티브 데이터 수집 대기 중", diagnostics = createDiagnostics()) {
+  diagnostics.usedFallback = true;
   return {
     generatedAt: asKstString(new Date()),
     source: "fallback",
@@ -146,16 +169,16 @@ function fallbackNarrative(reason = "데이터를 불러오지 못했습니다."
       rwaWeather: "unknown",
       gasWeather: "unknown",
       todayPositioning: reason,
-      contentAngle: "Real asset trust onchain",
+      contentAngle: "상단 온체인 지표는 정상이며, Market Weather는 다음 narrative cache 갱신 후 표시됩니다.",
       confidence: "low"
     },
     contentIdea: {
       title: "KGLD Content Idea",
       contentAngle: "Real asset trust onchain",
-      oneLineInsight: "RWA 프로젝트의 신뢰는 과장된 활동보다 검증 가능한 구조에서 시작됩니다.",
-      tweetDraftEnglish: "Real-world assets do not need hype to matter. They need structure, transparency, and trust.",
-      tweetDraftKorean: "RWA의 신뢰는 과장된 활동보다 검증 가능한 구조에서 시작됩니다.",
-      whyNow: "실시간 내러티브 데이터를 충분히 확인하지 못해 보수적인 fallback 메시지를 표시합니다.",
+      oneLineInsight: "시장 내러티브 데이터 수집 대기 중입니다.",
+      tweetDraftEnglish: "Narrative data is pending. Onchain dashboard metrics remain available.",
+      tweetDraftKorean: "시장 내러티브 데이터는 수집 대기 중이며, 상단 온체인 지표는 정상 표시됩니다.",
+      whyNow: "다음 narrative cache 갱신 후 콘텐츠 아이디어가 표시됩니다.",
       doNotSay: [
         "KGLD is widely traded",
         "KGLD is listed on a specific exchange unless confirmed",
@@ -164,7 +187,8 @@ function fallbackNarrative(reason = "데이터를 불러오지 못했습니다."
       ]
     },
     tokenizedGoldRadar: fallbackGoldRadar(),
-    rwaSectorPulse: fallbackRwaSectorPulse()
+    rwaSectorPulse: fallbackRwaSectorPulse(),
+    diagnostics
   };
 }
 
@@ -350,7 +374,7 @@ function buildRwaSectorPulse({ tokenizedGoldRadar, stablecoinStates, gasWeather 
   };
 }
 
-function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPulse }) {
+function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPulse, diagnostics }) {
   const activity = classifyKgldActivity(transfers);
   const hasUnknowns = gasWeather === "unknown";
   const generatedAt = asKstString(new Date());
@@ -416,6 +440,7 @@ function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPu
     },
     tokenizedGoldRadar,
     rwaSectorPulse,
+    diagnostics,
     observed: {
       kgldTransferSampleSize: transfers.length,
       kgldActivity: activity.state,
@@ -424,8 +449,9 @@ function buildNarrative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPu
   };
 }
 
-async function fetchTokenTransfers({ address, fromBlock, tokenName }) {
+async function fetchTokenTransfers({ address, fromBlock, tokenName, diagnostics }) {
   try {
+    logStep(`Fetching ${tokenName} transfers with maxCount ${TOKEN_TRANSFER_LIMIT_HEX}.`);
     const result = await rpc("alchemy_getAssetTransfers", [{
       fromBlock: `0x${fromBlock.toString(16)}`,
       toBlock: "latest",
@@ -435,27 +461,50 @@ async function fetchTokenTransfers({ address, fromBlock, tokenName }) {
       excludeZeroValue: false,
       maxCount: TOKEN_TRANSFER_LIMIT_HEX,
       order: "desc"
-    }]);
+    }], diagnostics);
+    diagnostics.rpcChecks[tokenName] = "ok";
+    logStep(`${tokenName} transfers ok: ${(result.transfers || []).length}`);
     return result.transfers || [];
   } catch (error) {
-    console.warn(`${tokenName} transfer lookup fallback: ${error.message}`);
+    diagnostics.rpcChecks[tokenName] = "failed";
+    addDiagnosticError(diagnostics, `${tokenName}: ${error.message}`);
+    console.warn(`[narrative] ${tokenName} transfer lookup failed: ${error.message}`);
     return null;
   }
 }
 
-async function fetchMinimalNarrativeInputs() {
+async function fetchMinimalNarrativeInputs(diagnostics) {
+  logStep(`Alchemy endpoint present: ${diagnostics.hasAlchemyUrl}`);
+  logStep("Fetching gas price and latest block.");
   const [gasHex, latestBlockHex] = await Promise.all([
-    rpc("eth_gasPrice", []),
-    rpc("eth_blockNumber", [])
+    rpc("eth_gasPrice", [], diagnostics).then((result) => {
+      diagnostics.rpcChecks.gasPrice = "ok";
+      logStep("eth_gasPrice ok.");
+      return result;
+    }).catch((error) => {
+      diagnostics.rpcChecks.gasPrice = "failed";
+      addDiagnosticError(diagnostics, `gasPrice: ${error.message}`);
+      throw error;
+    }),
+    rpc("eth_blockNumber", [], diagnostics).then((result) => {
+      diagnostics.rpcChecks.blockNumber = "ok";
+      logStep("eth_blockNumber ok.");
+      return result;
+    }).catch((error) => {
+      diagnostics.rpcChecks.blockNumber = "failed";
+      addDiagnosticError(diagnostics, `blockNumber: ${error.message}`);
+      throw error;
+    })
   ]);
   const latestBlock = BigInt(latestBlockHex);
   const fromBlock = latestBlock > 7200n ? latestBlock - 7200n : 0n;
+  logStep(`Using block range ${fromBlock.toString()} -> ${latestBlock.toString()}.`);
   const tokenTransferEntries = await Promise.all(Object.entries(TOKENIZED_GOLD_TOKENS).map(async ([tokenName, address]) => {
-    const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName });
+    const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName, diagnostics });
     return [tokenName, transfers];
   }));
   const stablecoinTransferEntries = await Promise.all(Object.entries(STABLECOIN_TOKENS).map(async ([tokenName, address]) => {
-    const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName });
+    const transfers = await fetchTokenTransfers({ address, fromBlock, tokenName, diagnostics });
     return [tokenName, transfers];
   }));
   const tokenTransfers = Object.fromEntries(tokenTransferEntries);
@@ -478,7 +527,8 @@ async function fetchMinimalNarrativeInputs() {
       tokenizedGoldRadar,
       stablecoinStates,
       gasWeather: classifyGas(BigInt(gasHex))
-    })
+    }),
+    diagnostics
   };
 }
 
@@ -494,15 +544,19 @@ async function writeNarrativeCache(data) {
 
 async function main() {
   let narrative;
+  const diagnostics = createDiagnostics();
+  logStep("Starting narrative cache update.");
   try {
-    const inputs = await fetchMinimalNarrativeInputs();
+    const inputs = await fetchMinimalNarrativeInputs(diagnostics);
     narrative = buildNarrative(inputs);
   } catch (error) {
-    console.warn(`Narrative update fallback: ${error.message}`);
-    narrative = fallbackNarrative("데이터를 불러오지 못했습니다.");
+    addDiagnosticError(diagnostics, error.message);
+    console.warn(`[narrative] Narrative update fallback: ${error.message}`);
+    narrative = fallbackNarrative("시장 내러티브 데이터 수집 대기 중", diagnostics);
   }
   await writeNarrativeCache(narrative);
-  console.log(`Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
+  console.log(`[narrative] Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
+  console.log(`[narrative] Diagnostics: ${JSON.stringify(narrative.diagnostics)}`);
 }
 
 main().catch((error) => {

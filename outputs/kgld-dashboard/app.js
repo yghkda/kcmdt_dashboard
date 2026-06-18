@@ -31,6 +31,13 @@ const fallbackNarrative = {
   generatedAt: "unknown",
   source: "fallback",
   status: "unknown",
+  diagnostics: {
+    generatedBy: "dashboard-fallback",
+    hasAlchemyUrl: false,
+    usedFallback: true,
+    errors: ["Narrative cache could not be loaded"],
+    rpcChecks: {}
+  },
   marketWeather: {
     title: "Market Weather for KGLD",
     stablecoinWeather: "unknown",
@@ -270,12 +277,45 @@ const weatherLabel = {
   unknown: "unknown"
 };
 
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  "\"": "&quot;",
+  "'": "&#39;"
+}[char]));
+
+const pendingNarrativeCopy = {
+  label: "Narrative pending",
+  headline: "시장 내러티브 데이터 수집 대기 중",
+  description: "상단 온체인 지표는 정상이며, Market Weather는 다음 narrative cache 갱신 후 표시됩니다."
+};
+
 const renderNarrativeCards = (narrative) => {
   const market = narrative.marketWeather || fallbackNarrative.marketWeather;
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
   const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
   const rwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
   const cacheTime = narrative.generatedAt || "unknown";
+  const diagnostics = narrative.diagnostics || fallbackNarrative.diagnostics;
+  const isPending = narrative.source === "fallback" || diagnostics?.usedFallback === true;
+  const diagnosticsErrors = Array.isArray(diagnostics?.errors) ? diagnostics.errors.filter(Boolean) : [];
+  const diagnosticsDetails = diagnosticsErrors.length ? `
+    <details class="diagnostic-details">
+      <summary>developer diagnostics</summary>
+      <code>${diagnosticsErrors.map(escapeHtml).join(" / ")}</code>
+    </details>
+  ` : "";
+  const displayedMarket = isPending ? {
+    ...market,
+    stablecoinWeather: "unknown",
+    goldTokenWeather: "unknown",
+    rwaWeather: "unknown",
+    gasWeather: "unknown",
+    todayPositioning: pendingNarrativeCopy.headline,
+    contentAngle: pendingNarrativeCopy.description,
+    confidence: "low"
+  } : market;
 
   document.getElementById("narrative-cache-time").textContent = `Last generated: ${cacheTime}`;
   document.getElementById("market-weather-content").innerHTML = `
@@ -292,6 +332,23 @@ const renderNarrativeCards = (narrative) => {
       <em>source: ${narrative.source || "fallback"} · confidence: ${market.confidence}</em>
     </div>
   `;
+
+  if (isPending) {
+    const marketContainer = document.getElementById("market-weather-content");
+    marketContainer.insertAdjacentHTML("afterbegin", `
+      <div class="pending-banner">
+        <span>${pendingNarrativeCopy.label}</span>
+        <strong>${pendingNarrativeCopy.headline}</strong>
+        <p>${pendingNarrativeCopy.description}</p>
+      </div>
+    `);
+    marketContainer.querySelector(".weather-positioning").textContent = pendingNarrativeCopy.headline;
+    marketContainer.querySelector(".briefing-note strong").textContent = pendingNarrativeCopy.description;
+    marketContainer.querySelector(".briefing-note em").textContent = `source: ${narrative.source || "fallback"} · confidence: low`;
+    if (diagnosticsDetails) {
+      marketContainer.insertAdjacentHTML("beforeend", diagnosticsDetails);
+    }
+  }
 
   document.getElementById("tokenized-gold-content").innerHTML = `
     <p class="gold-radar-headline">${radar.headline}</p>
