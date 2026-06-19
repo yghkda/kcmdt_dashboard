@@ -17,16 +17,35 @@ It performs these steps:
 
 1. Fetch KGLD onchain data from Ethereum mainnet via Alchemy.
 2. Refresh `outputs/kgld-dashboard/dashboard-data.js`.
-3. Refresh `data/narrative-cache.json`, `data/narrative-history.json`, and their deployable copies under `outputs/kgld-dashboard/data`.
+3. Refresh `data/news-context.json`, `data/narrative-cache.json`, `data/narrative-history.json`, and their deployable copies under `outputs/kgld-dashboard/data`.
 4. Render `outputs/kgld-dashboard/kgld-daily-dashboard.png`.
 5. Bundle the dashboard HTML files into `outputs/kgld-dashboard/kgld-dashboard-html.zip`.
 6. Send the summary, image, and bundle to Telegram.
 7. Deploy `outputs/kgld-dashboard` to GitHub Pages.
-8. Commit the refreshed dashboard data, narrative cache, and narrative history back to the repository.
+8. Commit the refreshed dashboard data, news context, narrative cache, and narrative history back to the repository.
+
+## News Context
+
+The Content Desk uses a separate `news-context.json` file so news and onchain
+data stay decoupled. The browser does not call a news API and does not expose
+search keys. The current implementation starts with a conservative manual
+watchlist for ITCEN, ITCEN Global, KorDA, KGLD, LayerZero, tokenized gold, and
+gold-backed service concepts:
+
+```bash
+npm run news:update
+```
+
+This creates both `data/news-context.json` and
+`outputs/kgld-dashboard/data/news-context.json`. The initial source is
+`manual`, and each item includes title, publisher, URL, summary, tags,
+relevance, whether it can be used for content, and a caution note. Future RSS or
+search integrations should be added to the local/CI script only, not to the
+browser client.
 
 ## Narrative Cache
 
-The Market Weather and Content Idea cards are static-page friendly. The browser
+The Market Weather and Content Desk cards are static-page friendly. The browser
 does not call Alchemy or expose API keys. Instead, local runs or GitHub Actions
 refresh the cache first:
 
@@ -46,6 +65,12 @@ treasury, or DeFi RWA protocol flows is intentionally marked `limited_data`
 until a future Dune or The Graph integration is added. The dashboard's
 `Reload Narrative`/`Refresh Narrative` button only re-fetches the already
 generated JSON from `outputs/kgld-dashboard/data/narrative-cache.json`.
+
+Content Desk combines `news-context.json` with the latest onchain narrative and
+uses `contentMode` values such as `news_plus_onchain`, `news_only`,
+`onchain_only`, or `fallback`. News items are used as marketing context only;
+claims such as completed listing, active trading, guaranteed redemption, yield,
+or price appreciation are intentionally blocked by caution fields.
 
 ## Narrative History
 

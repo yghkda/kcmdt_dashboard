@@ -62,7 +62,7 @@
       </div>
       <div class="hero-supply-card">
         <div class="supply-card-head">
-          <span>SUPPLY CUSTODY</span>
+          <span>SUPPLY CUSTODY <span class="info-tip" tabindex="0" data-tooltip="KGLD 총공급량이 운영 컨트랙트, 보관 지갑, 외부 지갑에 어떻게 분포되어 있는지 보여줍니다.">?</span></span>
           <strong id="hero-supply"></strong>
         </div>
         <div class="supply-meter" aria-hidden="true">
@@ -70,11 +70,11 @@
         </div>
         <div class="supply-breakdown">
           <div>
-            <span>Issue 보관</span>
+            <span>Issue 보관 <span class="info-tip" tabindex="0" data-tooltip="발행된 KGLD 중 아직 사용자에게 배포되지 않고 Issue 컨트랙트에 보관 중인 물량입니다.">?</span></span>
             <strong id="hero-issue-balance"></strong>
           </div>
           <div>
-            <span>Redeem 잔액</span>
+            <span>Redeem 잔액 <span class="info-tip" tabindex="0" data-tooltip="상환 절차와 관련해 Redeem 컨트랙트에 남아 있는 KGLD 잔액입니다. 실제 실물금 인도 완료 여부와는 별도입니다.">?</span></span>
             <strong id="hero-redeem-balance"></strong>
           </div>
         </div>
@@ -87,7 +87,7 @@
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">DAILY DECISION</p>
-            <h2>Today's Action Brief</h2>
+            <h2>Today's Action Brief <span class="info-tip" tabindex="0" data-tooltip="여러 시장/온체인 카드를 종합해 오늘의 운영, 마케팅, 리스크 액션을 요약합니다.">?</span></h2>
           </div>
           <span id="today-action-status" class="action-status-pill">pending</span>
         </div>
@@ -111,7 +111,7 @@
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">SUPPLY</p>
-            <h2>공급 분포</h2>
+            <h2>공급 분포 <span class="info-tip" tabindex="0" data-tooltip="KGLD 총공급량이 운영 컨트랙트, 보관 지갑, 외부 지갑에 어떻게 분포되어 있는지 보여줍니다.">?</span></h2>
           </div>
           <span class="block-label" id="block-label"></span>
         </div>
@@ -149,15 +149,6 @@
         <div id="risk-list" class="risk-list"></div>
       </article>
 
-      <article class="panel">
-        <div class="section-heading compact">
-          <div>
-            <p class="eyebrow">NEXT</p>
-            <h2>권장 조치</h2>
-          </div>
-        </div>
-        <div id="action-list" class="action-list"></div>
-      </article>
     </section>
 
     <section class="narrative-lab">
@@ -165,9 +156,12 @@
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">MARKET CONTEXT</p>
-            <h2>Market Weather for KGLD</h2>
+            <h2>Market Weather for KGLD <span class="info-tip" tabindex="0" data-tooltip="KGLD 자체 활동뿐 아니라 gas, 금 토큰, stablecoin, RWA 신호를 종합해 오늘의 시장 맥락을 요약합니다.">?</span></h2>
           </div>
-          <button id="refresh-narrative" class="refresh-button" type="button">Reload Narrative</button>
+          <div class="narrative-controls">
+            <span id="narrative-cache-time" class="count-pill">Last generated: pending</span>
+            <button id="refresh-narrative" class="refresh-button" type="button">Reload Narrative</button>
+          </div>
         </div>
         <div id="market-weather-content"></div>
       </article>
@@ -176,7 +170,7 @@
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">TOKENIZED GOLD</p>
-            <h2>Tokenized Gold Radar</h2>
+            <h2>Tokenized Gold Radar <span class="info-tip" tabindex="0" data-tooltip="PAXG, XAUT 등 금 기반 토큰의 최근 전송 샘플을 참고해 금 토큰 카테고리 분위기를 관찰합니다.">?</span></h2>
           </div>
         </div>
         <div id="tokenized-gold-content"></div>
@@ -186,31 +180,32 @@
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">RWA SECTOR</p>
-            <h2>RWA Sector Pulse</h2>
+            <h2>RWA Sector Pulse <span class="info-tip" tabindex="0" data-tooltip="금 토큰, stablecoin, gas, RWA 프로토콜 신호를 종합해 RWA 시장 맥락을 보수적으로 해석합니다.">?</span></h2>
           </div>
         </div>
         <div id="rwa-sector-content"></div>
-      </article>
-
-      <article class="panel content-idea-card">
-        <div class="section-heading compact">
-          <div>
-            <p class="eyebrow">CONTENT DESK</p>
-            <h2>KGLD Content Desk</h2>
-          </div>
-          <span id="narrative-cache-time" class="count-pill">Last generated: pending</span>
-        </div>
-        <div id="content-idea-content"></div>
       </article>
 
       <article class="panel narrative-trend-card">
         <div class="section-heading compact">
           <div>
             <p class="eyebrow">NARRATIVE HISTORY</p>
-            <h2>7-Day Narrative Trend</h2>
+            <h2>7-Day Narrative Trend <span class="info-tip" tabindex="0" data-tooltip="매일 생성된 narrative snapshot을 누적해 최근 흐름을 요약합니다. 단일 조회보다 추세 해석에 가깝습니다.">?</span></h2>
           </div>
         </div>
         <div id="narrative-trend-content"></div>
+      </article>
+    </section>
+
+    <section class="content-desk-zone">
+      <article class="panel content-idea-card">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">CONTENT DESK</p>
+            <h2>KGLD Content Desk <span class="info-tip" tabindex="0" data-tooltip="온체인 신호와 관련 뉴스/공개자료를 함께 참고해 KGLD 콘텐츠 문안을 제안합니다.">?</span></h2>
+          </div>
+        </div>
+        <div id="content-idea-content"></div>
       </article>
     </section>
 

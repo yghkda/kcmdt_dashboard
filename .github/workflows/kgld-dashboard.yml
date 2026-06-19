@@ -36,6 +36,9 @@ jobs:
       - name: Update dashboard data
         run: npm run update-dashboard
 
+      - name: Update news context
+        run: npm run news:update
+
       - name: Update narrative cache
         run: npm run narrative:update
 
@@ -72,7 +75,7 @@ jobs:
         run: |
           git config user.name "codex-automation"
           git config user.email "codex-automation@users.noreply.github.com"
-          git add outputs/kgld-dashboard/dashboard-data.js data/narrative-cache.json outputs/kgld-dashboard/data/narrative-cache.json data/narrative-history.json outputs/kgld-dashboard/data/narrative-history.json
+          git add outputs/kgld-dashboard/dashboard-data.js data/narrative-cache.json outputs/kgld-dashboard/data/narrative-cache.json data/narrative-history.json outputs/kgld-dashboard/data/narrative-history.json data/news-context.json outputs/kgld-dashboard/data/news-context.json
           if git diff --cached --quiet; then
             echo "No dashboard data changes to commit."
           else

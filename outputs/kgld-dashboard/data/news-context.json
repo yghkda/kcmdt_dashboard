@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-06-19 10:41:59 KST",
+  "source": "manual",
+  "items": [
+    {
+      "title": "ITCEN Global, Korea Gold Exchange, and Korea Gold Exchange Digital Asset gold RWA business watch item",
+      "publisher": "Manual watchlist",
+      "publishedAt": "unknown",
+      "url": "TODO: original article URL needed",
+      "summary": "Publicly discussed KGLD messaging can be framed around ITCEN Global, Korea Gold Exchange, and Korea Gold Exchange Digital Asset pursuing a gold-based Web3/RWA direction. Treat this as a conservative content seed until the original article URL is confirmed.",
+      "tags": [
+        "ITCEN",
+        "KGLD",
+        "RWA",
+        "Gold"
+      ],
+      "relevance": "high",
+      "usableForContent": true,
+      "caution": "Do not state issuance completion, exchange listing, active trading, or finalized commercial launch unless the source explicitly confirms it."
+    },
+    {
+      "title": "KGLD planned issuance / commercialization timing watch item",
+      "publisher": "Manual watchlist",
+      "publishedAt": "unknown",
+      "url": "TODO: original article URL needed",
+      "summary": "KGLD can be described as a real-gold-based RWA project under preparation when using conservative wording such as 'according to reports' or 'planned'.",
+      "tags": [
+        "KGLD",
+        "RWA",
+        "Gold"
+      ],
+      "relevance": "high",
+      "usableForContent": true,
+      "caution": "Use 'plan', 'reported plan', or 'preparation' language. Do not imply completed issuance, live redemption, or exchange availability."
+    },
+    {
+      "title": "LayerZero / KorDA / KGLD multichain expansion watch item",
+      "publisher": "Manual watchlist",
+      "publishedAt": "unknown",
+      "url": "TODO: original article or official blog URL needed",
+      "summary": "LayerZero-related messaging may support a multichain direction for tokenized assets, but KGLD claims should stay within the range of confirmed public materials.",
+      "tags": [
+        "LayerZero",
+        "KorDA",
+        "KGLD",
+        "RWA"
+      ],
+      "relevance": "medium",
+      "usableForContent": true,
+      "caution": "Do not imply KGLD is already active on every chain or that integrations are fully launched without a confirmed source."
+    },
+    {
+      "title": "Gold Standard Wallet / gold-backed financial service concept watch item",
+      "publisher": "Manual watchlist",
+      "publishedAt": "unknown",
+      "url": "TODO: original article URL needed",
+      "summary": "KGLD messaging can connect gold-backed tokens with broader gold-based financial service concepts, while avoiding claims about finalized yield, loan, or banking terms.",
+      "tags": [
+        "Gold",
+        "KGLD",
+        "Wallet",
+        "RWA"
+      ],
+      "relevance": "medium",
+      "usableForContent": true,
+      "caution": "Do not describe interest, yield, lending, or guaranteed benefits as finalized service terms unless official documents confirm them."
+    }
+  ],
+  "newsNarrative": {
+    "headline": "KGLD는 실물 금 기반 RWA 사업 구상과 온체인 운영 데이터를 함께 설명할 수 있는 콘텐츠 구간입니다.",
+    "keyMessage": "공개 자료와 보도 기반 메시지는 '추진', '준비', '검증 가능성' 중심으로 보수적으로 정리하는 것이 적절합니다.",
+    "kgldAngle": "뉴스 맥락은 KGLD의 사업 방향성을 설명하고, 온체인 데이터는 현재 운영 상태를 보조하는 근거로만 사용합니다.",
+    "doNotOverclaim": [
+      "상장 완료 또는 거래 가능 표현",
+      "발행 완료 또는 상용화 완료 표현",
+      "확정 수익, 이자, 가격 상승 암시",
+      "모든 체인에서 활성화됐다는 표현",
+      "무조건 상환 보장 표현"
+    ]
+  }
+}

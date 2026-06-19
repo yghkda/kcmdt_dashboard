@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "update-dashboard": "node work/update-kgld-dashboard.mjs",
+    "news:update": "node work/update-news-context.mjs",
     "narrative:update": "node work/update-narrative.mjs",
     "stamp-assets": "node work/stamp-dashboard-assets.mjs",
-    "build": "npm run narrative:update && node work/verify-narrative-cache.mjs && node --check work/update-narrative.mjs && node --check work/verify-narrative-cache.mjs && node --check outputs/kgld-dashboard/app.js",
+    "build": "npm run news:update && npm run narrative:update && node work/verify-narrative-cache.mjs && node --check work/update-news-context.mjs && node --check work/update-narrative.mjs && node --check work/verify-narrative-cache.mjs && node --check outputs/kgld-dashboard/app.js",
     "render-dashboard": "node work/render-dashboard.js outputs/kgld-dashboard/index.html outputs/kgld-dashboard/kgld-daily-dashboard.png",
     "send-telegram": "node work/send-telegram.js"
   },

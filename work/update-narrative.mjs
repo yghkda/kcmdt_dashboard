@@ -5,6 +5,7 @@ const ROOT_CACHE_PATH = path.resolve("data/narrative-cache.json");
 const DASHBOARD_CACHE_PATH = path.resolve("outputs/kgld-dashboard/data/narrative-cache.json");
 const ROOT_HISTORY_PATH = path.resolve("data/narrative-history.json");
 const DASHBOARD_HISTORY_PATH = path.resolve("outputs/kgld-dashboard/data/narrative-history.json");
+const ROOT_NEWS_PATH = path.resolve("data/news-context.json");
 const TOKEN_ADDRESS = "0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE";
 const TOKENIZED_GOLD_TOKENS = {
   KGLD: TOKEN_ADDRESS,
@@ -683,47 +684,94 @@ function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar,
   };
 }
 
-function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorPulse, narrativeTrend }) {
+function fallbackNewsContext() {
+  return {
+    generatedAt: "unknown",
+    source: "fallback",
+    items: [],
+    newsNarrative: {
+      headline: "뉴스 컨텍스트가 아직 준비되지 않았습니다.",
+      keyMessage: "온체인 데이터만 기준으로 콘텐츠를 제안합니다.",
+      kgldAngle: "뉴스 자료가 추가되면 사업 맥락과 온체인 상태를 함께 표시합니다.",
+      doNotOverclaim: [
+        "미확인 상장/거래소명 언급",
+        "거래량 우위 또는 시장 선도 표현",
+        "수익률 또는 가격 상승 암시",
+        "무조건 상환 보장 표현"
+      ]
+    }
+  };
+}
+
+function usableNewsItems(newsContext) {
+  return (newsContext?.items || [])
+    .filter((item) => item && item.usableForContent !== false)
+    .slice(0, 3);
+}
+
+async function readNewsContext() {
+  return readJsonFile(ROOT_NEWS_PATH, fallbackNewsContext());
+}
+
+function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorPulse, narrativeTrend, newsContext, narrativeSource }) {
   const goldMood = tokenizedGoldRadar?.marketMood || "unknown";
   const sectorMood = rwaSectorPulse?.sectorMood || "unknown";
   const trendMood = narrativeTrend?.trendMood || "unknown";
+  const relatedItems = usableNewsItems(newsContext);
+  const hasNews = relatedItems.length > 0;
+  const hasHighRelevanceNews = relatedItems.some((item) => item.relevance === "high");
+  const hasAlchemy = narrativeSource === "alchemy";
   const hasGoldSamples = ["observed", "sample_full", "notable", "active", "volatile"].includes(goldMood);
   const quietKgld = activity?.state === "quiet";
-  const contentAngle = quietKgld ? "Gold as a quiet onchain asset" : "RWA transparency over hype";
-  const oneLineInsight = quietKgld
-    ? "KGLD가 조용할수록 메시지는 속도보다 실물 기반 신뢰와 검증 가능성에 집중하는 편이 적합합니다."
-    : "온체인 흐름이 관찰될 때도 KGLD 메시지는 과장보다 검증 가능한 운영 구조에 두는 편이 적합합니다.";
-  const whyNowParts = [
-    `KGLD activity는 ${activity?.state || "unknown"}로 관찰됩니다.`,
-    `gas 상태는 ${gasWeather || "unknown"}입니다.`,
-    hasGoldSamples
-      ? "PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로 참고할 수 있습니다."
-      : `tokenized gold signal은 ${goldMood}입니다.`,
-    `RWA sector signal은 ${sectorMood}, 7-day trend는 ${trendMood}입니다.`
-  ];
+  const contentMode = hasHighRelevanceNews && hasAlchemy ? "news_plus_onchain" : hasNews ? "news_only" : hasAlchemy ? "onchain_only" : "fallback";
+  const primaryAngle = hasNews ? "Gold RWA preparation with onchain verification" : quietKgld ? "Gold as a quiet onchain asset" : "RWA transparency over hype";
+  const newsNarrative = newsContext?.newsNarrative || fallbackNewsContext().newsNarrative;
+  const onchainHeadline = quietKgld
+    ? "KGLD 온체인 활동은 조용하며, 운영 상태를 보수적으로 관찰하는 구간입니다."
+    : `KGLD 온체인 상태는 ${activity?.state || "unknown"}로 관찰됩니다.`;
+  const onchainKeyMessage = `Gas는 ${gasWeather || "unknown"}, tokenized gold signal은 ${goldMood}, RWA sector signal은 ${sectorMood}, 7-day trend는 ${trendMood}입니다.`;
+  const oneLineInsight = hasNews ? newsNarrative.keyMessage : onchainHeadline;
 
   return {
     title: "KGLD Content Desk",
-    contentAngle,
+    contentMode,
+    primaryAngle,
+    contentAngle: primaryAngle,
     oneLineInsight,
-    xPostEnglish: quietKgld
-      ? "Not every onchain asset needs to move fast. Some are built to make real-world value easier to verify."
-      : "For RWAs, the strongest signal is not noise. It is a structure people can verify.",
-    xPostKorean: quietKgld
-      ? "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. KGLD는 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 쪽이 더 적합합니다."
-      : "RWA에서 중요한 것은 과장된 활동이 아니라 검증 가능한 구조입니다. KGLD는 운영 투명성과 상환 가능성을 중심으로 설명하는 편이 적합합니다.",
-    internalNote: hasGoldSamples
-      ? "PAXG/XAUT 전송 샘플은 카테고리 관찰 신호로만 활용하세요. KGLD의 상장, 거래량 우위, 파트너십을 암시하지 않습니다."
-      : "외부 금 토큰 샘플이 제한적이므로 KGLD 자체의 준비자산, 상환 UX, 운영 투명성 메시지를 우선 검토하세요.",
-    landingCopy: "KGLD is designed to bring real-world value onchain with a focus on reserve visibility, redemption context, and operational transparency.",
-    whyNow: whyNowParts.join(" "),
+    newsContext: {
+      headline: newsNarrative.headline || "뉴스 컨텍스트가 제한적입니다.",
+      keyMessage: newsNarrative.keyMessage || "뉴스 기반 메시지는 보수적으로만 사용합니다.",
+      relatedItems
+    },
+    onchainContext: {
+      headline: onchainHeadline,
+      keyMessage: onchainKeyMessage
+    },
+    xPostEnglish: hasNews
+      ? "KGLD sits at the intersection of real gold, RWA infrastructure, and onchain verification. The right message is not hype. It is transparency people can inspect."
+      : "Not every onchain asset needs to move fast. Some are built to make real-world value easier to verify.",
+    xPostKorean: hasNews
+      ? "KGLD는 실물 금, RWA 인프라, 온체인 검증 가능성이 만나는 지점에 있습니다. 지금 필요한 메시지는 과장이 아니라 확인 가능한 투명성입니다."
+      : "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. KGLD는 실물 기반 신뢰와 운영 투명성을 차분히 설명하는 쪽이 더 적합합니다.",
+    internalNote: hasNews
+      ? "뉴스 소재는 '보도에 따르면', '공개 자료 기준', '추진/준비' 표현으로만 사용하세요. 온체인 데이터는 현재 운영 상태를 보조하는 근거로만 붙입니다."
+      : "뉴스 컨텍스트가 없으므로 온체인 상태만 기준으로 콘텐츠를 작성하세요. 외부 파트너, 상장, 서비스 출시를 암시하지 마세요.",
+    landingCopy: "KGLD is positioned as a gold-based RWA concept focused on reserve visibility, redemption context, and onchain operational transparency.",
+    whyNow: [
+      hasNews ? "수동 뉴스 watchlist에 KGLD/ITCEN/KorDA/LayerZero 관련 콘텐츠 소재가 등록되어 있습니다." : "뉴스 컨텍스트가 아직 제한적입니다.",
+      `KGLD activity는 ${activity?.state || "unknown"}로 관찰됩니다.`,
+      hasGoldSamples ? "PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고할 수 있습니다." : `tokenized gold signal은 ${goldMood}입니다.`,
+      `Gas 상태는 ${gasWeather || "unknown"}입니다.`
+    ].join(" "),
     complianceCaution: [
-      "상환 가능성은 정책과 조건 범위 안에서만 표현하세요.",
-      "PAXG/XAUT 관찰 신호를 KGLD 수요 또는 가격 흐름으로 해석하지 마세요.",
-      "준비자산과 운영 설명은 확인 가능한 자료와 일치해야 합니다."
+      ...(newsNarrative.doNotOverclaim || []),
+      ...relatedItems.map((item) => item.caution).filter(Boolean),
+      "뉴스에 나온 내용도 계획/추진/보도 기준으로만 표현하세요.",
+      "온체인 활동이 조용하다는 사실을 수요 부족이나 실패로 해석하지 마세요."
     ],
     doNotSay: [
-      "미확인 상장/거래소명 언급",
+      "상장 완료 또는 특정 거래소 거래 가능 표현",
+      "발행 완료, 상용화 완료, 모든 체인 활성화 표현",
       "거래량 우위 또는 시장 선도 표현",
       "수익률 또는 가격 상승 암시",
       "무조건 상환 보장 표현"
@@ -1153,13 +1201,16 @@ async function main() {
     narrative = fallbackNarrative("시장 내러티브 데이터 수집 대기 중", diagnostics);
   }
   const history = await updateNarrativeHistory(narrative);
+  const newsContext = await readNewsContext();
   narrative.narrativeTrend = buildNarrativeTrendStrict(history);
   narrative.contentIdea = buildContentDesk({
     activity: { state: narrative.observed?.kgldActivity || "unknown" },
     gasWeather: narrative.marketWeather?.gasWeather || "unknown",
     tokenizedGoldRadar: narrative.tokenizedGoldRadar,
     rwaSectorPulse: narrative.rwaSectorPulse,
-    narrativeTrend: narrative.narrativeTrend
+    narrativeTrend: narrative.narrativeTrend,
+    newsContext,
+    narrativeSource: narrative.source
   });
   narrative.todayActionBrief = buildTodayActionBrief(narrative);
   await writeNarrativeCache(narrative);

@@ -16,7 +16,7 @@ const splitStatusMessage = (message) => {
   if (!marker) {
     return {
       observed: normalized || "최근 온체인 데이터를 기준으로 상태를 집계했습니다.",
-      inference: "추가 이상 징후는 위험 모니터와 권장 조치에서 확인하세요."
+      inference: "추가 이상 징후는 위험 모니터와 Today's Action Brief에서 확인하세요."
     };
   }
 
@@ -66,8 +66,19 @@ const fallbackNarrative = {
   },
   contentIdea: {
     title: "KGLD Content Desk",
+    contentMode: "fallback",
+    primaryAngle: "insufficient_data",
     contentAngle: "insufficient_data",
     oneLineInsight: "데이터가 부족하면 추정하지 않고 unknown 상태로 유지합니다.",
+    newsContext: {
+      headline: "뉴스 컨텍스트가 아직 준비되지 않았습니다.",
+      keyMessage: "온체인 데이터만 기준으로 콘텐츠를 제안합니다.",
+      relatedItems: []
+    },
+    onchainContext: {
+      headline: "온체인 컨텍스트가 아직 준비되지 않았습니다.",
+      keyMessage: "narrative cache 갱신 후 표시됩니다."
+    },
     xPostEnglish: "Narrative data is not available yet.",
     xPostKorean: "내러티브 데이터가 아직 준비되지 않았습니다.",
     internalNote: "narrative cache가 준비된 뒤 내부 검토용 콘텐츠 메모가 표시됩니다.",
@@ -227,8 +238,8 @@ document.getElementById("kpi-grid").innerHTML = kpiDisplay.map((kpi, index) => `
 `).join("");
 
 const balanceConfig = [
-  ["Issue Contract · 발행 자산 보관", data.balances.issue, "var(--gold)"],
-  ["Redeem Contract", data.balances.redeem, "var(--mint)"],
+  [`Issue Contract · 발행 자산 보관 ${tip("Issue")}`, data.balances.issue, "var(--gold)"],
+  [`Redeem Contract ${tip("Redeem")}`, data.balances.redeem, "var(--mint)"],
   ["기타 유통", data.balances.circulating, "#345048"]
 ];
 
@@ -293,12 +304,15 @@ document.getElementById("risk-list").innerHTML = data.risks.map((risk) => `
   </div>
 `).join("");
 
-document.getElementById("action-list").innerHTML = data.actions.map((action) => `
-  <div class="action-row">
-    <span class="priority">${action.priority}</span>
-    <span class="action-text">${action.text}</span>
-  </div>
-`).join("");
+const actionList = document.getElementById("action-list");
+if (actionList) {
+  actionList.innerHTML = data.actions.map((action) => `
+    <div class="action-row">
+      <span class="priority">${action.priority}</span>
+      <span class="action-text">${action.text}</span>
+    </div>
+  `).join("");
+}
 
 const weatherLabel = {
   sunny: "맑음",
@@ -328,6 +342,37 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => 
   "'": "&#39;"
 }[char]));
 
+const tooltipCopy = {
+  Issue: "발행된 KGLD 중 아직 사용자에게 배포되지 않고 Issue 컨트랙트에 보관 중인 물량입니다.",
+  Redeem: "상환 절차와 관련해 Redeem 컨트랙트에 남아 있는 KGLD 잔액입니다. 실제 실물금 인도 완료 여부와는 별도입니다.",
+  SupplyCustody: "KGLD 총공급량이 운영 컨트랙트, 보관 지갑, 외부 지갑에 어떻게 분포되어 있는지 보여줍니다.",
+  MarketWeather: "KGLD 자체 활동뿐 아니라 gas, 금 토큰, stablecoin, RWA 신호를 종합해 오늘의 시장 맥락을 요약합니다.",
+  TokenizedGoldRadar: "PAXG, XAUT 등 금 기반 토큰의 최근 전송 샘플을 참고해 금 토큰 카테고리 분위기를 관찰합니다.",
+  RwaSectorPulse: "금 토큰, stablecoin, gas, RWA 프로토콜 신호를 종합해 RWA 시장 맥락을 보수적으로 해석합니다.",
+  NarrativeTrend: "매일 생성된 narrative snapshot을 누적해 최근 흐름을 요약합니다. 단일 조회보다 추세 해석에 가깝습니다.",
+  TodayActionBrief: "여러 시장/온체인 카드를 종합해 오늘의 운영, 마케팅, 리스크 액션을 요약합니다.",
+  ContentDesk: "온체인 신호와 관련 뉴스/공개자료를 함께 참고해 KGLD 콘텐츠 문안을 제안합니다.",
+  observed: "조회 범위 안에서 전송 샘플이 확인됐다는 뜻입니다. 시장이 활발하다는 의미는 아닙니다.",
+  sample_full: "최대 조회 개수까지 샘플이 채워졌다는 뜻입니다. 활동 증가를 의미하려면 과거 데이터와 비교가 필요합니다.",
+  quiet: "조회는 성공했지만 의미 있는 전송 또는 대형 이동이 제한적이라는 뜻입니다.",
+  active: "기준 대비 활동 증가나 명확한 근거가 있을 때만 사용하는 상태입니다.",
+  volatile: "대형 이동 또는 급격한 변동 후보가 관찰된 상태입니다. 원인 단정은 금지합니다.",
+  limited_data: "아직 충분한 외부 데이터가 연결되지 않아 섹터 전체 판단은 보류한다는 의미입니다.",
+  unknown: "데이터가 없거나 조회가 실패해 판단을 보류한 상태입니다.",
+  confidence: "현재 카드 판단의 신뢰도입니다. 데이터 소스 수, 조회 성공 여부, 히스토리 축적 정도에 따라 달라집니다.",
+  largeTransferDetected: "설정한 기준 이상의 대형 이동 후보가 관찰됐는지 표시합니다. 의도나 방향은 단정하지 않습니다.",
+  gasWeather: "Ethereum mainnet gas 비용 상태를 낮음, 보통, 높음으로 요약합니다.",
+  stablecoinWeather: "USDC/USDT 전송 샘플을 stablecoin liquidity proxy로 관찰한 상태입니다.",
+  goldTokenWeather: "KGLD/PAXG/XAUT 전송 샘플을 금 기반 토큰 카테고리 신호로 요약한 상태입니다.",
+  contentMode: "Content Desk가 뉴스와 온체인 중 어떤 근거를 사용했는지 표시합니다.",
+  NewsContext: "ITCEN, KorDA, KGLD 관련 기사나 공개자료에서 콘텐츠에 활용 가능한 맥락을 요약합니다.",
+  OnchainContext: "Alchemy 기반 온체인 데이터에서 콘텐츠에 참고할 만한 현재 상태를 요약합니다."
+};
+
+const tip = (key) => tooltipCopy[key]
+  ? `<span class="info-tip" tabindex="0" data-tooltip="${escapeHtml(tooltipCopy[key])}">?</span>`
+  : "";
+
 const pendingNarrativeCopy = {
   label: "Narrative pending",
   headline: "시장 내러티브 데이터 수집 대기 중",
@@ -354,6 +399,8 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       <code>url: ${escapeHtml(loadMeta.url || "unknown")}</code>
       <code>source: ${escapeHtml(narrative.source || "unknown")}</code>
       <code>generatedAt: ${escapeHtml(cacheTime)}</code>
+      <code>newsSource: ${escapeHtml(loadMeta.newsSource || "unknown")}</code>
+      <code>newsItems: ${escapeHtml(String(loadMeta.newsItems ?? "unknown"))}</code>
       <code>usedFallback: ${escapeHtml(String(diagnostics?.usedFallback ?? "unknown"))}</code>
       ${diagnosticsErrors.length ? `<code>errors: ${diagnosticsErrors.map(escapeHtml).join(" / ")}</code>` : ""}
     </details>
@@ -398,17 +445,13 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   `;
   document.getElementById("market-weather-content").innerHTML = `
     <div class="weather-badges">
-      <span class="weather-badge ${market.stablecoinWeather}">Stablecoin · ${weatherLabel[market.stablecoinWeather] || market.stablecoinWeather}</span>
-      <span class="weather-badge ${market.goldTokenWeather}">Gold Token · ${weatherLabel[market.goldTokenWeather] || market.goldTokenWeather}</span>
+      <span class="weather-badge ${market.stablecoinWeather}">Stablecoin · ${weatherLabel[market.stablecoinWeather] || market.stablecoinWeather} ${tip("stablecoinWeather")}</span>
+      <span class="weather-badge ${market.goldTokenWeather}">Gold Token · ${weatherLabel[market.goldTokenWeather] || market.goldTokenWeather} ${tip("goldTokenWeather")}</span>
       <span class="weather-badge ${market.rwaWeather}">RWA · ${weatherLabel[market.rwaWeather] || market.rwaWeather}</span>
-      <span class="weather-badge ${market.gasWeather}">Gas · ${weatherLabel[market.gasWeather] || market.gasWeather}</span>
+      <span class="weather-badge ${market.gasWeather}">Gas · ${weatherLabel[market.gasWeather] || market.gasWeather} ${tip("gasWeather")}</span>
     </div>
     <p class="weather-positioning">${market.todayPositioning}</p>
-    <div class="briefing-note">
-      <span>왜 중요한가</span>
-      <strong>${market.contentAngle}</strong>
-      <em>source: ${narrative.source || "fallback"} · confidence: ${market.confidence}</em>
-    </div>
+    <div class="market-meta-line">source: ${narrative.source || "fallback"} · confidence: ${market.confidence} ${tip("confidence")}</div>
   `;
 
   const marketPanel = document.getElementById("market-weather-content");
@@ -421,12 +464,12 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   ].forEach(([label, value], index) => {
     if (weatherBadges[index]) {
       weatherBadges[index].className = `weather-badge ${value}`;
-      weatherBadges[index].textContent = `${label} · ${weatherLabel[value] || value}`;
+      const key = label === "Stablecoin" ? "stablecoinWeather" : label === "Gold Token" ? "goldTokenWeather" : label === "Gas" ? "gasWeather" : value;
+      weatherBadges[index].innerHTML = `${label} · ${weatherLabel[value] || value} ${tip(key)}`;
     }
   });
   marketPanel.querySelector(".weather-positioning").textContent = displayedMarket.todayPositioning;
-  marketPanel.querySelector(".briefing-note strong").textContent = displayedMarket.contentAngle;
-  marketPanel.querySelector(".briefing-note em").textContent = `source: ${narrative.source || "fallback"} · confidence: ${displayedMarket.confidence}`;
+  marketPanel.querySelector(".market-meta-line").innerHTML = `source: ${narrative.source || "fallback"} · confidence: ${displayedMarket.confidence} ${tip("confidence")}`;
   marketPanel.insertAdjacentHTML("beforeend", diagnosticsDetails);
 
   if (isPending) {
@@ -439,8 +482,7 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       </div>
     `);
     marketContainer.querySelector(".weather-positioning").textContent = pendingNarrativeCopy.headline;
-    marketContainer.querySelector(".briefing-note strong").textContent = pendingNarrativeCopy.description;
-    marketContainer.querySelector(".briefing-note em").textContent = `source: ${narrative.source || "fallback"} · confidence: low`;
+    marketContainer.querySelector(".market-meta-line").innerHTML = `source: ${narrative.source || "fallback"} · confidence: low ${tip("confidence")}`;
   }
 
   document.getElementById("tokenized-gold-content").innerHTML = `
@@ -452,8 +494,8 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
         return `
           <div class="gold-token-row">
             <strong>${symbol}</strong>
-            <span>${token.transferCount} transfers · large ${token.largeTransferDetected ? "yes" : "no"}</span>
-            <em class="${token.activity}">${token.activity}</em>
+            <span>${token.transferCount} transfers · large ${token.largeTransferDetected ? "yes" : "no"} ${tip("largeTransferDetected")}</span>
+            <em class="${token.activity}">${token.activity} ${tip(token.activity)}</em>
           </div>
         `;
       }).join("")}
@@ -461,36 +503,55 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
     <div class="gold-observations">
       ${(radar.observations || []).slice(0, 3).map((item) => `<span>${item}</span>`).join("")}
     </div>
-    <div class="briefing-note">
-      <span>operator action</span>
-      <strong>${radar.operatorAction}</strong>
-      <em>mood: ${radar.marketMood} · confidence: ${radar.confidence}</em>
-    </div>
+    <div class="compact-meta">mood: ${radar.marketMood} ${tip(radar.marketMood)} · confidence: ${radar.confidence} ${tip("confidence")}</div>
   `;
 
   document.getElementById("rwa-sector-content").innerHTML = `
-    <div class="sector-mood ${rwa.sectorMood}">${rwa.sectorMood}</div>
+    <div class="sector-mood ${rwa.sectorMood}">${rwa.sectorMood} ${tip(rwa.sectorMood)}</div>
     <p class="rwa-headline">${rwa.headline}</p>
-    <p class="rwa-positioning">${rwa.kgldPositioning}</p>
     <div class="rwa-signal-grid">
-      <div><span>Tokenized Gold</span><strong>${rwa.signals?.tokenizedGold?.status || "unknown"}</strong></div>
-      <div><span>Stablecoins</span><strong>${rwa.signals?.stablecoins?.status || "unknown"}</strong></div>
-      <div><span>Gas</span><strong>${rwa.signals?.gas?.status || "unknown"}</strong></div>
-      <div><span>RWA Protocols</span><strong>${rwa.signals?.rwaProtocols?.status || "unknown"}</strong></div>
+      <div><span>Tokenized Gold</span><strong>${rwa.signals?.tokenizedGold?.status || "unknown"} ${tip(rwa.signals?.tokenizedGold?.status || "unknown")}</strong></div>
+      <div><span>Stablecoins ${tip("stablecoinWeather")}</span><strong>${rwa.signals?.stablecoins?.status || "unknown"} ${tip(rwa.signals?.stablecoins?.status || "unknown")}</strong></div>
+      <div><span>Gas ${tip("gasWeather")}</span><strong>${rwa.signals?.gas?.status || "unknown"} ${tip(rwa.signals?.gas?.status || "unknown")}</strong></div>
+      <div><span>RWA Protocols</span><strong>${rwa.signals?.rwaProtocols?.status || "unknown"} ${tip(rwa.signals?.rwaProtocols?.status || "unknown")}</strong></div>
     </div>
     <div class="rwa-evidence">
       ${(rwa.evidence || []).slice(0, 3).map((item) => `<span>${item}</span>`).join("")}
     </div>
-    <div class="briefing-note">
-      <span>content idea</span>
-      <strong>${rwa.contentIdea}</strong>
-      <em>confidence: ${rwa.confidence}</em>
-    </div>
+    <div class="compact-meta">confidence: ${rwa.confidence} ${tip("confidence")}</div>
   `;
 
+  const relatedNewsItems = (idea.newsContext?.relatedItems || []).slice(0, 3);
   document.getElementById("content-idea-content").innerHTML = `
-    <div class="content-angle">${idea.contentAngle}</div>
+    <div class="content-desk-topline">
+      <span class="content-mode-badge">${idea.contentMode || "onchain_only"} ${tip("contentMode")}</span>
+      <strong>${idea.primaryAngle || idea.contentAngle}</strong>
+    </div>
     <p class="one-line-insight">${idea.oneLineInsight}</p>
+    <div class="context-brief-grid">
+      <div class="context-brief">
+        <span>News Context ${tip("NewsContext")}</span>
+        <strong>${idea.newsContext?.headline || "뉴스 컨텍스트가 제한적입니다."}</strong>
+        <p>${idea.newsContext?.keyMessage || "뉴스 기반 메시지는 보수적으로만 사용합니다."}</p>
+      </div>
+      <div class="context-brief">
+        <span>Onchain Context ${tip("OnchainContext")}</span>
+        <strong>${idea.onchainContext?.headline || "온체인 컨텍스트가 제한적입니다."}</strong>
+        <p>${idea.onchainContext?.keyMessage || "narrative cache 갱신 후 표시됩니다."}</p>
+      </div>
+    </div>
+    ${relatedNewsItems.length ? `
+      <div class="related-news-list">
+        <span>Related Items</span>
+        ${relatedNewsItems.map((item) => `
+          ${String(item.url || "").startsWith("TODO:") ? `<div class="related-news-pending">` : `<a href="${escapeHtml(item.url || "#")}" target="_blank" rel="noreferrer">`}
+            <strong>${escapeHtml(item.title || "Untitled")}</strong>
+            <em>${escapeHtml(item.publisher || "unknown")} · ${escapeHtml(item.publishedAt || "unknown")} · ${escapeHtml(item.relevance || "low")}</em>
+            ${String(item.url || "").startsWith("TODO:") ? `<small>${escapeHtml(item.url)}</small>` : ""}
+          ${String(item.url || "").startsWith("TODO:") ? `</div>` : `</a>`}
+        `).join("")}
+      </div>
+    ` : ""}
     <div class="content-desk-grid">
       <div class="content-desk-section">
         <div class="content-desk-head">
@@ -519,11 +580,11 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       <span>why now</span>
       <strong>${idea.whyNow}</strong>
     </div>
-    <div class="do-not-say">
-      <span>Caution / Do not say</span>
+    <details class="do-not-say">
+      <summary>Caution / Do not say</summary>
       ${(idea.complianceCaution || []).map((item) => `<em>${item}</em>`).join("")}
       ${(idea.doNotSay || []).map((item) => `<em>${item}</em>`).join("")}
-    </div>
+    </details>
   `;
 
   document.getElementById("narrative-trend-content").innerHTML = `
@@ -549,22 +610,39 @@ const narrativeCacheUrl = () => {
   return url.toString();
 };
 
+const newsContextUrl = () => {
+  const url = new URL("data/news-context.json", appBaseUrl);
+  url.searchParams.set("v", Date.now().toString());
+  return url.toString();
+};
+
 const loadNarrativeCache = async () => {
   const url = narrativeCacheUrl();
+  const newsUrl = newsContextUrl();
   try {
     console.log("Loaded narrative cache URL:", url);
+    console.log("Loaded news context URL:", newsUrl);
     const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`cache HTTP ${response.status}`);
     }
     const narrative = await response.json();
+    const newsContext = await fetch(newsUrl, { cache: "no-store" })
+      .then((newsResponse) => newsResponse.ok ? newsResponse.json() : null)
+      .catch(() => null);
     console.log("loaded source:", narrative.source || "unknown");
     console.log("loaded generatedAt:", narrative.generatedAt || "unknown");
+    console.log("loaded news source:", newsContext?.source || "unknown");
     console.log("usedFallback:", narrative.diagnostics?.usedFallback);
-    renderNarrativeCards(narrative, { url });
+    renderNarrativeCards(narrative, {
+      url,
+      newsUrl,
+      newsSource: newsContext?.source,
+      newsItems: newsContext?.items?.length
+    });
   } catch (error) {
     console.warn("Narrative cache load failed:", error);
-    renderNarrativeCards(fallbackNarrative, { url });
+    renderNarrativeCards(fallbackNarrative, { url, newsUrl });
   }
 };
 

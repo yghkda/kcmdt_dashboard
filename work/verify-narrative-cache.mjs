@@ -5,6 +5,8 @@ const rootCachePath = path.resolve("data/narrative-cache.json");
 const dashboardCachePath = path.resolve("outputs/kgld-dashboard/data/narrative-cache.json");
 const rootHistoryPath = path.resolve("data/narrative-history.json");
 const dashboardHistoryPath = path.resolve("outputs/kgld-dashboard/data/narrative-history.json");
+const rootNewsPath = path.resolve("data/news-context.json");
+const dashboardNewsPath = path.resolve("outputs/kgld-dashboard/data/news-context.json");
 
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
@@ -19,10 +21,17 @@ async function main() {
     if (error.code !== "ENOENT") throw error;
     await fs.writeFile(dashboardHistoryPath, `${JSON.stringify({ updatedAt: "unknown", snapshots: [] }, null, 2)}\n`, "utf8");
   }
+  try {
+    await fs.copyFile(rootNewsPath, dashboardNewsPath);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    await fs.writeFile(dashboardNewsPath, `${JSON.stringify({ generatedAt: "unknown", source: "fallback", items: [], newsNarrative: {} }, null, 2)}\n`, "utf8");
+  }
 
   const rootCache = await readJson(rootCachePath);
   const dashboardCache = await readJson(dashboardCachePath);
   const dashboardHistory = await readJson(dashboardHistoryPath);
+  const dashboardNews = await readJson(dashboardNewsPath);
   const filesMatch = JSON.stringify(rootCache) === JSON.stringify(dashboardCache);
 
   if (!filesMatch) {
@@ -35,6 +44,8 @@ async function main() {
   console.log(`[narrative-cache] usedFallback=${dashboardCache.diagnostics?.usedFallback ?? "unknown"}`);
   console.log(`[narrative-cache] trendMood=${dashboardCache.narrativeTrend?.trendMood || "unknown"}`);
   console.log(`[narrative-history] snapshots=${dashboardHistory.snapshots?.length || 0}`);
+  console.log(`[news-context] source=${dashboardNews.source || "unknown"}`);
+  console.log(`[news-context] items=${dashboardNews.items?.length || 0}`);
 }
 
 main().catch((error) => {
