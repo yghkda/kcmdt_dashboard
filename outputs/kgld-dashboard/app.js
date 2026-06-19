@@ -238,8 +238,8 @@ document.getElementById("kpi-grid").innerHTML = kpiDisplay.map((kpi, index) => `
 `).join("");
 
 const balanceConfig = [
-  [`Issue Contract · 발행 자산 보관 ${tip("Issue")}`, data.balances.issue, "var(--gold)"],
-  [`Redeem Contract ${tip("Redeem")}`, data.balances.redeem, "var(--mint)"],
+  ["Issue Contract · 발행 자산 보관", data.balances.issue, "var(--gold)"],
+  ["Redeem Contract", data.balances.redeem, "var(--mint)"],
   ["기타 유통", data.balances.circulating, "#345048"]
 ];
 

@@ -455,6 +455,16 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
 }
 
 .section-heading.compact { align-items: center; margin: 0 0 24px; }
+.section-heading > div { min-width: 0; }
+.section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.section-heading h2 .info-tip {
+  flex: 0 0 16px;
+  margin-left: 0;
+}
 .subtle-pill, .count-pill, .block-label { color: var(--muted); border-color: rgba(255,255,255,.08); background: rgba(255,255,255,.025); }
 
 .kpi-grid {
@@ -750,6 +760,16 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
+}
+
+.market-weather-card .section-heading.compact {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.market-weather-card .narrative-controls {
+  justify-content: flex-start;
 }
 
 .market-weather-card,

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-19 10:58:07 KST",
+  "updatedAt": "2026-06-19 12:47:38 KST",
   "snapshots": [
     {
       "generatedAt": "2026-06-18 23:22:39 KST",
@@ -35,44 +35,6 @@
       "summary": {
         "marketWeather": "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
         "tokenizedGoldMood": "sample_full",
-        "rwaSectorMood": "limited_data",
-        "contentAngle": "Gold as a quiet onchain asset"
-      }
-    },
-    {
-      "generatedAt": "2026-06-19 10:58:07 KST",
-      "source": "alchemy",
-      "signals": {
-        "KGLD": {
-          "activity": "quiet",
-          "transferCount": 0,
-          "largeTransferDetected": false
-        },
-        "PAXG": {
-          "activity": "notable",
-          "transferCount": 10,
-          "largeTransferDetected": true
-        },
-        "XAUT": {
-          "activity": "sample_full",
-          "transferCount": 10,
-          "largeTransferDetected": false
-        },
-        "USDC": {
-          "status": "sample_full",
-          "transferCount": 10
-        },
-        "USDT": {
-          "status": "sample_full",
-          "transferCount": 10
-        },
-        "gas": {
-          "status": "low"
-        }
-      },
-      "summary": {
-        "marketWeather": "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
-        "tokenizedGoldMood": "notable",
         "rwaSectorMood": "limited_data",
         "contentAngle": "Gold as a quiet onchain asset"
       }
