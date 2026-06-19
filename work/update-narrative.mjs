@@ -535,25 +535,36 @@ function buildTokenizedGoldRadarConservative(tokens) {
     .filter(([, token]) => token.activity === "notable" || token.activity === "volatile")
     .map(([name]) => name);
   const externalSampleNames = sampleNames.filter((name) => name !== "KGLD");
+  const sampleFullNames = Object.entries(tokens)
+    .filter(([, token]) => token.activity === "sample_full")
+    .map(([name]) => name);
   const kgldQuiet = tokens.KGLD?.activity === "quiet";
 
   let headline = "금 기반 토큰 전송 샘플이 제한적으로 관찰됩니다.";
   let kgldAngle = "KGLD는 거래 활성도 경쟁보다 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.";
   let operatorAction = "시장 활성도를 단정하지 말고, 금 기반 토큰 카테고리의 관찰 신호로만 참고하세요.";
+  let interpretation = "관찰된 전송 표본이 제한적이므로 금 토큰 카테고리의 공통 흐름을 해석하기에는 아직 이릅니다.";
   let confidence = marketMood === "unknown" ? "low" : "medium";
 
   if (kgldQuiet && externalSampleNames.length) {
     headline = "PAXG와 XAUT의 최근 전송 샘플이 확인되었고, KGLD는 조용한 상태입니다.";
     kgldAngle = "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.";
+    interpretation = "외부 금 토큰에서는 전송이 이어지지만 KGLD는 같은 관찰 구간에서 움직임이 없습니다. 금 토큰 카테고리의 온체인 이동과 KGLD 운영 흐름이 현재는 분리되어 있다는 신호로 볼 수 있습니다.";
   } else if (marketMood === "notable" || marketMood === "volatile") {
     headline = "일부 금 기반 토큰에서 대형 이동 기준에 해당하는 샘플이 확인됩니다.";
     kgldAngle = "KGLD는 대형 이동의 의도를 단정하지 않고, 실물 기반 신뢰와 상환 가능성 중심의 안정적인 메시지를 유지하는 편이 적합합니다.";
+    interpretation = "일반 전송 표본뿐 아니라 대형 이동 기준에 해당하는 이벤트가 포함됐습니다. 방향성보다 관련 TX와 주소 맥락을 우선 확인해야 하는 구간입니다.";
   } else if (marketMood === "unknown") {
     headline = "금 토큰 비교 데이터를 충분히 확인하지 못했습니다.";
     kgldAngle = "KGLD는 부족한 외부 데이터를 추정하지 않고 기본 신뢰 메시지를 유지합니다.";
     operatorAction = "PAXG/XAUT 조회 상태를 확인하고, 데이터가 충분해진 뒤 비교 내러티브를 사용하세요.";
   } else if (marketMood === "quiet") {
     headline = "금 기반 토큰 전송 샘플은 전반적으로 조용하게 관찰됩니다.";
+    interpretation = "KGLD, PAXG, XAUT 모두에서 의미 있는 전송 표본이 제한적이어서 카테고리 전반의 온체인 이동 강도는 낮게 관찰됩니다.";
+  }
+
+  if (sampleFullNames.length >= 2 && !kgldQuiet) {
+    interpretation = `${sampleFullNames.join(", ")}에서 최대 조회 개수까지 전송 표본이 채워졌습니다. 여러 금 토큰에서 온체인 이동이 이어진다는 뜻이지만, 과거 기준선이 없어 활동 증가나 수요 방향으로 해석할 수는 없습니다.`;
   }
 
   const observations = [
@@ -571,6 +582,7 @@ function buildTokenizedGoldRadarConservative(tokens) {
     headline,
     marketMood,
     kgldAngle,
+    interpretation,
     observations,
     operatorAction,
     confidence,
@@ -634,11 +646,40 @@ function buildRwaSectorPulseConservative({ tokenizedGoldRadar, stablecoinStates,
   };
 }
 
+function buildMarketSignalRead({ kgldActivity, goldTokenWeather, stablecoinWeather, gasWeather }) {
+  const goldSampled = ["observed", "sample_full", "notable"].includes(goldTokenWeather);
+  const stablecoinSampled = ["observed", "sample_full", "notable"].includes(stablecoinWeather);
+  const sampleFull = goldTokenWeather === "sample_full" || stablecoinWeather === "sample_full";
+
+  if (goldSampled && stablecoinSampled && gasWeather === "low") {
+    return `금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 ${kgldActivity}이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.`;
+  }
+  if (goldSampled && stablecoinSampled) {
+    return `금 토큰과 스테이블코인 양쪽에서 전송 표본이 확인됐습니다. 여러 자산군의 온체인 이동은 관찰되지만 ${sampleFull ? "조회 표본이 가득 찬 것" : "표본이 존재하는 것"}만으로 시장 방향이나 수요 증가를 판단할 수는 없습니다.`;
+  }
+  if (goldSampled) {
+    return `금 기반 토큰에서는 전송 표본이 확인되지만 stablecoin 신호는 ${stablecoinWeather}입니다. 현재는 금 토큰 카테고리 내부 움직임으로만 해석하는 편이 안전합니다.`;
+  }
+  if (stablecoinSampled) {
+    return `스테이블코인 전송 표본은 확인되지만 금 기반 토큰 신호는 ${goldTokenWeather}입니다. 유동성 이동이 KGLD나 금 토큰 수요로 연결됐다고 해석할 근거는 아직 없습니다.`;
+  }
+  if (kgldActivity === "quiet") {
+    return `KGLD는 조용하고 외부 금 토큰·스테이블코인 신호도 제한적입니다. 오늘의 시장 맥락은 방향성 판단보다 운영 상태 확인에 가깝습니다.`;
+  }
+  return `KGLD activity는 ${kgldActivity}, 금 토큰 신호는 ${goldTokenWeather}, stablecoin 신호는 ${stablecoinWeather}, gas는 ${gasWeather}로 관찰됩니다. 현재 표본만으로 시장 방향은 단정하지 않습니다.`;
+}
+
 function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar, rwaSectorPulse, diagnostics }) {
   const activity = classifyKgldActivity(transfers);
   const generatedAt = asKstString(new Date());
   const goldTokenWeather = tokenizedGoldRadar.marketMood || "unknown";
   const stablecoinWeather = rwaSectorPulse.signals?.stablecoins?.status || "unknown";
+  const signalRead = buildMarketSignalRead({
+    kgldActivity: activity.state,
+    goldTokenWeather,
+    stablecoinWeather,
+    gasWeather
+  });
   const confidence = gasWeather === "unknown" ? "low" : "medium";
   const contentAngle = "Gold as a quiet onchain asset";
   const oneLineInsight = "시장 샘플이 관찰되더라도 KGLD 메시지는 거래량보다 실물 기반 신뢰와 상환 가능성에 두는 편이 적합합니다.";
@@ -659,7 +700,8 @@ function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar,
       goldTokenWeather,
       rwaWeather: rwaSectorPulse.sectorMood || "limited_data",
       gasWeather,
-      todayPositioning: `관찰 범위에서 KGLD activity는 ${activity.state}, 금 토큰 신호는 ${goldTokenWeather}, stablecoin 신호는 ${stablecoinWeather}, Ethereum gas는 ${gasWeather}입니다.`,
+      todayPositioning: signalRead,
+      signalRead,
       contentAngle,
       confidence
     },

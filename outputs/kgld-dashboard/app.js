@@ -46,6 +46,7 @@ const fallbackNarrative = {
     rwaWeather: "unknown",
     gasWeather: "unknown",
     todayPositioning: "데이터를 불러오지 못했습니다.",
+    signalRead: "시장 신호 해석을 위한 데이터가 아직 준비되지 않았습니다.",
     contentAngle: "MCP 데이터 연결 후 업데이트가 필요합니다.",
     confidence: "low"
   },
@@ -95,6 +96,7 @@ const fallbackNarrative = {
     headline: "금 토큰 시장 데이터를 불러오지 못했습니다.",
     marketMood: "unknown",
     kgldAngle: "KGLD는 확인되지 않은 외부 시장 분위기를 추정하지 않고, 준비자산·상환 가능성·실물 기반 신뢰 메시지를 유지합니다.",
+    interpretation: "금 토큰 전송 표본을 불러온 뒤 카테고리 흐름과 KGLD의 상대적 상태를 해석합니다.",
     observations: ["KGLD/PAXG/XAUT 비교 데이터가 아직 준비되지 않았습니다."],
     operatorAction: "캐시 갱신 상태를 확인하세요.",
     confidence: "low",
@@ -451,7 +453,10 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       <span class="weather-badge ${market.rwaWeather}">RWA · ${weatherLabel[market.rwaWeather] || market.rwaWeather}</span>
       <span class="weather-badge ${market.gasWeather}">Gas · ${weatherLabel[market.gasWeather] || market.gasWeather} ${tip("gasWeather")}</span>
     </div>
-    <p class="weather-positioning">${market.todayPositioning}</p>
+    <div class="signal-read-block market-signal-read">
+      <span>Signal Read</span>
+      <strong>${market.signalRead || market.todayPositioning}</strong>
+    </div>
     <div class="market-meta-line">source: ${narrative.source || "fallback"} · confidence: ${market.confidence} ${tip("confidence")}</div>
   `;
 
@@ -469,7 +474,7 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       weatherBadges[index].innerHTML = `${label} · ${weatherLabel[value] || value} ${tip(key)}`;
     }
   });
-  marketPanel.querySelector(".weather-positioning").textContent = displayedMarket.todayPositioning;
+  marketPanel.querySelector(".market-signal-read strong").textContent = displayedMarket.signalRead || displayedMarket.todayPositioning;
   marketPanel.querySelector(".market-meta-line").innerHTML = `source: ${narrative.source || "fallback"} · confidence: ${displayedMarket.confidence} ${tip("confidence")}`;
   marketPanel.insertAdjacentHTML("beforeend", diagnosticsDetails);
 
@@ -482,13 +487,16 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
         <p>${pendingNarrativeCopy.description}</p>
       </div>
     `);
-    marketContainer.querySelector(".weather-positioning").textContent = pendingNarrativeCopy.headline;
+    marketContainer.querySelector(".market-signal-read strong").textContent = pendingNarrativeCopy.description;
     marketContainer.querySelector(".market-meta-line").innerHTML = `source: ${narrative.source || "fallback"} · confidence: low ${tip("confidence")}`;
   }
 
   document.getElementById("tokenized-gold-content").innerHTML = `
     <p class="gold-radar-headline">${radar.headline}</p>
-    <p class="gold-radar-angle">${radar.kgldAngle}</p>
+    <div class="signal-read-block">
+      <span>Signal Read</span>
+      <strong>${radar.interpretation || radar.kgldAngle}</strong>
+    </div>
     <div class="gold-token-rows">
       ${["KGLD", "PAXG", "XAUT"].map((symbol) => {
         const token = radar.tokens?.[symbol] || fallbackNarrative.tokenizedGoldRadar.tokens[symbol];

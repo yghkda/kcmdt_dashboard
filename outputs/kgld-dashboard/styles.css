@@ -972,6 +972,40 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   letter-spacing: -0.055em;
 }
 
+.signal-read-block {
+  margin-top: 16px;
+  border: 1px solid rgba(112, 214, 179, 0.12);
+  background:
+    linear-gradient(135deg, rgba(112, 214, 179, 0.055), rgba(218, 189, 98, 0.035)),
+    rgba(255,255,255,.012);
+  border-radius: 16px;
+  padding: 14px 15px;
+}
+
+.signal-read-block span {
+  display: block;
+  color: var(--mint);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.signal-read-block strong {
+  display: block;
+  margin-top: 7px;
+  color: #dce4e0;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.market-signal-read strong {
+  font-size: clamp(15px, 2vw, 19px);
+  line-height: 1.48;
+  letter-spacing: -0.025em;
+}
+
 .market-meta-line,
 .compact-meta {
   margin-top: 13px;
