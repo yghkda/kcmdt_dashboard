@@ -584,16 +584,19 @@ function buildRwaSectorPulseConservative({ tokenizedGoldRadar, stablecoinStates,
 
   let headline = "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.";
   let kgldPositioning = "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.";
+  let decisionGuide = "섹터 방향을 단정하지 말고, KGLD 자체의 준비자산 확인 가능성·상환 절차·운영 추적성만 판단 근거로 사용하세요.";
   let confidence = "low";
 
   if ((["observed", "sample_full", "notable"].includes(goldStatus)) &&
       (["observed", "sample_full", "notable"].includes(stablecoinStatus))) {
     headline = "금 기반 토큰과 스테이블코인 전송 샘플은 확인되었지만, RWA 섹터 전체 판단에는 추가 데이터가 필요합니다.";
     kgldPositioning = "KGLD는 섹터 과열 신호보다 준비자산·상환 UX·운영 투명성 중심 메시지가 적합합니다.";
+    decisionGuide = "현재 샘플은 시장 강약 판단에 쓰지 말고, KGLD의 준비자산·상환 절차·운영 투명성을 설명하는 보조 맥락으로만 활용하세요.";
     confidence = "medium";
   } else if (goldStatus === "notable" || stablecoinStatus === "notable") {
     headline = "일부 자산에서 대형 이동 기준에 해당하는 샘플이 확인되지만, RWA 섹터 전체 방향성은 단정하지 않습니다.";
     kgldPositioning = "KGLD는 특정 지갑 의도를 추정하기보다 준비자산·상환 가능성·운영 추적성을 강조하는 편이 적합합니다.";
+    decisionGuide = "대형 이동의 의도를 추정하지 말고 관련 TX·주소 맥락을 확인한 뒤, 확인 가능한 사실만 콘텐츠와 운영 판단에 반영하세요.";
     confidence = "medium";
   }
 
@@ -602,6 +605,7 @@ function buildRwaSectorPulseConservative({ tokenizedGoldRadar, stablecoinStates,
     sectorMood: "limited_data",
     headline,
     kgldPositioning,
+    decisionGuide,
     evidence: [
       `Tokenized gold: ${goldStatus} sample signal`,
       `Stablecoins: ${stablecoinStatus} sample signal (USDC ${stablecoinStates.USDC.transferCount}, USDT ${stablecoinStates.USDT.transferCount})`,
@@ -655,7 +659,7 @@ function buildNarrativeConservative({ gasWeather, transfers, tokenizedGoldRadar,
       goldTokenWeather,
       rwaWeather: rwaSectorPulse.sectorMood || "limited_data",
       gasWeather,
-      todayPositioning: "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
+      todayPositioning: `관찰 범위에서 KGLD activity는 ${activity.state}, 금 토큰 신호는 ${goldTokenWeather}, stablecoin 신호는 ${stablecoinWeather}, Ethereum gas는 ${gasWeather}입니다.`,
       contentAngle,
       confidence
     },
@@ -816,7 +820,7 @@ function buildTodayActionBrief(narrative) {
 
   if (kgldActivity === "quiet" && ["low", "normal"].includes(gasWeather) && !hasLargeTransfer) {
     status = "normal";
-    headline = "KGLD는 조용한 온체인 상태를 유지하고 있으며, 신뢰 메시지를 정리하기 좋은 구간입니다.";
+    headline = "오늘은 Issue/Redeem 잔액 대사를 우선 확인하고, 외부 메시지는 검증 가능한 준비자산·상환 절차에 한정하세요.";
     operationsAction = "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.";
     marketingAction = "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요.";
     riskAction = "대형 이동이나 관리자성 이벤트가 없으면 추가 조치는 필요하지 않습니다.";

@@ -118,6 +118,29 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   vertical-align: middle;
 }
 
+.info-tip.info-tip {
+  display: inline-grid;
+  flex: 0 0 16px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.context-brief > span,
+.related-news-list > span,
+.supply-card-head > span,
+.supply-breakdown > div > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.context-brief > span .info-tip,
+.related-news-list > span .info-tip,
+.supply-card-head > span .info-tip,
+.supply-breakdown > div > span .info-tip {
+  margin-left: 0;
+}
+
 .info-tip::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -1422,6 +1445,31 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   color: #cbd7d2;
   font-size: 12px;
   line-height: 1.55;
+}
+
+.rwa-decision-guide {
+  margin-top: 14px;
+  border-left: 2px solid var(--gold);
+  background: rgba(218, 189, 98, 0.045);
+  border-radius: 0 12px 12px 0;
+  padding: 11px 13px;
+}
+
+.rwa-decision-guide span {
+  display: block;
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.rwa-decision-guide strong {
+  display: block;
+  margin-top: 6px;
+  color: #d9e1dd;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .rwa-signal-grid {

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-19 13:00:31 KST",
+  "generatedAt": "2026-06-19 13:10:52 KST",
   "source": "manual",
   "items": [
     {
       "title": "ITCEN Global, Korea Gold Exchange, and Korea Gold Exchange Digital Asset gold RWA business watch item",
-      "publisher": "Manual watchlist",
-      "publishedAt": "unknown",
-      "url": "TODO: original article URL needed",
+      "publisher": "Naver News Search",
+      "publishedAt": "live search",
+      "url": "https://search.naver.com/search.naver?where=news&query=ITCEN%20KGLD",
       "summary": "Publicly discussed KGLD messaging can be framed around ITCEN Global, Korea Gold Exchange, and Korea Gold Exchange Digital Asset pursuing a gold-based Web3/RWA direction. Treat this as a conservative content seed until the original article URL is confirmed.",
       "tags": [
         "ITCEN",
@@ -20,9 +20,9 @@
     },
     {
       "title": "KGLD planned issuance / commercialization timing watch item",
-      "publisher": "Manual watchlist",
-      "publishedAt": "unknown",
-      "url": "TODO: original article URL needed",
+      "publisher": "Naver News Search",
+      "publishedAt": "live search",
+      "url": "https://search.naver.com/search.naver?where=news&query=KGLD%20발행%20계획",
       "summary": "KGLD can be described as a real-gold-based RWA project under preparation when using conservative wording such as 'according to reports' or 'planned'.",
       "tags": [
         "KGLD",
@@ -35,9 +35,9 @@
     },
     {
       "title": "LayerZero / KorDA / KGLD multichain expansion watch item",
-      "publisher": "Manual watchlist",
-      "publishedAt": "unknown",
-      "url": "TODO: original article or official blog URL needed",
+      "publisher": "Naver News Search",
+      "publishedAt": "live search",
+      "url": "https://search.naver.com/search.naver?where=news&query=LayerZero%20KorDA%20KGLD",
       "summary": "LayerZero-related messaging may support a multichain direction for tokenized assets, but KGLD claims should stay within the range of confirmed public materials.",
       "tags": [
         "LayerZero",
@@ -51,9 +51,9 @@
     },
     {
       "title": "Gold Standard Wallet / gold-backed financial service concept watch item",
-      "publisher": "Manual watchlist",
-      "publishedAt": "unknown",
-      "url": "TODO: original article URL needed",
+      "publisher": "Naver News Search",
+      "publishedAt": "live search",
+      "url": "https://search.naver.com/search.naver?where=news&query=Gold%20Standard%20Wallet%20KGLD",
       "summary": "KGLD messaging can connect gold-backed tokens with broader gold-based financial service concepts, while avoiding claims about finalized yield, loan, or banking terms.",
       "tags": [
         "Gold",

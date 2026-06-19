@@ -109,6 +109,7 @@ const fallbackNarrative = {
     sectorMood: "limited_data",
     headline: "RWA 섹터 판단을 위한 데이터가 아직 제한적입니다.",
     kgldPositioning: "현재는 KGLD의 준비자산, 상환 UX, 운영 투명성 중심 메시지가 적절합니다.",
+    decisionGuide: "섹터 방향을 단정하지 말고, KGLD 자체의 준비자산 확인 가능성·상환 절차·운영 추적성만 판단 근거로 사용하세요.",
     evidence: ["tokenized gold, stablecoin, gas 일부 신호만 우선 관찰합니다."],
     contentIdea: "RWA transparency over hype",
     confidence: "low",
@@ -509,6 +510,10 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   document.getElementById("rwa-sector-content").innerHTML = `
     <div class="sector-mood ${rwa.sectorMood}">${rwa.sectorMood} ${tip(rwa.sectorMood)}</div>
     <p class="rwa-headline">${rwa.headline}</p>
+    <div class="rwa-decision-guide">
+      <span>KGLD 활용 기준</span>
+      <strong>${rwa.decisionGuide || rwa.kgldPositioning}</strong>
+    </div>
     <div class="rwa-signal-grid">
       <div><span>Tokenized Gold</span><strong>${rwa.signals?.tokenizedGold?.status || "unknown"} ${tip(rwa.signals?.tokenizedGold?.status || "unknown")}</strong></div>
       <div><span>Stablecoins ${tip("stablecoinWeather")}</span><strong>${rwa.signals?.stablecoins?.status || "unknown"} ${tip(rwa.signals?.stablecoins?.status || "unknown")}</strong></div>
