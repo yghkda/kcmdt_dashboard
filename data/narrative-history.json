@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-19 14:23:42 KST",
+  "updatedAt": "2026-06-19 14:52:24 KST",
   "snapshots": [
     {
       "generatedAt": "2026-06-18 23:22:39 KST",
@@ -34,6 +34,44 @@
       },
       "summary": {
         "marketWeather": "오늘은 KGLD가 거래량보다 실물 기반 신뢰와 상환 가능성을 강조하기 좋은 구간입니다.",
+        "tokenizedGoldMood": "sample_full",
+        "rwaSectorMood": "limited_data",
+        "contentAngle": "Gold as a quiet onchain asset"
+      }
+    },
+    {
+      "generatedAt": "2026-06-19 14:52:24 KST",
+      "source": "alchemy",
+      "signals": {
+        "KGLD": {
+          "activity": "quiet",
+          "transferCount": 0,
+          "largeTransferDetected": false
+        },
+        "PAXG": {
+          "activity": "sample_full",
+          "transferCount": 10,
+          "largeTransferDetected": false
+        },
+        "XAUT": {
+          "activity": "sample_full",
+          "transferCount": 10,
+          "largeTransferDetected": false
+        },
+        "USDC": {
+          "status": "sample_full",
+          "transferCount": 10
+        },
+        "USDT": {
+          "status": "sample_full",
+          "transferCount": 10
+        },
+        "gas": {
+          "status": "low"
+        }
+      },
+      "summary": {
+        "marketWeather": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 quiet이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
         "tokenizedGoldMood": "sample_full",
         "rwaSectorMood": "limited_data",
         "contentAngle": "Gold as a quiet onchain asset"
