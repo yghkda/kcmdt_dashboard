@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-19 00:19:55 KST",
+  "updatedAt": "2026-06-19 09:07:44 KST",
   "snapshots": [
     {
       "generatedAt": "2026-06-18 23:22:39 KST",
@@ -40,7 +40,7 @@
       }
     },
     {
-      "generatedAt": "2026-06-19 00:19:55 KST",
+      "generatedAt": "2026-06-19 09:07:44 KST",
       "source": "alchemy",
       "signals": {
         "KGLD": {
