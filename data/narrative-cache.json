@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19 14:52:24 KST",
+  "generatedAt": "2026-06-20 09:07:44 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
@@ -73,7 +73,7 @@
     },
     "onchainContext": {
       "headline": "KGLD 온체인 활동은 조용하며, 운영 상태를 보수적으로 관찰하는 구간입니다.",
-      "keyMessage": "Gas는 low, tokenized gold signal은 sample_full, RWA sector signal은 limited_data, 7-day trend는 unknown입니다."
+      "keyMessage": "Gas는 low, tokenized gold signal은 sample_full, RWA sector signal은 limited_data, 7-day trend는 quiet입니다."
     },
     "xPostEnglish": "KGLD sits at the intersection of real gold, RWA infrastructure, and onchain verification. The right message is not hype. It is transparency people can inspect.",
     "xPostKorean": "KGLD는 실물 금, RWA 인프라, 온체인 검증 가능성이 만나는 지점에 있습니다. 지금 필요한 메시지는 과장이 아니라 확인 가능한 투명성입니다.",
@@ -171,11 +171,11 @@
     "rpcChecks": {
       "blockNumber": "ok",
       "gasPrice": "ok",
-      "PAXG": "ok",
-      "KGLD": "ok",
       "XAUT": "ok",
-      "USDT": "ok",
-      "USDC": "ok"
+      "KGLD": "ok",
+      "PAXG": "ok",
+      "USDC": "ok",
+      "USDT": "ok"
     }
   },
   "observed": {
@@ -185,15 +185,15 @@
   },
   "narrativeTrend": {
     "title": "7-Day Narrative Trend",
-    "headline": "7일 추세 판단을 위한 데이터가 아직 축적 중입니다.",
-    "kgldQuietStreak": 2,
-    "goldTokenObservedDays": 2,
-    "stablecoinObservedDays": 2,
-    "gasLowDays": 2,
+    "headline": "KGLD는 최근 며칠간 조용한 온체인 상태를 유지하고 있습니다. 금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다.",
+    "kgldQuietStreak": 3,
+    "goldTokenObservedDays": 3,
+    "stablecoinObservedDays": 3,
+    "gasLowDays": 3,
     "notableLargeTransferDays": 0,
-    "trendMood": "unknown",
-    "kgldImplication": "추세 데이터 축적 중입니다. 단일 스냅샷보다 며칠간의 반복 신호가 쌓인 뒤 판단합니다.",
-    "confidence": "low"
+    "trendMood": "quiet",
+    "kgldImplication": "거래 활성도보다 준비자산·상환·운영 투명성 메시지를 유지하기 좋은 구간입니다. 온체인 실행 비용이 비교적 안정적인 구간입니다.",
+    "confidence": "medium"
   },
   "todayActionBrief": {
     "title": "Today's Action Brief",
@@ -208,6 +208,6 @@
       "수익률 또는 가격 상승 암시",
       "무조건 상환 보장 표현"
     ],
-    "confidence": "low"
+    "confidence": "medium"
   }
 }
