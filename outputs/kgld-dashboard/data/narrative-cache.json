@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-21 09:07:45 KST",
+  "generatedAt": "2026-06-22 09:07:41 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Weather for KGLD",
@@ -174,8 +174,8 @@
       "KGLD": "ok",
       "PAXG": "ok",
       "XAUT": "ok",
-      "USDC": "ok",
-      "USDT": "ok"
+      "USDT": "ok",
+      "USDC": "ok"
     }
   },
   "observed": {
@@ -186,10 +186,10 @@
   "narrativeTrend": {
     "title": "7-Day Narrative Trend",
     "headline": "KGLD는 최근 며칠간 조용한 온체인 상태를 유지하고 있습니다. 금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다.",
-    "kgldQuietStreak": 4,
-    "goldTokenObservedDays": 4,
-    "stablecoinObservedDays": 4,
-    "gasLowDays": 4,
+    "kgldQuietStreak": 5,
+    "goldTokenObservedDays": 5,
+    "stablecoinObservedDays": 5,
+    "gasLowDays": 5,
     "notableLargeTransferDays": 0,
     "trendMood": "quiet",
     "kgldImplication": "거래 활성도보다 준비자산·상환·운영 투명성 메시지를 유지하기 좋은 구간입니다. 온체인 실행 비용이 비교적 안정적인 구간입니다.",
