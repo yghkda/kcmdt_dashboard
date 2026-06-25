@@ -45,7 +45,7 @@ browser client.
 
 ## Narrative Cache
 
-The Market Weather and Content Desk cards are static-page friendly. The browser
+The Market Intelligence Brief and Content Opportunities cards are static-page friendly. The browser
 does not call Alchemy or expose API keys. Instead, local runs or GitHub Actions
 refresh the cache first:
 
@@ -58,17 +58,20 @@ recent ERC-20 transfers each for KGLD, PAXG, XAUT, USDC, and USDT. If the lookup
 cache with `unknown` weather and `low` confidence. Individual token lookup
 failures are isolated to that token where possible.
 
-The RWA Sector Pulse card currently uses a lightweight watchlist only:
-tokenized gold activity, USDC/USDT activity as a stablecoin liquidity proxy, and
-gas condition. Protocol-specific RWA data such as Ondo, BUIDL, tokenized
-treasury, or DeFi RWA protocol flows is intentionally marked `limited_data`
-until a future Dune or The Graph integration is added. The dashboard's
+Raw tokenized-gold, stablecoin, gas, history, and watchlist data remains in the
+cache, but the main UI only promotes meaningful changes such as a large
+transfer, a baseline-backed change, or a verified fresh source. Query-limit
+samples and collection states remain in the collapsed Developer Diagnostics.
+The dashboard's
 `Reload Narrative`/`Refresh Narrative` button only re-fetches the already
 generated JSON from `outputs/kgld-dashboard/data/narrative-cache.json`.
 
-Content Desk combines `news-context.json` with the latest onchain narrative and
-uses `contentMode` values such as `news_plus_onchain`, `news_only`,
-`onchain_only`, or `fallback`. News items are used as marketing context only;
+Content Opportunities combines `news-context.json` with the latest onchain
+narrative and uses `contentMode` values such as `fresh_news`,
+`official_update`, `editorial`, `reframed`, or `no_content`. A news item must
+have a valid date, HTTP URL, publisher, `verified: true`, and an
+`official`/`media` source type before it can appear as a source. Search links and
+watch items are never presented as articles. News items are used as marketing context only;
 claims such as completed listing, active trading, guaranteed redemption, yield,
 or price appreciation are intentionally blocked by caution fields.
 
@@ -81,7 +84,7 @@ The page separates three responsibilities:
 3. `Content Opportunities` proposes writing angles and copy using news context plus onchain reference data.
 
 When no verified fresh article is available, Content Opportunities explicitly
-uses `evergreen` mode instead of presenting manual watchlist entries as new
+uses `editorial` mode instead of presenting manual watchlist entries as new
 news.
 
 `data/content-history.json` and `data/news-history.json` store recent selections.

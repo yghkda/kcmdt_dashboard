@@ -674,6 +674,162 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   `;
 };
 
+const renderNarrativeCardsV2 = (narrative, loadMeta = {}) => {
+  const actionBrief = buildOperationsBrief();
+  const cacheTime = narrative.generatedAt || "unknown";
+  const diagnostics = narrative.diagnostics || {};
+  const rawRadar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
+  const rawRwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
+  const rawMarket = narrative.marketWeather || fallbackNarrative.marketWeather;
+  const brief = narrative.marketIntelligenceBrief || {
+    title: "Market Intelligence Brief",
+    status: diagnostics.usedFallback ? "limited_data" : "no_change",
+    headline: diagnostics.usedFallback
+      ? "시장 인텔리전스 데이터 수집을 기다리고 있습니다."
+      : "오늘 주목할 만한 외부 시장 변화는 확인되지 않았습니다.",
+    summary: "금 토큰·스테이블코인·RWA 관련 신호를 계속 관찰합니다.",
+    kgldImpact: "KGLD 운영 상태는 상단 Operations 영역에서 별도로 확인합니다.",
+    watching: ["금 토큰 대형 이동", "신규 RWA 공식 발표", "규제·수탁·상환 정책 변화"],
+    detectedInsightCount: 0,
+    lastGeneratedAt: cacheTime,
+    confidence: "low"
+  };
+  const detectedInsights = Array.isArray(narrative.detectedInsights) ? narrative.detectedInsights.slice(0, 3) : [];
+  const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
+  const diagnosticsErrors = Array.isArray(diagnostics.errors) ? diagnostics.errors.filter(Boolean) : [];
+  const candidates = Array.isArray(diagnostics.meaningfulCandidates) ? diagnostics.meaningfulCandidates : [];
+  const tokenDiagnostics = ["KGLD", "PAXG", "XAUT"].map((symbol) => {
+    const token = rawRadar.tokens?.[symbol] || {};
+    return `${symbol}: ${token.activity || "unknown"}, transfers ${token.transferCount ?? 0}, large ${token.largeTransferDetected ? "yes" : "no"}`;
+  });
+  const stable = rawRwa.signals?.stablecoins || {};
+
+  document.getElementById("narrative-cache-time").textContent = `Last generated: ${brief.lastGeneratedAt || cacheTime}`;
+  const actionStatus = document.getElementById("today-action-status");
+  actionStatus.textContent = operationsStatusLabel[actionBrief.operationsStatus] || actionBrief.operationsStatus;
+  actionStatus.className = `action-status-pill ${actionBrief.operationsStatus}`;
+  document.getElementById("today-action-brief-content").innerHTML = `
+    <p class="action-brief-headline">${escapeHtml(actionBrief.headline)}</p>
+    <div class="operations-check-grid">
+      <div><span>Supply</span><strong>${escapeHtml(actionBrief.supplyCheck)}</strong></div>
+      <div><span>Issue</span><strong>${escapeHtml(actionBrief.issueCheck)}</strong></div>
+      <div><span>Redeem</span><strong>${escapeHtml(actionBrief.redeemCheck)}</strong></div>
+      <div><span>Risk</span><strong>${escapeHtml(actionBrief.riskCheck)}</strong></div>
+    </div>
+    <div class="operations-immediate"><span>Immediate Action</span><strong>${escapeHtml(actionBrief.immediateAction)}</strong></div>
+  `;
+
+  document.getElementById("market-weather-content").innerHTML = `
+    <div class="brief-status-row">
+      <span class="market-brief-status ${escapeHtml(brief.status)}">${escapeHtml(brief.status.replaceAll("_", " "))}</span>
+      <span class="brief-confidence">confidence ${escapeHtml(brief.confidence || "low")}</span>
+    </div>
+    <p class="market-brief-headline">${escapeHtml(brief.headline)}</p>
+    <p class="market-brief-summary">${escapeHtml(brief.summary)}</p>
+    <div class="market-brief-impact">
+      <span>KGLD Impact</span>
+      <strong>${escapeHtml(brief.kgldImpact)}</strong>
+    </div>
+    <div class="market-watch-list">
+      <span>Watching</span>
+      <div>${(brief.watching || []).map((item) => `<em>${escapeHtml(item)}</em>`).join("")}</div>
+    </div>
+    <details class="diagnostic-details">
+      <summary>Developer Diagnostics</summary>
+      <code>url: ${escapeHtml(loadMeta.url || "unknown")}</code>
+      <code>source: ${escapeHtml(narrative.source || "unknown")}</code>
+      <code>generatedAt: ${escapeHtml(cacheTime)}</code>
+      <code>usedFallback: ${escapeHtml(String(diagnostics.usedFallback ?? "unknown"))}</code>
+      <code>gas: ${escapeHtml(rawMarket.gasWeather || "unknown")}</code>
+      <code>stablecoins: ${escapeHtml(stable.status || "unknown")} / USDC ${escapeHtml(String(stable.usdcTransferCount ?? 0))} / USDT ${escapeHtml(String(stable.usdtTransferCount ?? 0))}</code>
+      ${tokenDiagnostics.map((line) => `<code>${escapeHtml(line)}</code>`).join("")}
+      ${candidates.map((item) => `<code>${escapeHtml(item.candidate)}: ${item.meaningful ? "meaningful" : "ignored"} (${escapeHtml(item.reason)})</code>`).join("")}
+      ${diagnosticsErrors.length ? `<code>errors: ${diagnosticsErrors.map(escapeHtml).join(" / ")}</code>` : ""}
+    </details>
+  `;
+
+  const insightsContainer = document.getElementById("detected-insights");
+  insightsContainer.hidden = detectedInsights.length === 0;
+  insightsContainer.innerHTML = detectedInsights.length ? `
+    <div class="detected-insights-heading">
+      <span>DETECTED INSIGHTS</span>
+      <strong>${detectedInsights.length} signal${detectedInsights.length > 1 ? "s" : ""}</strong>
+    </div>
+    <div class="detected-insight-grid">
+      ${detectedInsights.map((insight) => `
+        <article class="panel detected-insight-card ${escapeHtml(insight.severity || "info")}">
+          <div class="insight-card-topline">
+            <span>${escapeHtml(String(insight.type || "insight").replaceAll("_", " "))}</span>
+            <em>${escapeHtml(insight.detectedAt || cacheTime)}</em>
+          </div>
+          <h3>${escapeHtml(insight.headline || "확인할 신호가 감지되었습니다.")}</h3>
+          <p>${escapeHtml(insight.whyImportant || "")}</p>
+          <div><span>KGLD Impact</span><strong>${escapeHtml(insight.kgldImpact || "")}</strong></div>
+          ${(insight.source || []).map((source) => typeof source === "object" && source.url
+            ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.title || source.url)}</a>`
+            : `<small>${escapeHtml(String(source))}</small>`).join("")}
+        </article>
+      `).join("")}
+    </div>
+  ` : "";
+
+  const relatedSources = (idea.relatedSources || []).filter((item) => item?.verified === true && /^https?:\/\//i.test(item.url || "")).slice(0, 3);
+  document.getElementById("content-idea-content").innerHTML = `
+    <div class="content-desk-topline">
+      <span class="content-mode-badge">${escapeHtml(idea.contentMode || "editorial")}</span>
+      <span class="content-mode-badge neutral">${escapeHtml(idea.freshness || "none")}</span>
+      <strong>${escapeHtml(idea.selectedAngle || idea.primaryAngle || idea.contentAngle || "Editorial")}</strong>
+    </div>
+    <p class="one-line-insight">${escapeHtml(idea.oneLineInsight || "")}</p>
+    <div class="content-source-card">
+      <div>
+        <span>Why Today</span>
+        <strong>${escapeHtml(idea.whyToday || idea.whyNow || "")}</strong>
+      </div>
+      <div>
+        <span>Primary Source</span>
+        ${idea.primarySource?.url
+          ? `<a href="${escapeHtml(idea.primarySource.url)}" target="_blank" rel="noreferrer">${escapeHtml(idea.primarySource.title || "Source")}</a>`
+          : `<strong>${escapeHtml(idea.primarySource?.title || "No new verified source today")}</strong>`}
+        <em>${escapeHtml(idea.primarySource?.publisher || "Editorial")} · ${escapeHtml(idea.primarySource?.sourceType || "derived")}</em>
+      </div>
+    </div>
+    <div class="usable-facts">
+      <span>Usable Facts</span>
+      ${(idea.usableFacts || []).map((item) => `<em>${escapeHtml(item)}</em>`).join("")}
+    </div>
+    <div class="kgld-message"><span>KGLD Message</span><strong>${escapeHtml(idea.kgldMessage || idea.oneLineInsight || "")}</strong></div>
+    ${relatedSources.length ? `
+      <div class="related-news-list">
+        <span>Related Sources</span>
+        ${relatedSources.map((item) => `
+          <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">
+            <strong>${escapeHtml(item.title)}</strong>
+            <em>${escapeHtml(item.publisher)} · ${escapeHtml(item.publishedAt)}</em>
+          </a>
+        `).join("")}
+      </div>
+    ` : ""}
+    <div class="content-desk-grid">
+      <div class="content-desk-section">
+        <div class="content-desk-head"><span>EN Post</span><button type="button" class="copy-mini" data-copy-text="${escapeHtml(idea.xPostEnglish || "")}">Copy</button></div>
+        <p>${escapeHtml(idea.xPostEnglish || "")}</p>
+      </div>
+      <div class="content-desk-section korean">
+        <div class="content-desk-head"><span>KR Post</span><button type="button" class="copy-mini" data-copy-text="${escapeHtml(idea.xPostKorean || "")}">Copy</button></div>
+        <p>${escapeHtml(idea.xPostKorean || "")}</p>
+      </div>
+      <div class="content-desk-section"><span>Internal Note</span><p>${escapeHtml(idea.internalNote || "")}</p></div>
+      <div class="content-desk-section"><span>Landing Copy</span><p>${escapeHtml(idea.landingCopy || "")}</p></div>
+    </div>
+    <details class="do-not-say">
+      <summary>Compliance Caution</summary>
+      ${(idea.complianceCaution || []).map((item) => `<em>${escapeHtml(item)}</em>`).join("")}
+      ${(idea.doNotSay || []).map((item) => `<em>${escapeHtml(item)}</em>`).join("")}
+    </details>
+  `;
+};
+
 const narrativeCacheUrl = () => {
   const url = new URL("data/narrative-cache.json", appBaseUrl);
   url.searchParams.set("v", Date.now().toString());
@@ -704,7 +860,7 @@ const loadNarrativeCache = async () => {
     console.log("loaded generatedAt:", narrative.generatedAt || "unknown");
     console.log("loaded news source:", newsContext?.source || "unknown");
     console.log("usedFallback:", narrative.diagnostics?.usedFallback);
-    renderNarrativeCards(narrative, {
+    renderNarrativeCardsV2(narrative, {
       url,
       newsUrl,
       newsSource: newsContext?.source,
@@ -712,7 +868,7 @@ const loadNarrativeCache = async () => {
     });
   } catch (error) {
     console.warn("Narrative cache load failed:", error);
-    renderNarrativeCards(fallbackNarrative, { url, newsUrl });
+    renderNarrativeCardsV2(fallbackNarrative, { url, newsUrl });
   }
 };
 
