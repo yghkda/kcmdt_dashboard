@@ -72,6 +72,23 @@ uses `contentMode` values such as `news_plus_onchain`, `news_only`,
 claims such as completed listing, active trading, guaranteed redemption, yield,
 or price appreciation are intentionally blocked by caution fields.
 
+## Information Layers
+
+The page separates three responsibilities:
+
+1. `KGLD Operations` uses only KGLD contract, supply, Issue, Redeem, risk, and transaction data.
+2. `Market & RWA Intelligence` interprets external gold-token, stablecoin, gas, and RWA signals without changing the KGLD operations status.
+3. `Content Opportunities` proposes writing angles and copy using news context plus onchain reference data.
+
+When no verified fresh article is available, Content Opportunities explicitly
+uses `evergreen` mode instead of presenting manual watchlist entries as new
+news.
+
+`data/content-history.json` and `data/news-history.json` store recent selections.
+The same KST date is replaced rather than appended twice, and the latest 60
+entries are retained. Content angles used during the previous seven days are
+deprioritized.
+
 ## Narrative History
 
 `npm run narrative:update` also updates `data/narrative-history.json` and

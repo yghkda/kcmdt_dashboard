@@ -31,9 +31,22 @@
       </div>
     </header>
 
+    <div class="dashboard-purpose">
+      <strong>KGLD 온체인 운영 상태를 우선 모니터링하고, 금 토큰·RWA 시장과 관련 뉴스에서 파생되는 참고 인사이트를 함께 제공합니다.</strong>
+      <span>Primary: KGLD operations monitoring · Secondary: market and RWA intelligence</span>
+    </div>
+
+    <div class="layer-heading operations-layer">
+      <div>
+        <p class="eyebrow">PRIMARY · KGLD OPERATIONS</p>
+        <h2>KGLD Operations <span class="info-tip" tabindex="0" data-tooltip="KGLD 컨트랙트, 공급, Issue, Redeem, 관리자 이벤트와 최근 거래를 기반으로 현재 운영 상태를 판단합니다.">?</span></h2>
+      </div>
+      <p>KGLD는 지금 정상인가? 운영자가 오늘 확인할 것은 무엇인가?</p>
+    </div>
+
     <section class="hero panel">
       <div>
-        <div class="hero-label">현재 운영 상태</div>
+        <div class="hero-label">KGLD Operations</div>
         <div class="status-line">
           <span id="status-badge" class="status-badge"></span>
           <span class="network-pill">ETH MAINNET</span>
@@ -86,8 +99,8 @@
       <article class="panel today-action-brief-card">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">DAILY DECISION</p>
-            <h2>Today's Action Brief <span class="info-tip" tabindex="0" data-tooltip="여러 시장/온체인 카드를 종합해 오늘의 운영, 마케팅, 리스크 액션을 요약합니다.">?</span></h2>
+            <p class="eyebrow">DAILY OPERATIONS</p>
+            <h2>Today's Operations Brief <span class="info-tip" tabindex="0" data-tooltip="KGLD 자체 공급, Issue, Redeem, 위험과 최근 거래만을 바탕으로 오늘의 운영 확인사항을 요약합니다.">?</span></h2>
           </div>
           <span id="today-action-status" class="action-status-pill">pending</span>
         </div>
@@ -151,12 +164,31 @@
 
     </section>
 
+    <section class="panel transaction-panel" id="transaction-section">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">TRANSACTION FEED</p>
+          <h2>최근 거래</h2>
+        </div>
+        <span class="count-pill" id="transaction-count"></span>
+      </div>
+      <div id="transaction-content"></div>
+    </section>
+
+    <div class="layer-heading intelligence-layer">
+      <div>
+        <p class="eyebrow">SECONDARY · MARKET & RWA INTELLIGENCE</p>
+        <h2>Market & RWA Intelligence <span class="info-tip" tabindex="0" data-tooltip="금 토큰, 스테이블코인, RWA 시장과 관련 뉴스에서 확인되는 외부 신호를 해석합니다. KGLD 컨트랙트 위험 등급과는 별도입니다.">?</span></h2>
+      </div>
+      <p>외부 시장 데이터는 KGLD 컨트랙트 정상 여부가 아니라 사업·콘텐츠 의사결정을 위한 참고 정보입니다.</p>
+    </div>
+
     <section class="narrative-lab">
       <article class="panel market-weather-card">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">MARKET CONTEXT</p>
-            <h2>Market Weather for KGLD <span class="info-tip" tabindex="0" data-tooltip="KGLD 자체 활동뿐 아니라 gas, 금 토큰, stablecoin, RWA 신호를 종합해 오늘의 시장 맥락을 요약합니다.">?</span></h2>
+            <p class="eyebrow">MARKET INTERPRETATION</p>
+            <h2>Market Interpretation <span class="info-tip" tabindex="0" data-tooltip="여러 외부 시장 신호를 종합해 오늘의 시장 환경과 KGLD 참고 영향을 설명합니다.">?</span></h2>
           </div>
           <div class="narrative-controls">
             <span id="narrative-cache-time" class="count-pill">Last generated: pending</span>
@@ -169,8 +201,8 @@
       <article class="panel tokenized-gold-card">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">TOKENIZED GOLD</p>
-            <h2>Tokenized Gold Radar <span class="info-tip" tabindex="0" data-tooltip="PAXG, XAUT 등 금 기반 토큰의 최근 전송 샘플을 참고해 금 토큰 카테고리 분위기를 관찰합니다.">?</span></h2>
+            <p class="eyebrow">TOKENIZED GOLD SIGNAL</p>
+            <h2>Tokenized Gold Signal <span class="info-tip" tabindex="0" data-tooltip="PAXG, XAUT, KGLD의 최근 전송 샘플과 대형 이동 후보를 비교합니다.">?</span></h2>
           </div>
         </div>
         <div id="tokenized-gold-content"></div>
@@ -179,8 +211,8 @@
       <article class="panel rwa-sector-card">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">RWA SECTOR</p>
-            <h2>RWA Sector Pulse <span class="info-tip" tabindex="0" data-tooltip="금 토큰, stablecoin, gas, RWA 프로토콜 신호를 종합해 RWA 시장 맥락을 보수적으로 해석합니다.">?</span></h2>
+            <p class="eyebrow">RWA OPPORTUNITY MAP</p>
+            <h2>RWA Opportunity Map <span class="info-tip" tabindex="0" data-tooltip="RWA 하위 영역에서 관찰되는 움직임과 KGLD가 차별화할 수 있는 사업 기회를 정리합니다.">?</span></h2>
           </div>
         </div>
         <div id="rwa-sector-content"></div>
@@ -189,35 +221,32 @@
       <article class="panel narrative-trend-card">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">NARRATIVE HISTORY</p>
-            <h2>7-Day Narrative Trend <span class="info-tip" tabindex="0" data-tooltip="매일 생성된 narrative snapshot을 누적해 최근 흐름을 요약합니다. 단일 조회보다 추세 해석에 가깝습니다.">?</span></h2>
+            <p class="eyebrow">EXTERNAL SIGNAL TREND</p>
+            <h2>External Signal Trend <span class="info-tip" tabindex="0" data-tooltip="최근 누적된 외부 시장 신호에서 변화한 항목과 유지되는 항목을 구분합니다.">?</span></h2>
           </div>
         </div>
         <div id="narrative-trend-content"></div>
       </article>
     </section>
 
+    <div class="layer-heading content-layer">
+      <div>
+        <p class="eyebrow">CONTENT OPPORTUNITIES</p>
+        <h2>Content Opportunities <span class="info-tip" tabindex="0" data-tooltip="신규 기사, 공식 자료, 온체인 신호를 바탕으로 오늘 활용할 수 있는 KGLD 콘텐츠 소재를 제안합니다.">?</span></h2>
+      </div>
+      <p>오늘 실제로 활용할 수 있는 메시지와 작성 도구를 제공합니다.</p>
+    </div>
+
     <section class="content-desk-zone">
       <article class="panel content-idea-card">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">CONTENT DESK</p>
-            <h2>KGLD Content Desk <span class="info-tip" tabindex="0" data-tooltip="온체인 신호와 관련 뉴스/공개자료를 함께 참고해 KGLD 콘텐츠 문안을 제안합니다.">?</span></h2>
+            <p class="eyebrow">WRITING DESK</p>
+            <h2>Today's Content Opportunity</h2>
           </div>
         </div>
         <div id="content-idea-content"></div>
       </article>
-    </section>
-
-    <section class="panel transaction-panel" id="transaction-section">
-      <div class="section-heading compact">
-        <div>
-          <p class="eyebrow">TRANSACTION FEED</p>
-          <h2>최근 거래</h2>
-        </div>
-        <span class="count-pill" id="transaction-count"></span>
-      </div>
-      <div id="transaction-content"></div>
     </section>
 
     <footer>

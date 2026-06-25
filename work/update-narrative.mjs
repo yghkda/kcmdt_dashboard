@@ -6,6 +6,10 @@ const DASHBOARD_CACHE_PATH = path.resolve("outputs/kgld-dashboard/data/narrative
 const ROOT_HISTORY_PATH = path.resolve("data/narrative-history.json");
 const DASHBOARD_HISTORY_PATH = path.resolve("outputs/kgld-dashboard/data/narrative-history.json");
 const ROOT_NEWS_PATH = path.resolve("data/news-context.json");
+const ROOT_NEWS_HISTORY_PATH = path.resolve("data/news-history.json");
+const DASHBOARD_NEWS_HISTORY_PATH = path.resolve("outputs/kgld-dashboard/data/news-history.json");
+const ROOT_CONTENT_HISTORY_PATH = path.resolve("data/content-history.json");
+const DASHBOARD_CONTENT_HISTORY_PATH = path.resolve("outputs/kgld-dashboard/data/content-history.json");
 const TOKEN_ADDRESS = "0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE";
 const TOKENIZED_GOLD_TOKENS = {
   KGLD: TOKEN_ADDRESS,
@@ -759,7 +763,7 @@ async function readNewsContext() {
   return readJsonFile(ROOT_NEWS_PATH, fallbackNewsContext());
 }
 
-function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorPulse, narrativeTrend, newsContext, narrativeSource }) {
+function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorPulse, narrativeTrend, newsContext, narrativeSource, contentHistory }) {
   const goldMood = tokenizedGoldRadar?.marketMood || "unknown";
   const sectorMood = rwaSectorPulse?.sectorMood || "unknown";
   const trendMood = narrativeTrend?.trendMood || "unknown";
@@ -769,18 +773,75 @@ function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorP
   const hasAlchemy = narrativeSource === "alchemy";
   const hasGoldSamples = ["observed", "sample_full", "notable", "active", "volatile"].includes(goldMood);
   const quietKgld = activity?.state === "quiet";
-  const contentMode = hasHighRelevanceNews && hasAlchemy ? "news_plus_onchain" : hasNews ? "news_only" : hasAlchemy ? "onchain_only" : "fallback";
-  const primaryAngle = hasNews ? "Gold RWA preparation with onchain verification" : quietKgld ? "Gold as a quiet onchain asset" : "RWA transparency over hype";
+  const todayKey = String(asKstString(new Date())).slice(0, 10);
+  const existingToday = (contentHistory?.entries || []).find((item) => String(item.usedAt || "").slice(0, 10) === todayKey);
+  const recentAngles = new Set((contentHistory?.entries || [])
+    .filter((item) => String(item.usedAt || "").slice(0, 10) !== todayKey)
+    .slice(-7)
+    .map((item) => item.selectedAngle));
+  const anglePool = [
+    "Reserve Transparency",
+    "Redemption UX",
+    "Gold/RWA Education",
+    "Multichain",
+    "Product Vision",
+    "Market Context",
+    "Technology",
+    "ITCEN Group Strategy"
+  ];
+  const selectedAngle = existingToday?.selectedAngle || anglePool.find((angle) => !recentAngles.has(angle)) || anglePool[0];
+  const hasFreshNews = relatedItems.some((item) => item.sourceType === "official" || /^\d{4}-\d{2}-\d{2}/.test(item.publishedAt || ""));
+  const contentMode = hasFreshNews && hasAlchemy
+    ? "news_plus_onchain"
+    : hasFreshNews
+      ? "fresh_news"
+      : hasAlchemy
+        ? "evergreen"
+        : "evergreen";
+  const primaryAngle = selectedAngle;
   const newsNarrative = newsContext?.newsNarrative || fallbackNewsContext().newsNarrative;
   const onchainHeadline = quietKgld
     ? "KGLD 온체인 활동은 조용하며, 운영 상태를 보수적으로 관찰하는 구간입니다."
     : `KGLD 온체인 상태는 ${activity?.state || "unknown"}로 관찰됩니다.`;
   const onchainKeyMessage = `Gas는 ${gasWeather || "unknown"}, tokenized gold signal은 ${goldMood}, RWA sector signal은 ${sectorMood}, 7-day trend는 ${trendMood}입니다.`;
-  const oneLineInsight = hasNews ? newsNarrative.keyMessage : onchainHeadline;
+  const oneLineInsight = hasFreshNews ? newsNarrative.keyMessage : "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않아 교육형 evergreen 소재를 제안합니다.";
+  const primarySource = hasFreshNews ? relatedItems[0] : {
+    title: "No verified new source in the latest run",
+    publisher: "KGLD Dashboard",
+    publishedAt: asKstString(new Date()),
+    url: "",
+    sourceType: "derived"
+  };
+  const angleCopy = {
+    "Reserve Transparency": {
+      en: "For a gold-backed RWA, trust starts with what can be verified: reserves, custody, and the path to redemption.",
+      ko: "금 기반 RWA의 신뢰는 준비자산, 보관 구조, 상환 경로처럼 확인 가능한 정보에서 시작됩니다."
+    },
+    "Redemption UX": {
+      en: "Tokenized gold is more than a token balance. The redemption path is part of the product.",
+      ko: "토큰화 금은 잔액만으로 완성되지 않습니다. 사용자가 이해할 수 있는 상환 경로도 제품의 일부입니다."
+    },
+    "Gold/RWA Education": {
+      en: "A gold token is not defined by speed alone. Reserve visibility and redemption design shape its real utility.",
+      ko: "금 토큰의 가치는 전송 속도만으로 설명되지 않습니다. 준비자산 가시성과 상환 설계가 실제 활용성을 만듭니다."
+    },
+    "Multichain": {
+      en: "Multichain access can improve reach, but trust still depends on consistent reserves, custody, and redemption rules.",
+      ko: "멀티체인 접근성은 도달 범위를 넓힐 수 있지만, 신뢰는 일관된 준비자산·보관·상환 기준에서 나옵니다."
+    }
+  };
+  const selectedCopy = angleCopy[selectedAngle] || {
+    en: "KGLD explores how real-world gold can be represented with clearer onchain operations and verifiable context.",
+    ko: "KGLD는 실물 금을 더 명확한 온체인 운영과 검증 가능한 맥락으로 설명하는 방식을 탐구합니다."
+  };
 
   return {
-    title: "KGLD Content Desk",
+    title: "Content Opportunities",
     contentMode,
+    freshness: hasFreshNews ? "today" : "none",
+    selectedAngle,
+    primarySource,
+    previouslyUsed: recentAngles.has(selectedAngle),
     primaryAngle,
     contentAngle: primaryAngle,
     oneLineInsight,
@@ -793,12 +854,17 @@ function buildContentDesk({ activity, gasWeather, tokenizedGoldRadar, rwaSectorP
       headline: onchainHeadline,
       keyMessage: onchainKeyMessage
     },
-    xPostEnglish: hasNews
-      ? "KGLD sits at the intersection of real gold, RWA infrastructure, and onchain verification. The right message is not hype. It is transparency people can inspect."
-      : "Not every onchain asset needs to move fast. Some are built to make real-world value easier to verify.",
-    xPostKorean: hasNews
-      ? "KGLD는 실물 금, RWA 인프라, 온체인 검증 가능성이 만나는 지점에 있습니다. 지금 필요한 메시지는 과장이 아니라 확인 가능한 투명성입니다."
-      : "모든 온체인 자산이 빠르게 움직일 필요는 없습니다. KGLD는 실물 기반 신뢰와 운영 투명성을 차분히 설명하는 쪽이 더 적합합니다.",
+    whyToday: hasFreshNews
+      ? "최근 공개자료와 현재 온체인 맥락을 함께 활용할 수 있습니다."
+      : `신규 확인 기사 대신 최근 7일간 사용하지 않은 ${selectedAngle} 교육형 앵글을 선택했습니다.`,
+    usableFacts: [
+      `KGLD activity: ${activity?.state || "unknown"}`,
+      `Tokenized gold signal: ${goldMood}`,
+      `Gas condition: ${gasWeather || "unknown"}`
+    ],
+    kgldMessage: selectedCopy.ko,
+    xPostEnglish: selectedCopy.en,
+    xPostKorean: selectedCopy.ko,
     internalNote: hasNews
       ? "뉴스 소재는 '보도에 따르면', '공개 자료 기준', '추진/준비' 표현으로만 사용하세요. 온체인 데이터는 현재 운영 상태를 보조하는 근거로만 붙입니다."
       : "뉴스 컨텍스트가 없으므로 온체인 상태만 기준으로 콘텐츠를 작성하세요. 외부 파트너, 상장, 서비스 출시를 암시하지 마세요.",
@@ -894,6 +960,82 @@ function buildTodayActionBrief(narrative) {
     doNotDo,
     confidence
   };
+}
+
+function buildIntelligenceModels(narrative, history) {
+  const market = narrative.marketWeather || {};
+  const radar = narrative.tokenizedGoldRadar || fallbackGoldRadar();
+  const rwa = narrative.rwaSectorPulse || fallbackRwaSectorPulse();
+  const snapshots = normalizeHistory(history).snapshots.slice(-7);
+  const previous = snapshots.length > 1 ? snapshots[snapshots.length - 2] : null;
+  const currentGold = radar.marketMood || "unknown";
+  const currentStable = rwa.signals?.stablecoins?.status || "unknown";
+  const currentGas = market.gasWeather || "unknown";
+  const marketState = currentGold === "notable" || currentStable === "notable"
+    ? "notable"
+    : currentGold === "unknown" && currentStable === "unknown"
+      ? "limited_data"
+      : currentGold === "quiet" && currentStable === "quiet"
+        ? "quiet"
+        : currentGold !== currentStable
+          ? "mixed"
+          : "observed";
+  const whatChanged = previous
+    ? [
+        previous.summary?.tokenizedGoldMood !== currentGold ? `금 토큰 ${previous.summary?.tokenizedGoldMood || "unknown"} → ${currentGold}` : "",
+        previous.signals?.USDC?.status !== currentStable ? `stablecoin ${previous.signals?.USDC?.status || "unknown"} → ${currentStable}` : "",
+        previous.signals?.gas?.status !== currentGas ? `gas ${previous.signals?.gas?.status || "unknown"} → ${currentGas}` : ""
+      ].filter(Boolean).join(" · ") || "전일 대비 의미 있는 외부 신호 변화 없음"
+    : "전일 비교를 위한 snapshot 축적 중";
+
+  market.title = "Market Interpretation";
+  market.marketState = marketState;
+  market.headline = market.signalRead || market.todayPositioning || "외부 시장 신호를 보수적으로 관찰합니다.";
+  market.whatChanged = whatChanged;
+  market.marketInterpretation = market.signalRead || market.todayPositioning || "";
+  market.kgldImpact = "외부 신호는 KGLD 컨트랙트 정상 여부를 바꾸지 않으며, 사업·포지셔닝 참고 정보로만 사용합니다.";
+  market.watchNext = ["금 토큰 대형 이동 후보", "stablecoin 신호 변화", "gas 환경 변화"];
+
+  const tokenEntries = Object.entries(radar.tokens || {});
+  const activeExternal = tokenEntries.filter(([name, token]) => name !== "KGLD" && isObservedStatus(token.activity)).map(([name]) => name);
+  const largeNames = tokenEntries.filter(([, token]) => token.largeTransferDetected).map(([name]) => name);
+  radar.title = "Tokenized Gold Signal";
+  radar.signalState = marketState === "limited_data" ? "limited_data" : largeNames.length ? "notable" : activeExternal.length ? "observed" : "quiet";
+  radar.relativeActivity = activeExternal.length
+    ? `${activeExternal.join("/")}에서는 전송 표본이 확인되며 KGLD는 ${radar.tokens?.KGLD?.activity || "unknown"} 상태입니다.`
+    : "KGLD/PAXG/XAUT 간 상대 활동 차이가 제한적입니다.";
+  radar.largeFlowPresence = largeNames.length ? `대형 이동 후보: ${largeNames.join(", ")}` : "대형 이동 후보는 제한적입니다.";
+  radar.marketMeaning = radar.interpretation || radar.headline;
+  radar.kgldReference = "외부 금 토큰 활동은 카테고리 참고 신호이며 KGLD 수요나 운영 위험으로 직접 연결하지 않습니다.";
+
+  const observedAreas = [];
+  if (currentGold !== "unknown" && currentGold !== "quiet") observedAreas.push("Tokenized Gold");
+  if (currentStable !== "unknown" && currentStable !== "quiet") observedAreas.push("Stablecoin");
+  if (currentGas !== "unknown") observedAreas.push("Settlement / Infrastructure");
+  rwa.title = "RWA Opportunity Map";
+  rwa.state = observedAreas.length ? "observed" : "limited_data";
+  rwa.leadingArea = observedAreas[0] || "확인 가능한 선도 영역 없음";
+  rwa.observedAreas = observedAreas;
+  rwa.kgldOpportunity = [
+    "실물 금 교환 UX",
+    "준비자산 검증 가능성",
+    "국내 금 유통 인프라 연결",
+    "멀티체인 접근성 설명"
+  ];
+  rwa.differentiationGap = "현재 외부 데이터만으로 사업 진척도를 단정할 수 없으므로, 검증 가능한 준비자산·상환 절차·운영 추적성이 핵심 차별화 과제입니다.";
+  rwa.missingData = ["Tokenized Treasury", "Institutional Funds", "Private Credit", "RWA DeFi protocol flows"];
+
+  const trend = narrative.narrativeTrend || {};
+  trend.title = "External Signal Trend";
+  trend.whatChanged = whatChanged;
+  trend.unchangedSignals = previous && whatChanged.includes("의미 있는")
+    ? ["금 토큰 표본 상태", "stablecoin 표본 상태", "gas 상태"]
+    : [];
+  trend.notableChanges = whatChanged.includes("→") ? [whatChanged] : [];
+  trend.nextTrigger = "외부 신호 상태 변화, 대형 이동 후보 또는 신규 뉴스가 확인될 때 상세 해석을 확장합니다.";
+  trend.isCompact = trend.notableChanges.length === 0;
+
+  return narrative;
 }
 
 async function readJsonFile(filePath, fallbackValue) {
@@ -1234,6 +1376,53 @@ async function writeNarrativeHistory(data) {
   ]);
 }
 
+async function writeMirroredJson(rootPath, dashboardPath, data) {
+  const serialized = `${JSON.stringify(data, null, 2)}\n`;
+  await fs.mkdir(path.dirname(rootPath), { recursive: true });
+  await fs.mkdir(path.dirname(dashboardPath), { recursive: true });
+  await Promise.all([
+    fs.writeFile(rootPath, serialized, "utf8"),
+    fs.writeFile(dashboardPath, serialized, "utf8")
+  ]);
+}
+
+async function updateContentHistories(contentIdea) {
+  const contentHistory = await readJsonFile(ROOT_CONTENT_HISTORY_PATH, { updatedAt: "unknown", entries: [] });
+  const newsHistory = await readJsonFile(ROOT_NEWS_HISTORY_PATH, { updatedAt: "unknown", entries: [] });
+  const dateKey = String(asKstString(new Date())).slice(0, 10);
+  const contentEntry = {
+    usedAt: asKstString(new Date()),
+    selectedAngle: contentIdea.selectedAngle || contentIdea.primaryAngle || "unknown",
+    contentMode: contentIdea.contentMode || "fallback",
+    sourceUrl: contentIdea.primarySource?.url || "",
+    normalizedText: String(contentIdea.xPostEnglish || "").toLowerCase().replace(/\s+/g, " ").trim()
+  };
+  const contentEntries = [
+    ...(contentHistory.entries || []).filter((item) => String(item.usedAt || "").slice(0, 10) !== dateKey),
+    contentEntry
+  ].slice(-60);
+
+  const newsEntries = [...(newsHistory.entries || [])];
+  if (contentIdea.primarySource?.url && contentIdea.freshness !== "none") {
+    newsEntries.push({
+      usedAt: contentEntry.usedAt,
+      title: contentIdea.primarySource.title,
+      url: contentIdea.primarySource.url
+    });
+  }
+
+  await Promise.all([
+    writeMirroredJson(ROOT_CONTENT_HISTORY_PATH, DASHBOARD_CONTENT_HISTORY_PATH, {
+      updatedAt: contentEntry.usedAt,
+      entries: contentEntries
+    }),
+    writeMirroredJson(ROOT_NEWS_HISTORY_PATH, DASHBOARD_NEWS_HISTORY_PATH, {
+      updatedAt: contentEntry.usedAt,
+      entries: newsEntries.slice(-60)
+    })
+  ]);
+}
+
 async function main() {
   let narrative;
   const diagnostics = createDiagnostics();
@@ -1248,7 +1437,9 @@ async function main() {
   }
   const history = await updateNarrativeHistory(narrative);
   const newsContext = await readNewsContext();
+  const contentHistory = await readJsonFile(ROOT_CONTENT_HISTORY_PATH, { updatedAt: "unknown", entries: [] });
   narrative.narrativeTrend = buildNarrativeTrendStrict(history);
+  narrative = buildIntelligenceModels(narrative, history);
   narrative.contentIdea = buildContentDesk({
     activity: { state: narrative.observed?.kgldActivity || "unknown" },
     gasWeather: narrative.marketWeather?.gasWeather || "unknown",
@@ -1256,9 +1447,11 @@ async function main() {
     rwaSectorPulse: narrative.rwaSectorPulse,
     narrativeTrend: narrative.narrativeTrend,
     newsContext,
-    narrativeSource: narrative.source
+    narrativeSource: narrative.source,
+    contentHistory
   });
   narrative.todayActionBrief = buildTodayActionBrief(narrative);
+  await updateContentHistories(narrative.contentIdea);
   await writeNarrativeCache(narrative);
   console.log(`[narrative] Updated narrative cache: ${narrative.source} at ${narrative.generatedAt}`);
   console.log(`[narrative] Updated narrative history snapshots: ${history.snapshots.length}`);

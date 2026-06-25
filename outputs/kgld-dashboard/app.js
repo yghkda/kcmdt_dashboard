@@ -307,16 +307,6 @@ document.getElementById("risk-list").innerHTML = data.risks.map((risk) => `
   </div>
 `).join("");
 
-const actionList = document.getElementById("action-list");
-if (actionList) {
-  actionList.innerHTML = data.actions.map((action) => `
-    <div class="action-row">
-      <span class="priority">${action.priority}</span>
-      <span class="action-text">${action.text}</span>
-    </div>
-  `).join("");
-}
-
 const weatherLabel = {
   sunny: "맑음",
   cloudy: "흐림",
@@ -336,6 +326,22 @@ Object.assign(weatherLabel, {
   volatile: "volatile",
   limited_data: "limited data"
 });
+
+const operationsStatusLabel = {
+  normal: "정상",
+  watch: "관찰",
+  check_required: "확인 필요",
+  critical: "긴급"
+};
+
+const intelligenceStatusLabel = {
+  quiet: "조용함",
+  observed: "관찰됨",
+  notable: "주목할 만함",
+  mixed: "혼재",
+  limited_data: "데이터 제한",
+  unknown: "데이터 제한"
+};
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
   "&": "&amp;",
@@ -368,6 +374,9 @@ const tooltipCopy = {
   stablecoinWeather: "USDC/USDT 전송 샘플을 stablecoin liquidity proxy로 관찰한 상태입니다.",
   goldTokenWeather: "KGLD/PAXG/XAUT 전송 샘플을 금 기반 토큰 카테고리 신호로 요약한 상태입니다.",
   contentMode: "Content Desk가 뉴스와 온체인 중 어떤 근거를 사용했는지 표시합니다.",
+  fresh_news: "최근 72시간 내 새롭게 확인된 기사나 공개자료를 기반으로 한 콘텐츠입니다.",
+  evergreen: "오늘 신규 뉴스가 없을 때 반복 사용 가능한 교육형·설명형 콘텐츠입니다.",
+  reframed: "기존 공개자료를 새로운 관점에서 재해석한 콘텐츠입니다.",
   NewsContext: "ITCEN, KorDA, KGLD 관련 기사나 공개자료에서 콘텐츠에 활용 가능한 맥락을 요약합니다.",
   OnchainContext: "Alchemy 기반 온체인 데이터에서 콘텐츠에 참고할 만한 현재 상태를 요약합니다."
 };
@@ -385,13 +394,48 @@ const pendingNarrativeCopy = {
 const contentDeskValue = (idea, modernKey, legacyKey, fallbackValue = "") =>
   idea?.[modernKey] || idea?.[legacyKey] || fallbackValue;
 
+const buildOperationsBrief = () => {
+  const hasCriticalRisk = data.risks.some((risk) => String(risk.level).toLowerCase() === "alert");
+  const hasWatchRisk = data.risks.some((risk) => String(risk.level).toLowerCase() === "watch");
+  const operationsStatus = hasCriticalRisk
+    ? "critical"
+    : data.statusLevel === "alert"
+      ? "check_required"
+      : hasWatchRisk || data.statusLevel === "watch"
+        ? "watch"
+        : "normal";
+  const issueActivity = data.activity?.issue || {};
+  const redeemActivity = data.activity?.redeem || {};
+
+  return {
+    title: "Today's Operations Brief",
+    operationsStatus,
+    headline: operationsStatus === "normal"
+      ? "KGLD 컨트랙트와 주요 운영 잔액에서 즉시 확인이 필요한 이상은 없습니다."
+      : operationsStatus === "watch"
+        ? "KGLD 운영 데이터에 관찰 항목이 있어 정기 점검 시 우선 확인이 필요합니다."
+        : "KGLD 운영 데이터에 확인이 필요한 신호가 있습니다.",
+    supplyCheck: `총공급량 ${totalSupply.value} KGLD와 주요 보관 잔액을 기준으로 확인했습니다.`,
+    issueCheck: `Issue 보관량 ${formatToken(data.balances.issue.value)} KGLD · 유입 ${formatToken(issueActivity.inbound || 0)} · 유출 ${formatToken(issueActivity.outbound || 0)}.`,
+    redeemCheck: `Redeem 잔액 ${formatToken(data.balances.redeem.value)} KGLD · 유입 ${formatToken(redeemActivity.inbound || 0)} · 유출 ${formatToken(redeemActivity.outbound || 0)}.`,
+    riskCheck: hasCriticalRisk
+      ? "경보 수준 위험 항목이 있어 원인 확인이 필요합니다."
+      : hasWatchRisk
+        ? "관찰 수준 위험 항목이 있습니다."
+        : "관리자성 경보와 즉시 확인이 필요한 위험 항목은 없습니다.",
+    immediateAction: operationsStatus === "normal"
+      ? "정기 모니터링을 유지하세요."
+      : "위험 모니터와 최근 거래를 우선 확인하세요."
+  };
+};
+
 const renderNarrativeCards = (narrative, loadMeta = {}) => {
   const market = narrative.marketWeather || fallbackNarrative.marketWeather;
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
   const radar = narrative.tokenizedGoldRadar || fallbackNarrative.tokenizedGoldRadar;
   const rwa = narrative.rwaSectorPulse || fallbackNarrative.rwaSectorPulse;
   const trend = narrative.narrativeTrend || fallbackNarrative.narrativeTrend;
-  const actionBrief = narrative.todayActionBrief || fallbackNarrative.todayActionBrief;
+  const actionBrief = buildOperationsBrief();
   const cacheTime = narrative.generatedAt || "unknown";
   const diagnostics = narrative.diagnostics || (narrative.source === "fallback" ? fallbackNarrative.diagnostics : {});
   const isPending = narrative.source !== "alchemy" && diagnostics?.usedFallback === true;
@@ -420,33 +464,22 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   } : market;
 
   document.getElementById("narrative-cache-time").textContent = `Last generated: ${cacheTime}`;
-  const displayedActionBrief = isPending ? fallbackNarrative.todayActionBrief : actionBrief;
+  const displayedActionBrief = actionBrief;
   const actionStatus = document.getElementById("today-action-status");
-  actionStatus.textContent = displayedActionBrief.status || "unknown";
-  actionStatus.className = `action-status-pill ${displayedActionBrief.status || "unknown"}`;
+  actionStatus.textContent = operationsStatusLabel[displayedActionBrief.operationsStatus] || displayedActionBrief.operationsStatus;
+  actionStatus.className = `action-status-pill ${displayedActionBrief.operationsStatus}`;
   document.getElementById("today-action-brief-content").innerHTML = `
     <p class="action-brief-headline">${displayedActionBrief.headline}</p>
-    <div class="action-pill-grid">
-      <div class="action-pill">
-        <span>Operations</span>
-        <strong>${displayedActionBrief.operationsAction}</strong>
-      </div>
-      <div class="action-pill">
-        <span>Marketing</span>
-        <strong>${displayedActionBrief.marketingAction}</strong>
-      </div>
-      <div class="action-pill">
-        <span>Risk</span>
-        <strong>${displayedActionBrief.riskAction}</strong>
-      </div>
+    <div class="operations-check-grid">
+      <div><span>Supply</span><strong>${displayedActionBrief.supplyCheck}</strong></div>
+      <div><span>Issue</span><strong>${displayedActionBrief.issueCheck}</strong></div>
+      <div><span>Redeem</span><strong>${displayedActionBrief.redeemCheck}</strong></div>
+      <div><span>Risk</span><strong>${displayedActionBrief.riskCheck}</strong></div>
     </div>
-    <details class="do-not-do-compact">
-      <summary>Do Not Say</summary>
-      ${(displayedActionBrief.doNotDo || []).map((item) => `<em>${item}</em>`).join("")}
-    </details>
-    <div class="action-brief-meta">confidence: ${displayedActionBrief.confidence || "low"}</div>
+    <div class="operations-immediate"><span>Immediate Action</span><strong>${displayedActionBrief.immediateAction}</strong></div>
   `;
   document.getElementById("market-weather-content").innerHTML = `
+    <div class="sector-mood ${market.marketState || "limited_data"}">${intelligenceStatusLabel[market.marketState] || market.marketState || "데이터 제한"}</div>
     <div class="weather-badges">
       <span class="weather-badge ${market.stablecoinWeather}">Stablecoin · ${weatherLabel[market.stablecoinWeather] || market.stablecoinWeather} ${tip("stablecoinWeather")}</span>
       <span class="weather-badge ${market.goldTokenWeather}">Gold Token · ${weatherLabel[market.goldTokenWeather] || market.goldTokenWeather} ${tip("goldTokenWeather")}</span>
@@ -454,9 +487,14 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       <span class="weather-badge ${market.gasWeather}">Gas · ${weatherLabel[market.gasWeather] || market.gasWeather} ${tip("gasWeather")}</span>
     </div>
     <div class="signal-read-block market-signal-read">
-      <span>Signal Read</span>
-      <strong>${market.signalRead || market.todayPositioning}</strong>
+      <span>Market Interpretation</span>
+      <strong>${market.marketInterpretation || market.signalRead || market.todayPositioning}</strong>
     </div>
+    <div class="intelligence-detail-grid">
+      <div><span>What Changed</span><strong>${market.whatChanged || "비교 데이터 축적 중"}</strong></div>
+      <div><span>KGLD Impact</span><strong>${market.kgldImpact || "외부 신호는 KGLD 운영 상태와 별도로 해석합니다."}</strong></div>
+    </div>
+    <div class="watch-next">${(market.watchNext || []).map((item) => `<span>${item}</span>`).join("")}</div>
     <div class="market-meta-line">source: ${narrative.source || "fallback"} · confidence: ${market.confidence} ${tip("confidence")}</div>
   `;
 
@@ -494,8 +532,8 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   document.getElementById("tokenized-gold-content").innerHTML = `
     <p class="gold-radar-headline">${radar.headline}</p>
     <div class="signal-read-block">
-      <span>Signal Read</span>
-      <strong>${radar.interpretation || radar.kgldAngle}</strong>
+      <span>Market Meaning</span>
+      <strong>${radar.marketMeaning || radar.interpretation || radar.kgldAngle}</strong>
     </div>
     <div class="gold-token-rows">
       ${["KGLD", "PAXG", "XAUT"].map((symbol) => {
@@ -512,35 +550,54 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
     <div class="gold-observations">
       ${(radar.observations || []).slice(0, 3).map((item) => `<span>${item}</span>`).join("")}
     </div>
+    <div class="intelligence-detail-grid">
+      <div><span>Relative Activity</span><strong>${radar.relativeActivity || radar.headline}</strong></div>
+      <div><span>Large Flow</span><strong>${radar.largeFlowPresence || "대형 이동 후보는 제한적입니다."}</strong></div>
+    </div>
+    <div class="compact-reference">${radar.kgldReference || ""}</div>
     <div class="compact-meta">mood: ${radar.marketMood} ${tip(radar.marketMood)} · confidence: ${radar.confidence} ${tip("confidence")}</div>
   `;
 
   document.getElementById("rwa-sector-content").innerHTML = `
-    <div class="sector-mood ${rwa.sectorMood}">${rwa.sectorMood} ${tip(rwa.sectorMood)}</div>
-    <p class="rwa-headline">${rwa.headline}</p>
+    <div class="sector-mood ${rwa.state || rwa.sectorMood}">${intelligenceStatusLabel[rwa.state || rwa.sectorMood] || rwa.state || rwa.sectorMood} ${tip(rwa.state || rwa.sectorMood)}</div>
+    <p class="rwa-headline">현재 확인 가능한 선도 영역: ${rwa.leadingArea || "데이터 제한"}</p>
     <div class="rwa-decision-guide">
-      <span>KGLD 활용 기준</span>
-      <strong>${rwa.decisionGuide || rwa.kgldPositioning}</strong>
+      <span>KGLD Opportunity</span>
+      <strong>${(rwa.kgldOpportunity || []).join(" · ") || rwa.decisionGuide || rwa.kgldPositioning}</strong>
     </div>
-    <div class="rwa-signal-grid">
-      <div><span>Tokenized Gold</span><strong>${rwa.signals?.tokenizedGold?.status || "unknown"} ${tip(rwa.signals?.tokenizedGold?.status || "unknown")}</strong></div>
-      <div><span>Stablecoins ${tip("stablecoinWeather")}</span><strong>${rwa.signals?.stablecoins?.status || "unknown"} ${tip(rwa.signals?.stablecoins?.status || "unknown")}</strong></div>
-      <div><span>Gas ${tip("gasWeather")}</span><strong>${rwa.signals?.gas?.status || "unknown"} ${tip(rwa.signals?.gas?.status || "unknown")}</strong></div>
-      <div><span>RWA Protocols</span><strong>${rwa.signals?.rwaProtocols?.status || "unknown"} ${tip(rwa.signals?.rwaProtocols?.status || "unknown")}</strong></div>
+    <div class="opportunity-map-grid">
+      <div><span>Observed Areas</span><strong>${(rwa.observedAreas || []).join(", ") || "확인 범위 제한"}</strong></div>
+      <div><span>Differentiation Gap</span><strong>${rwa.differentiationGap || rwa.decisionGuide || ""}</strong></div>
     </div>
-    <div class="rwa-evidence">
-      ${(rwa.evidence || []).slice(0, 3).map((item) => `<span>${item}</span>`).join("")}
-    </div>
-    <div class="compact-meta">confidence: ${rwa.confidence} ${tip("confidence")}</div>
+    <details class="missing-data-details"><summary>Missing Data</summary>${(rwa.missingData || []).map((item) => `<span>${item}</span>`).join("")}</details>
   `;
 
   const relatedNewsItems = (idea.newsContext?.relatedItems || []).slice(0, 3);
   document.getElementById("content-idea-content").innerHTML = `
     <div class="content-desk-topline">
       <span class="content-mode-badge">${idea.contentMode || "onchain_only"} ${tip("contentMode")}</span>
-      <strong>${idea.primaryAngle || idea.contentAngle}</strong>
+      <span class="content-mode-badge neutral">${idea.freshness || "none"}</span>
+      <strong>${idea.selectedAngle || idea.primaryAngle || idea.contentAngle}</strong>
     </div>
     <p class="one-line-insight">${idea.oneLineInsight}</p>
+    <div class="content-source-card">
+      <div>
+        <span>Why Today</span>
+        <strong>${idea.whyToday || idea.whyNow}</strong>
+      </div>
+      <div>
+        <span>Primary Source</span>
+        ${idea.primarySource?.url
+          ? `<a href="${escapeHtml(idea.primarySource.url)}" target="_blank" rel="noreferrer">${escapeHtml(idea.primarySource.title || "Source")}</a>`
+          : `<strong>${escapeHtml(idea.primarySource?.title || "No verified new source")}</strong>`}
+        <em>${escapeHtml(idea.primarySource?.sourceType || "derived")}</em>
+      </div>
+    </div>
+    <div class="usable-facts">
+      <span>Usable Facts</span>
+      ${(idea.usableFacts || []).map((item) => `<em>${item}</em>`).join("")}
+    </div>
+    <div class="kgld-message"><span>KGLD Message</span><strong>${idea.kgldMessage || idea.oneLineInsight}</strong></div>
     <div class="context-brief-grid">
       <div class="context-brief">
         <span>News Context ${tip("NewsContext")}</span>
@@ -602,7 +659,7 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
 
   document.getElementById("narrative-trend-content").innerHTML = `
     <div class="trend-mood ${trend.trendMood || "unknown"}">${trend.trendMood || "unknown"}</div>
-    <p class="trend-headline">${trend.headline || "추세 데이터 축적 중"}</p>
+    <p class="trend-headline">${trend.whatChanged || trend.headline || "추세 데이터 축적 중"}</p>
     <div class="trend-metric-grid">
       <div><span>KGLD Quiet Streak</span><strong>${trend.kgldQuietStreak ?? 0}</strong></div>
       <div><span>Gold Token Observed Days</span><strong>${trend.goldTokenObservedDays ?? 0}</strong></div>
@@ -610,9 +667,9 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
       <div><span>Gas Low Days</span><strong>${trend.gasLowDays ?? 0}</strong></div>
     </div>
     <div class="briefing-note">
-      <span>KGLD implication</span>
-      <strong>${trend.kgldImplication || "추세 데이터 축적 중입니다."}</strong>
-      <em>large-transfer days: ${trend.notableLargeTransferDays ?? 0} · confidence: ${trend.confidence || "low"}</em>
+      <span>Next Trigger</span>
+      <strong>${trend.nextTrigger || "외부 신호 변화가 확인될 때 상세 해석을 확장합니다."}</strong>
+      <em>${trend.isCompact ? "no notable external change" : "notable change detected"} · confidence: ${trend.confidence || "low"}</em>
     </div>
   `;
 };
