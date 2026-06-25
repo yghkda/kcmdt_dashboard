@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25 10:40:58 KST",
+  "generatedAt": "2026-06-25 14:12:32 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -24,107 +24,51 @@
   },
   "contentIdea": {
     "title": "Content Opportunities",
-    "contentMode": "evergreen",
+    "contentMode": "editorial",
     "freshness": "none",
     "selectedAngle": "Reserve Transparency",
+    "primaryAngle": "Reserve Transparency",
+    "contentAngle": "Reserve Transparency",
     "primarySource": {
-      "title": "No verified new source in the latest run",
-      "publisher": "KGLD Dashboard",
-      "publishedAt": "2026-06-25 10:40:58 KST",
+      "title": "No new verified source today",
+      "publisher": "Editorial",
+      "publishedAt": "2026-06-25 14:12:32 KST",
       "url": "",
       "sourceType": "derived"
     },
-    "previouslyUsed": false,
-    "primaryAngle": "Reserve Transparency",
-    "contentAngle": "Reserve Transparency",
-    "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않아 교육형 evergreen 소재를 제안합니다.",
+    "previouslyUsed": true,
+    "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Reserve Transparency 주제를 선택했습니다.",
+    "usableFacts": [
+      "신규 검증 기사 없음",
+      "Editorial angle: Reserve Transparency",
+      "KGLD activity: quiet"
+    ],
+    "kgldMessage": "금 기반 RWA의 신뢰는 준비자산, 보관 구조, 명확한 상환 경로에서 시작합니다.",
+    "xPostEnglish": "For a gold-backed RWA, trust starts with reserves, custody, and a clear path to redemption.",
+    "xPostKorean": "금 기반 RWA의 신뢰는 준비자산, 보관 구조, 명확한 상환 경로에서 시작합니다.",
+    "internalNote": "Editorial Mode입니다. 신규 뉴스처럼 표현하지 말고 교육·설명형 콘텐츠로 사용하세요.",
+    "landingCopy": "KGLD connects real-world gold with a focus on verifiable reserves, redemption context, and operational transparency.",
+    "whyNow": "새 소식을 만들지 않고, 기존에 확인 가능한 KGLD/RWA 구조를 교육형 주제로 설명할 수 있습니다.",
+    "relatedSources": [],
     "newsContext": {
-      "headline": "KGLD는 실물 금 기반 RWA 사업 구상과 온체인 운영 데이터를 함께 설명할 수 있는 콘텐츠 구간입니다.",
-      "keyMessage": "공개 자료와 보도 기반 메시지는 '추진', '준비', '검증 가능성' 중심으로 보수적으로 정리하는 것이 적절합니다.",
-      "relatedItems": [
-        {
-          "title": "ITCEN Global, Korea Gold Exchange, and Korea Gold Exchange Digital Asset gold RWA business watch item",
-          "publisher": "Naver News Search",
-          "publishedAt": "live search",
-          "url": "https://search.naver.com/search.naver?where=news&query=ITCEN%20KGLD",
-          "summary": "Publicly discussed KGLD messaging can be framed around ITCEN Global, Korea Gold Exchange, and Korea Gold Exchange Digital Asset pursuing a gold-based Web3/RWA direction. Treat this as a conservative content seed until the original article URL is confirmed.",
-          "tags": [
-            "ITCEN",
-            "KGLD",
-            "RWA",
-            "Gold"
-          ],
-          "relevance": "high",
-          "usableForContent": true,
-          "caution": "Do not state issuance completion, exchange listing, active trading, or finalized commercial launch unless the source explicitly confirms it."
-        },
-        {
-          "title": "KGLD planned issuance / commercialization timing watch item",
-          "publisher": "Naver News Search",
-          "publishedAt": "live search",
-          "url": "https://search.naver.com/search.naver?where=news&query=KGLD%20발행%20계획",
-          "summary": "KGLD can be described as a real-gold-based RWA project under preparation when using conservative wording such as 'according to reports' or 'planned'.",
-          "tags": [
-            "KGLD",
-            "RWA",
-            "Gold"
-          ],
-          "relevance": "high",
-          "usableForContent": true,
-          "caution": "Use 'plan', 'reported plan', or 'preparation' language. Do not imply completed issuance, live redemption, or exchange availability."
-        },
-        {
-          "title": "LayerZero / KorDA / KGLD multichain expansion watch item",
-          "publisher": "Naver News Search",
-          "publishedAt": "live search",
-          "url": "https://search.naver.com/search.naver?where=news&query=LayerZero%20KorDA%20KGLD",
-          "summary": "LayerZero-related messaging may support a multichain direction for tokenized assets, but KGLD claims should stay within the range of confirmed public materials.",
-          "tags": [
-            "LayerZero",
-            "KorDA",
-            "KGLD",
-            "RWA"
-          ],
-          "relevance": "medium",
-          "usableForContent": true,
-          "caution": "Do not imply KGLD is already active on every chain or that integrations are fully launched without a confirmed source."
-        }
-      ]
+      "headline": "오늘 신규 검증 뉴스 없음",
+      "keyMessage": "검색 링크와 watch item은 기사로 표시하지 않습니다.",
+      "relatedItems": []
     },
     "onchainContext": {
-      "headline": "KGLD 온체인 활동은 조용하며, 운영 상태를 보수적으로 관찰하는 구간입니다.",
-      "keyMessage": "Gas는 low, tokenized gold signal은 sample_full, RWA sector signal은 limited_data, 7-day trend는 unknown입니다."
+      "headline": "온체인 데이터는 콘텐츠의 보조 맥락으로만 사용합니다.",
+      "keyMessage": "샘플 수만으로 시장 활성도나 수요를 단정하지 않습니다."
     },
-    "whyToday": "신규 확인 기사 대신 최근 7일간 사용하지 않은 Reserve Transparency 교육형 앵글을 선택했습니다.",
-    "usableFacts": [
-      "KGLD activity: quiet",
-      "Tokenized gold signal: sample_full",
-      "Gas condition: low"
-    ],
-    "kgldMessage": "금 기반 RWA의 신뢰는 준비자산, 보관 구조, 상환 경로처럼 확인 가능한 정보에서 시작됩니다.",
-    "xPostEnglish": "For a gold-backed RWA, trust starts with what can be verified: reserves, custody, and the path to redemption.",
-    "xPostKorean": "금 기반 RWA의 신뢰는 준비자산, 보관 구조, 상환 경로처럼 확인 가능한 정보에서 시작됩니다.",
-    "internalNote": "뉴스 소재는 '보도에 따르면', '공개 자료 기준', '추진/준비' 표현으로만 사용하세요. 온체인 데이터는 현재 운영 상태를 보조하는 근거로만 붙입니다.",
-    "landingCopy": "KGLD is positioned as a gold-based RWA concept focused on reserve visibility, redemption context, and onchain operational transparency.",
-    "whyNow": "수동 뉴스 watchlist에 KGLD/ITCEN/KorDA/LayerZero 관련 콘텐츠 소재가 등록되어 있습니다. KGLD activity는 quiet로 관찰됩니다. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고할 수 있습니다. Gas 상태는 low입니다.",
     "complianceCaution": [
-      "상장 완료 또는 거래 가능 표현",
-      "발행 완료 또는 상용화 완료 표현",
-      "확정 수익, 이자, 가격 상승 암시",
-      "모든 체인에서 활성화됐다는 표현",
-      "무조건 상환 보장 표현",
-      "Do not state issuance completion, exchange listing, active trading, or finalized commercial launch unless the source explicitly confirms it.",
-      "Use 'plan', 'reported plan', or 'preparation' language. Do not imply completed issuance, live redemption, or exchange availability.",
-      "Do not imply KGLD is already active on every chain or that integrations are fully launched without a confirmed source.",
-      "뉴스에 나온 내용도 계획/추진/보도 기준으로만 표현하세요.",
-      "온체인 활동이 조용하다는 사실을 수요 부족이나 실패로 해석하지 마세요."
+      "보도 내용은 '공개 자료에 따르면', '계획', '추진'처럼 보수적으로 표현하세요.",
+      "미확인 상장, 거래소, 파트너십, 가격 상승 또는 수익률을 암시하지 마세요."
     ],
     "doNotSay": [
-      "상장 완료 또는 특정 거래소 거래 가능 표현",
-      "발행 완료, 상용화 완료, 모든 체인 활성화 표현",
-      "거래량 우위 또는 시장 선도 표현",
-      "수익률 또는 가격 상승 암시",
-      "무조건 상환 보장 표현"
+      "상장 완료 또는 거래 가능",
+      "시장 선도 또는 거래량 우위",
+      "확정 수익 또는 가격 상승",
+      "무조건 상환 보장"
     ]
   },
   "tokenizedGoldRadar": {
@@ -226,9 +170,36 @@
       "KGLD": "ok",
       "PAXG": "ok",
       "XAUT": "ok",
-      "USDT": "ok",
-      "USDC": "ok"
-    }
+      "USDC": "ok",
+      "USDT": "ok"
+    },
+    "meaningfulCandidates": [
+      {
+        "candidate": "KGLD transfer activity",
+        "meaningful": false,
+        "reason": "quiet_without_change"
+      },
+      {
+        "candidate": "PAXG transfer activity",
+        "meaningful": false,
+        "reason": "query_limit_sample_only"
+      },
+      {
+        "candidate": "XAUT transfer activity",
+        "meaningful": false,
+        "reason": "query_limit_sample_only"
+      },
+      {
+        "candidate": "7-day market signal change",
+        "meaningful": false,
+        "reason": "no_baseline_backed_change"
+      },
+      {
+        "candidate": "verified project/RWA news",
+        "meaningful": false,
+        "reason": "no_verified_fresh_source"
+      }
+    ]
   },
   "observed": {
     "kgldTransferSampleSize": 0,
@@ -256,6 +227,23 @@
     "nextTrigger": "외부 신호 상태 변화, 대형 이동 후보 또는 신규 뉴스가 확인될 때 상세 해석을 확장합니다.",
     "isCompact": true
   },
+  "marketIntelligenceBrief": {
+    "title": "Market Intelligence Brief",
+    "status": "no_change",
+    "headline": "오늘 주목할 만한 외부 시장 변화는 확인되지 않았습니다.",
+    "summary": "금 토큰·스테이블코인·RWA 관련 신호는 기존 관찰 범위와 유사합니다.",
+    "kgldImpact": "KGLD 운영 상태나 사업 방향에 즉시 반영할 외부 변화는 없습니다.",
+    "watching": [
+      "금 토큰 대형 이동",
+      "신규 RWA 상품·공식 발표",
+      "규제·수탁·상환 정책 변화",
+      "KGLD/ITCEN/KorDA 관련 검증 뉴스"
+    ],
+    "detectedInsightCount": 0,
+    "lastGeneratedAt": "2026-06-25 14:12:32 KST",
+    "confidence": "medium"
+  },
+  "detectedInsights": [],
   "todayActionBrief": {
     "title": "Today's Action Brief",
     "status": "normal",

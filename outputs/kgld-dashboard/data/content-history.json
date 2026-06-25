@@ -1,12 +1,14 @@
 {
-  "updatedAt": "2026-06-25 10:40:58 KST",
+  "updatedAt": "2026-06-25 14:12:32 KST",
   "entries": [
     {
-      "usedAt": "2026-06-25 10:40:58 KST",
+      "usedAt": "2026-06-25 14:12:32 KST",
       "selectedAngle": "Reserve Transparency",
-      "contentMode": "evergreen",
+      "contentMode": "editorial",
       "sourceUrl": "",
-      "normalizedText": "for a gold-backed rwa, trust starts with what can be verified: reserves, custody, and the path to redemption."
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "for a gold backed rwa trust starts with reserves custody and a clear path to redemption",
+      "normalizedContentHash": "fa7852f6"
     }
   ]
 }
