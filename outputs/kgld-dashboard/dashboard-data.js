@@ -1,11 +1,11 @@
 window.KGLD_DASHBOARD_DATA = {
-  "updatedAt": "2026-06-26 09:07:42 KST",
+  "updatedAt": "2026-06-26 17:11:21 KST",
   "period": "최근 24시간",
   "network": "Ethereum Mainnet",
-  "latestBlock": 25398120,
-  "status": "집중 관찰",
+  "latestBlock": 25400525,
+  "status": "공급 변동",
   "statusLevel": "watch",
-  "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 0건. 발행 0 KGLD, 소각 0 KGLD. Issue 및 Redeem 관련 신규 이동 없음. 추정: Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다.",
+  "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 1건. 발행 964.47 KGLD, 소각 0 KGLD. Issue 유입 964.47 / 유출 0 KGLD. Redeem 유입 0 / 유출 0 KGLD. 추정: Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다. 최근 24시간 공급량 변동이 발생했으므로 발행·소각 트랜잭션과 운영 사유를 대조해야 합니다.",
   "contracts": {
     "token": "0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE",
     "issue": "0xd5A62Dd28BF16229b4Dd9687DECC233548B9AA95",
@@ -14,31 +14,31 @@ window.KGLD_DASHBOARD_DATA = {
   "kpis": [
     {
       "label": "총공급량",
-      "value": "247.20492435",
+      "value": "1211.67492435",
       "unit": "KGLD",
       "change": "0",
       "tone": "neutral"
     },
     {
       "label": "24시간 전송",
-      "value": "0",
+      "value": "1",
       "unit": "건",
       "change": "0",
-      "tone": "neutral"
+      "tone": "watch"
     },
     {
       "label": "24시간 거래량",
-      "value": "0",
+      "value": "964.47",
       "unit": "KGLD",
       "change": "0",
-      "tone": "neutral"
+      "tone": "watch"
     },
     {
       "label": "발행",
-      "value": "0",
+      "value": "964.47",
       "unit": "KGLD",
       "change": "0",
-      "tone": "neutral"
+      "tone": "watch"
     },
     {
       "label": "소각",
@@ -49,7 +49,7 @@ window.KGLD_DASHBOARD_DATA = {
     },
     {
       "label": "Issue 보관 비중",
-      "value": "99.72",
+      "value": "99.94",
       "unit": "%",
       "change": "0",
       "tone": "watch"
@@ -57,51 +57,60 @@ window.KGLD_DASHBOARD_DATA = {
   ],
   "balances": {
     "issue": {
-      "value": 246.53263476,
-      "percentage": 99.72,
+      "value": 1211.00263476,
+      "percentage": 99.94,
       "change": 0
     },
     "redeem": {
       "value": 0.50082762,
-      "percentage": 0.2,
+      "percentage": 0.04,
       "change": 0
     },
     "circulating": {
       "value": 0.17146197,
-      "percentage": 0.06,
+      "percentage": 0.01,
       "change": 0
     }
   },
   "activity": {
     "issue": {
-      "inbound": 0,
+      "inbound": 964.47,
       "outbound": 0,
-      "count": 0,
-      "note": "발행 자산 보관 및 배포 흐름 변동 없음"
+      "count": 1,
+      "note": "발행 자산 보관 및 배포 흐름 관찰"
     },
     "redeem": {
       "inbound": 0,
       "outbound": 0,
       "count": 0,
-      "note": "상환 관련 이동 없음"
+      "note": "상환 관련 이동 관찰"
     }
   },
-  "transactions": [],
+  "transactions": [
+    {
+      "time": "2026-06-26 16:46:35 KST",
+      "type": "mint",
+      "from": "0x0000000000000000000000000000000000000000",
+      "to": "0xd5a62dd28bf16229b4dd9687decc233548b9aa95",
+      "amount": "964.47",
+      "hash": "0x00e7f091dfa42f84cc48490527859c3bc394ca2ff7011bbccea061007578d2f4"
+    }
+  ],
   "risks": [
     {
-      "level": "INFO",
+      "level": "WATCH",
       "title": "최근 24시간 전송",
-      "detail": "관찰 사실: KGLD Transfer 0건, 총 0 KGLD 이동."
+      "detail": "관찰 사실: KGLD Transfer 1건, 총 964.47 KGLD 이동."
     },
     {
       "level": "WATCH",
       "title": "Issue 보관 구조",
-      "detail": "관찰 사실: Issue 컨트랙트 잔액 246.53263476 KGLD (99.72%). 추정: 발행 자산 보관 및 배포 대기 물량이 포함될 수 있습니다."
+      "detail": "관찰 사실: Issue 컨트랙트 잔액 1211.00263476 KGLD (99.94%). 추정: 발행 자산 보관 및 배포 대기 물량이 포함될 수 있습니다."
     },
     {
-      "level": "INFO",
+      "level": "WATCH",
       "title": "공급량 변동",
-      "detail": "관찰 사실: 최근 24시간 발행 0 KGLD, 소각 0 KGLD."
+      "detail": "관찰 사실: 최근 24시간 발행 964.47 KGLD, 소각 0 KGLD."
     }
   ],
   "actions": [
