@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26 17:11:22 KST",
+  "generatedAt": "2026-06-27 09:07:47 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -13,7 +13,7 @@
     "confidence": "medium",
     "marketState": "notable",
     "headline": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 operational이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
-    "whatChanged": "금 토큰 sample_full → notable",
+    "whatChanged": "전일 대비 의미 있는 외부 신호 변화 없음",
     "marketInterpretation": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 operational이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
     "kgldImpact": "외부 신호는 KGLD 컨트랙트 정상 여부를 바꾸지 않으며, 사업·포지셔닝 참고 정보로만 사용합니다.",
     "watchNext": [
@@ -26,27 +26,27 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Project Progress",
-    "primaryAngle": "Project Progress",
-    "contentAngle": "Project Progress",
+    "selectedAngle": "Technology",
+    "primaryAngle": "Technology",
+    "contentAngle": "Technology",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-06-26 17:11:22 KST",
+      "publishedAt": "2026-06-27 09:07:47 KST",
       "url": "",
       "sourceType": "derived"
     },
-    "previouslyUsed": true,
+    "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Project Progress 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Technology 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Project Progress",
+      "Editorial angle: Technology",
       "KGLD activity: operational"
     ],
-    "kgldMessage": "프로젝트 진행은 기대보다 확인 가능한 사실을 중심으로 설명하는 편이 신뢰를 만듭니다.",
-    "xPostEnglish": "Build progress should be explained through what is verifiable, not what is merely expected.",
-    "xPostKorean": "프로젝트 진행은 기대보다 확인 가능한 사실을 중심으로 설명하는 편이 신뢰를 만듭니다.",
+    "kgldMessage": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
+    "xPostEnglish": "Good infrastructure is quiet: it makes verification, custody, and redemption easier to understand.",
+    "xPostKorean": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
     "internalNote": "Editorial Mode입니다. 신규 뉴스처럼 표현하지 말고 교육·설명형 콘텐츠로 사용하세요.",
     "landingCopy": "KGLD connects real-world gold with a focus on verifiable reserves, redemption context, and operational transparency.",
     "whyNow": "새 소식을 만들지 않고, 기존에 확인 가능한 KGLD/RWA 구조를 교육형 주제로 설명할 수 있습니다.",
@@ -165,8 +165,8 @@
     "usedFallback": false,
     "errors": [],
     "rpcChecks": {
-      "gasPrice": "ok",
       "blockNumber": "ok",
+      "gasPrice": "ok",
       "KGLD": "ok",
       "PAXG": "ok",
       "XAUT": "ok",
@@ -191,8 +191,8 @@
       },
       {
         "candidate": "7-day market signal change",
-        "meaningful": true,
-        "reason": "new_large_transfer_signal"
+        "meaningful": false,
+        "reason": "no_baseline_backed_change"
       },
       {
         "candidate": "verified project/RWA news",
@@ -210,25 +210,27 @@
     "title": "External Signal Trend",
     "headline": "금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다. 일부 대형 이동 관찰일이 포함되어 있습니다.",
     "kgldQuietStreak": 0,
-    "goldTokenObservedDays": 3,
-    "stablecoinObservedDays": 3,
-    "gasLowDays": 3,
-    "notableLargeTransferDays": 1,
+    "goldTokenObservedDays": 4,
+    "stablecoinObservedDays": 4,
+    "gasLowDays": 4,
+    "notableLargeTransferDays": 2,
     "trendMood": "mixed",
     "kgldImplication": "단일 전송 샘플보다 반복되는 준비자산·상환·운영 투명성 메시지의 일관성이 중요합니다. 온체인 실행 비용이 비교적 안정적인 구간입니다.",
     "confidence": "medium",
-    "whatChanged": "금 토큰 sample_full → notable",
-    "unchangedSignals": [],
-    "notableChanges": [
-      "금 토큰 sample_full → notable"
+    "whatChanged": "전일 대비 의미 있는 외부 신호 변화 없음",
+    "unchangedSignals": [
+      "금 토큰 표본 상태",
+      "stablecoin 표본 상태",
+      "gas 상태"
     ],
+    "notableChanges": [],
     "nextTrigger": "외부 신호 상태 변화, 대형 이동 후보 또는 신규 뉴스가 확인될 때 상세 해석을 확장합니다.",
-    "isCompact": false
+    "isCompact": true
   },
   "marketIntelligenceBrief": {
     "title": "Market Intelligence Brief",
     "status": "insight_detected",
-    "headline": "2개의 확인할 만한 외부 신호가 감지되었습니다.",
+    "headline": "1개의 확인할 만한 외부 신호가 감지되었습니다.",
     "summary": "샘플 수 자체가 아니라 대형 이동, 비교 가능한 변화, 검증된 신규 자료만 선별했습니다.",
     "kgldImpact": "감지된 신호의 근거를 확인한 뒤 KGLD 운영 또는 콘텐츠에 반영할지 판단하세요.",
     "watching": [
@@ -237,8 +239,8 @@
       "규제·수탁·상환 정책 변화",
       "KGLD/ITCEN/KorDA 관련 검증 뉴스"
     ],
-    "detectedInsightCount": 2,
-    "lastGeneratedAt": "2026-06-26 17:11:22 KST",
+    "detectedInsightCount": 1,
+    "lastGeneratedAt": "2026-06-27 09:07:47 KST",
     "confidence": "medium"
   },
   "detectedInsights": [
@@ -255,21 +257,7 @@
       "source": [
         "Alchemy Ethereum mainnet"
       ],
-      "detectedAt": "2026-06-26 17:11:22 KST"
-    },
-    {
-      "type": "market_change",
-      "severity": "notable",
-      "headline": "최근 기록과 비교해 새로운 대형 이동 신호가 확인되었습니다.",
-      "whyImportant": "단일 샘플 수가 아니라 이전 기록과 비교 가능한 변화입니다.",
-      "kgldImpact": "관련 거래와 주소를 확인한 뒤 운영 또는 콘텐츠 대응 필요성을 판단하세요.",
-      "evidence": [
-        "Narrative history comparison"
-      ],
-      "source": [
-        "narrative-history.json"
-      ],
-      "detectedAt": "2026-06-26 17:11:22 KST"
+      "detectedAt": "2026-06-27 09:07:47 KST"
     }
   ],
   "todayActionBrief": {
