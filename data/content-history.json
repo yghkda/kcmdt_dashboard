@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-28 09:07:49 KST",
+  "updatedAt": "2026-06-29 09:07:50 KST",
   "entries": [
     {
       "usedAt": "2026-06-25 14:12:32 KST",
@@ -36,6 +36,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "tokenized gold connects a familiar asset with a more transparent operational record",
       "normalizedContentHash": "a09ec827"
+    },
+    {
+      "usedAt": "2026-06-29 09:07:50 KST",
+      "selectedAngle": "Redemption UX",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "a tokenized asset is only as understandable as its redemption path",
+      "normalizedContentHash": "d7b3292d"
     }
   ]
 }
