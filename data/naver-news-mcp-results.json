@@ -1,0 +1,147 @@
+{
+  "generatedAt": "2026-06-29 12:27:00 KST",
+  "source": "naver_news_mcp",
+  "queries": [
+    {
+      "query": "ITCEN KGLD",
+      "total": 2,
+      "start": 1,
+      "display": 2,
+      "sort": "date",
+      "items": [
+        {
+          "title": "내년 ‘토큰증권’ 시대 개막…AI 에이전트·RWA가 이끄는 차세대 금융...",
+          "description": "아이티센(ITCEN)은 실물 금을 100% 담보로 하는 ‘KGLD’를 통해 아시아 최대 온체인 금 생태계 구축 계획을 발표했으며 신년기 한화자산운용 파트장은 2027년 1월 시행될 토큰증권(STO) 제도를 앞두고 주식과 채권의 24시간...",
+          "link": "https://n.news.naver.com/mnews/article/009/0005666304?sid=101",
+          "originallink": "https://www.mk.co.kr/article/12017628",
+          "pubDate": "Wed, 15 Apr 2026 14:11:00 +0900"
+        },
+        {
+          "title": "[Who Is ?] 강진모 아이티센그룹 회장",
+          "description": "◆ 생애 강진모는 아이티센(ITCEN)그룹의 회장이다. 1968년 9월18일 경북 상주에서 태어났다. 아주대학교... 최근에는 KGLD, CENG, KRWgc, USDgc 등 토큰 상표권도 출원했다. 일본 스테이블코인 발행사 JPYC와 손잡고 디지털금융...",
+          "link": "https://www.businesspost.co.kr/BP?command=article_view&num=416593",
+          "originallink": "https://www.businesspost.co.kr/BP?command=article_view&num=416593",
+          "pubDate": "Thu, 23 Oct 2025 07:06:00 +0900"
+        }
+      ]
+    },
+    {
+      "query": "아이티센 KGLD",
+      "total": 109,
+      "start": 1,
+      "display": 5,
+      "sort": "date",
+      "items": [
+        {
+          "title": "아이티센글로벌 “웹3 사업 철수는 루머… 3분기 금 토큰 공개로 증명”",
+          "description": "특히 최근 KGLD는 가상 자산 시황 사이트 코인마켓캡(CoinMarketCap)에 등록 절차를 진행하고 있다. 아이티센글로벌은 올해 3분기 내 금 코인 발행을 추진하고, 해외 가상 자산 거래소를 시작으로 내년 상반기까지...",
+          "link": "https://n.news.naver.com/mnews/article/366/0001173845?sid=101",
+          "originallink": "https://biz.chosun.com/stock/finance/2026/06/23/FVPO7B2N25B43OF6SU553W6LMI/?utm_source=naver&utm_medium=original&utm_campaign=biz",
+          "pubDate": "Tue, 23 Jun 2026 18:21:00 +0900"
+        },
+        {
+          "title": "[더벨][현장 스토리] 아이티센글로벌 \"플랫폼 수직계열화, RWA시장 선점...",
+          "description": "금 코인 형태의 RWA 토큰인 KGLD는 최근 결제대행사(PG)와 PoC 단계를 마친 것으로 알려졌다. 아이티센글로벌 IR북 (아이티센그룹 제공) 최근 시장에서 제기되고 있는 우려에 대해서도 일축했다. 한국금거래소 지분 매각...",
+          "link": "https://www.thebell.co.kr/free/content/ArticleView.asp?key=202606221032110360102791",
+          "originallink": "https://www.thebell.co.kr/free/content/ArticleView.asp?key=202606221032110360102791",
+          "pubDate": "Tue, 23 Jun 2026 07:58:00 +0900"
+        },
+        {
+          "title": "[#클라우드 월드] 아이티센글로벌 '웹3 상용화'·와이즈넛 '자사주 100억...",
+          "description": "18일 클라우드 업계에서는 아이티센글로벌의 블록체인 기반 웹3 사업 상용화 단계 진입, 와이즈넛의 100억원... 금 코인 형태의 실물연계자산(RWA) 토큰 '케이골드(KGLD)'는 온체인 예치 및 담보 대출 등 혁신 금융 서비스로...",
+          "link": "https://www.newsworks.co.kr/news/articleView.html?idxno=844381",
+          "originallink": "https://www.newsworks.co.kr/news/articleView.html?idxno=844381",
+          "pubDate": "Fri, 19 Jun 2026 00:36:00 +0900"
+        },
+        {
+          "title": "아이티센글로벌, 웹3 기반 실물 자산 상용화 돌입",
+          "description": "아이티센글로벌이 계열사들과 손잡고 추진해 온 블록체인 기반의 새로운 디지털 금융 생태계 조성 사업이... 이 사업의 핵심 요소인 금 기반 토큰 케이골드(KGLD)는 가상 공간 예치와 담보 대출 같은 새로운 금융...",
+          "link": "http://www.newslock.co.kr/news/articleView.html?idxno=131768",
+          "originallink": "http://www.newslock.co.kr/news/articleView.html?idxno=131768",
+          "pubDate": "Thu, 18 Jun 2026 20:48:00 +0900"
+        },
+        {
+          "title": "아이티센글로벌, 금 기반 RWA 사업 상용화 속도낸다",
+          "description": "아이티센글로벌은 실물 자산과 1대1로 연동한 가상자산 발행을 위해 KGLD, CENG, KRWgc, USDgc 등 금 코인과 KSVR, XAGC, XAGT, CENS 등 은 코인 관련 상표권 출원도 완료했다. 회사는 이를 기반으로 올해 3분기 내 금 코인 발행을...",
+          "link": "https://n.news.naver.com/mnews/article/018/0006309289?sid=101",
+          "originallink": "https://www.edaily.co.kr/news/newspath.asp?newsid=05582566645483032",
+          "pubDate": "Thu, 18 Jun 2026 17:16:00 +0900"
+        }
+      ]
+    },
+    {
+      "query": "KorDA KGLD",
+      "total": 15,
+      "start": 1,
+      "display": 5,
+      "sort": "date",
+      "items": [
+        {
+          "title": "[인터뷰] 진짜 '디지털 금'이 온다",
+          "description": "KorDA는 오는 5월 중 한국 최초의 실물 금 기반 온체인 토큰 KGLD의 초기 발행 검증을 목표로 하고 있다. 단순한 코인 발행이 아니다. 실물 금의 수입, 보관, 수탁, 검증, 토큰 발행, 상환까지 연결하는 엔드투엔드 구조를 실제...",
+          "link": "https://www.tokenpost.kr/news/insights/354087",
+          "originallink": "https://www.tokenpost.kr/news/insights/354087",
+          "pubDate": "Tue, 28 Apr 2026 12:38:00 +0900"
+        },
+        {
+          "title": "[현장] \"실험의 시대는 끝났다\"…'BUIDL ASIA: 넥스트 파이낸스 서밋' 서...",
+          "description": "RWA & Tokenization 세션에서는 KorDA 이상운 대표의 KGLD 발행 전략 및 STO 진출 전략 발표를 필두로, Squid의 Fig이 RWA 기반 온체인 글로벌 금융 접근성 확장 방안을 소개하고, Injective의 Andrew Kang이 글로벌 기관 금융의 새로운...",
+          "link": "https://www.tokenpost.kr/news/insights/349723",
+          "originallink": "https://www.tokenpost.kr/news/insights/349723",
+          "pubDate": "Wed, 15 Apr 2026 15:14:00 +0900"
+        },
+        {
+          "title": "\"전통자산인 금에 블록체인 기술 입혔죠\"",
+          "description": "아이티센글로벌은 이르면 다음달 중 서비스 기반이 될 토큰 '케이골드(KGLD)'를 발행하고, 금융사 파트너십을... 한국금거래소디지털에셋(Korda)·크레더의 이상윤 대표는 \"금은 이제 보관만 하는 자산이 아니라 블록체인...",
+          "link": "https://n.news.naver.com/mnews/article/009/0005638977?sid=105",
+          "originallink": "https://www.mk.co.kr/article/11966334",
+          "pubDate": "Thu, 19 Feb 2026 17:25:00 +0900"
+        },
+        {
+          "title": "아이티센, 금본위 통장 서비스 '시동'",
+          "description": "지난해 말 50톤의 실물 금을 기반으로 10조원 규모의 '케이골드(KGLD)' 발행 계획을 전한 지 두 달만이다.... 서울 여의도에서 개최된 월드크립토포럼(WCF)에서 아이티센글로벌 자회사인 한국금거래소디지털에셋(Korda)...",
+          "link": "https://www.koit.co.kr/news/articleView.html?idxno=205664",
+          "originallink": "https://www.koit.co.kr/news/articleView.html?idxno=205664",
+          "pubDate": "Thu, 19 Feb 2026 14:38:00 +0900"
+        },
+        {
+          "title": "아이티센, 세계 최초 금본위 통장 프로젝트 시동…디지털 금융 시대 주...",
+          "description": "지난해 말 50톤의 실물 금을 기반으로 10조원 규모 '케이골드(KGLD)' 발행 계획을 전한 지 두 달만이다. 앞서 서울 여의도에서 개최된 월드크립토포럼(WCF)에서 아이티센글로벌 자회사인 한국금거래소디지털에셋(Korda)...",
+          "link": "https://n.news.naver.com/mnews/article/092/0002411048?sid=105",
+          "originallink": "https://zdnet.co.kr/view/?no=20260219104856",
+          "pubDate": "Thu, 19 Feb 2026 14:09:00 +0900"
+        }
+      ]
+    },
+    {
+      "query": "LayerZero KGLD",
+      "total": 3,
+      "start": 1,
+      "display": 3,
+      "sort": "date",
+      "items": [
+        {
+          "title": "“1경7천조 금 시장 블록체인으로”…레이어제로·한국금거래소, ‘KGLD...",
+          "description": "레이어제로 기술 파트너 합류 OFT 기반 단일 구조 토큰 구현 디파이·결제 등 금융 서비스 연계 레이어제로(LayerZero)가 한국금거래소디지털에셋과 손잡고 실물 금 기반 토큰 ‘KGLD’의 멀티체인 확장에 나선다....",
+          "link": "https://n.news.naver.com/mnews/article/009/0005666970?sid=101",
+          "originallink": "https://www.mk.co.kr/article/12018885",
+          "pubDate": "Thu, 16 Apr 2026 15:18:00 +0900"
+        },
+        {
+          "title": "레이어제로, 한국금거래소 금 토큰 'KGLD' 멀티체인 확장 지원",
+          "description": "이상윤 한국금거래소디지털에셋 대표(좌), 임종규 레이어제로 아시아 총괄(우) KGLD 멀티체인 확장 파트너십 체결. / 사진=레이어제로 제공 레이어제로(LayerZero)는 한국금거래소디지털에셋(이하 한국금거래소)과 협력해...",
+          "link": "http://www.financialreview.co.kr/news/articleView.html?idxno=41695",
+          "originallink": "http://www.financialreview.co.kr/news/articleView.html?idxno=41695",
+          "pubDate": "Thu, 16 Apr 2026 13:14:00 +0900"
+        },
+        {
+          "title": "레이어제로, 한국금거래소 금 토큰 ‘KGLD’ 멀티체인 확장 지원…아시...",
+          "description": "레이어제로(LayerZero)는 한국금거래소디지털에셋(이하 한국금거래소)과 협력해 실물 금을 기반으로 한 토큰화 자산 ‘KGLD’의 멀티체인 확장을 지원하는 기술 파트너로 참여한다고 16일 밝혔다. 이번 프로젝트는 대표적...",
+          "link": "https://www.tokenpost.kr/news/cryptocurrency/350201",
+          "originallink": "https://www.tokenpost.kr/news/cryptocurrency/350201",
+          "pubDate": "Thu, 16 Apr 2026 12:12:00 +0900"
+        }
+      ]
+    }
+  ]
+}

@@ -28,20 +28,21 @@ It performs these steps:
 
 The Content Desk uses a separate `news-context.json` file so news and onchain
 data stay decoupled. The browser does not call a news API and does not expose
-search keys. The current implementation starts with a conservative manual
-watchlist for ITCEN, ITCEN Global, KorDA, KGLD, LayerZero, tokenized gold, and
-gold-backed service concepts:
+search keys. News collection is handled outside the browser through the Naver
+News MCP. Save the MCP results to `data/naver-news-mcp-results.json`, then run:
 
 ```bash
 npm run news:update
 ```
 
 This creates both `data/news-context.json` and
-`outputs/kgld-dashboard/data/news-context.json`. The initial source is
-`manual`, and each item includes title, publisher, URL, summary, tags,
-relevance, whether it can be used for content, and a caution note. Future RSS or
-search integrations should be added to the local/CI script only, not to the
-browser client.
+`outputs/kgld-dashboard/data/news-context.json`. When MCP results are present,
+the source is `naver_news_mcp` and each item includes title, publisher, source
+URL, Naver URL, summary, tags, relevance, whether it can be used for content,
+and a caution note. If the MCP result file is missing, the script writes a safe
+fallback instead of presenting search links as articles. Future RSS or search
+integrations should be added to the local/CI script only, not to the browser
+client.
 
 ## Narrative Cache
 
