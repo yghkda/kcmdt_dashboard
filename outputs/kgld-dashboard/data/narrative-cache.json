@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-29 09:07:50 KST",
+  "generatedAt": "2026-06-29 12:34:48 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -32,11 +32,11 @@
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-06-29 09:07:50 KST",
+      "publishedAt": "2026-06-29 12:34:48 KST",
       "url": "",
       "sourceType": "derived"
     },
-    "previouslyUsed": false,
+    "previouslyUsed": true,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
     "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Redemption UX 주제를 선택했습니다.",
     "usableFacts": [
@@ -165,13 +165,13 @@
     "usedFallback": false,
     "errors": [],
     "rpcChecks": {
-      "gasPrice": "ok",
       "blockNumber": "ok",
+      "gasPrice": "ok",
       "KGLD": "ok",
-      "XAUT": "ok",
       "PAXG": "ok",
-      "USDC": "ok",
-      "USDT": "ok"
+      "XAUT": "ok",
+      "USDT": "ok",
+      "USDC": "ok"
     },
     "meaningfulCandidates": [
       {
@@ -240,7 +240,7 @@
       "KGLD/ITCEN/KorDA 관련 검증 뉴스"
     ],
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-06-29 09:07:50 KST",
+    "lastGeneratedAt": "2026-06-29 12:34:48 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
