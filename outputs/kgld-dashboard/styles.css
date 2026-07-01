@@ -955,7 +955,8 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   line-height: 1.65;
 }
 
-.market-brief-impact {
+.market-brief-impact,
+.market-brief-next-step {
   margin-top: 22px;
   padding: 16px;
   border: 1px solid rgba(218,189,98,.13);
@@ -964,6 +965,7 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
 }
 
 .market-brief-impact span,
+.market-brief-next-step span,
 .market-watch-list > span {
   display: block;
   color: var(--gold);
@@ -973,12 +975,48 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   text-transform: uppercase;
 }
 
-.market-brief-impact strong {
+.market-brief-impact strong,
+.market-brief-next-step strong {
   display: block;
   margin-top: 8px;
   color: #dce4df;
   font-size: 13px;
   line-height: 1.55;
+}
+
+.market-brief-next-step {
+  margin-top: 12px;
+  background: rgba(112,214,179,.035);
+  border-color: rgba(112,214,179,.13);
+}
+
+.source-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 11px;
+  border: 1px solid rgba(112,214,179,.22);
+  border-radius: 999px;
+  color: var(--mint);
+  background: rgba(112,214,179,.055);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.source-link::after {
+  content: "↗";
+  font-size: 10px;
+  opacity: .85;
+}
+
+.source-link.primary {
+  color: #e8f4ef;
+  border-color: rgba(218,189,98,.28);
+  background: rgba(218,189,98,.08);
 }
 
 .market-watch-list {
@@ -1065,6 +1103,41 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   line-height: 1.55;
 }
 
+.insight-interpretation,
+.insight-checklist,
+.insight-sources {
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  background: rgba(255,255,255,.022);
+}
+
+.insight-checklist {
+  display: grid;
+  gap: 7px;
+}
+
+.insight-checklist em {
+  position: relative;
+  padding-left: 14px;
+  color: #b7c5c0;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.insight-checklist em::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
 .detected-insight-card div > span {
   display: block;
   margin-top: 16px;
@@ -1075,13 +1148,19 @@ h2 { font-size: 20px; letter-spacing: -0.02em; }
   text-transform: uppercase;
 }
 
-.detected-insight-card a,
+.detected-insight-card .source-link,
 .detected-insight-card small {
   display: block;
   margin-top: 12px;
   color: var(--mint);
   font-size: 10px;
   text-decoration: none;
+}
+
+.insight-sources .source-link {
+  display: inline-flex;
+  margin-right: 7px;
+  margin-bottom: 2px;
 }
 
 .content-desk-zone {

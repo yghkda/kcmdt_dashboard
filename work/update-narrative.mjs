@@ -1060,6 +1060,25 @@ function simpleHash(value) {
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
+function etherscanAddressUrl(address) {
+  return `https://etherscan.io/address/${address}`;
+}
+
+function tokenSourceLink(tokenName) {
+  const address = TOKENIZED_GOLD_TOKENS[tokenName] || STABLECOIN_TOKENS[tokenName] || TOKEN_ADDRESS;
+  return {
+    title: `${tokenName} contract events on Etherscan`,
+    url: `${etherscanAddressUrl(address)}#events`
+  };
+}
+
+function historySourceLink() {
+  return {
+    title: "Narrative history JSON",
+    url: "./data/narrative-history.json"
+  };
+}
+
 function isVerifiedNewsItem(item, now = new Date()) {
   if (!item || item.verified !== true || item.usableForContent === false) return false;
   if (!String(item.title || "").trim() || !String(item.publisher || "").trim()) return false;
@@ -1208,6 +1227,160 @@ function buildMarketIntelligence({ narrative, history, newsContext, newsHistory 
         "규제·수탁·상환 정책 변화",
         "KGLD/ITCEN/KorDA 관련 검증 뉴스"
       ],
+      detectedInsightCount: detectedInsights.length,
+      lastGeneratedAt: narrative.generatedAt,
+      confidence: hasCoreData ? "medium" : "low"
+    },
+    detectedInsights,
+    candidates
+  };
+}
+
+function buildMarketIntelligenceEnhanced({ narrative, history, newsContext, newsHistory }) {
+  const candidates = [];
+  const insights = [];
+  const tokens = narrative.tokenizedGoldRadar?.tokens || {};
+
+  for (const [tokenName, token] of Object.entries(tokens)) {
+    const result = isMeaningfulTokenEvent(tokenName, token);
+    candidates.push({
+      candidate: `${tokenName} transfer activity`,
+      meaningful: result.meaningful,
+      reason: result.reason
+    });
+
+    if (!result.meaningful) continue;
+
+    insights.push({
+      type: "tokenized_gold_event",
+      severity: "notable",
+      headline: `${tokenName}에서 기준 이상의 대형 이동이 관찰되었습니다.`,
+      whyImportant: "단순 샘플 충족이 아니라 금 기반 토큰 카테고리에서 별도 확인할 만한 규모의 이동입니다.",
+      interpretation: tokenName === "KGLD"
+        ? "KGLD 자체 이동이면 Issue/Redeem, 운영 지갑, 사용자 이동 중 무엇인지 먼저 구분해야 합니다."
+        : `${tokenName} 흐름은 외부 금 토큰 수요나 보관·정산 움직임의 참고 신호입니다. KGLD 수요로 직접 해석하지는 않습니다.`,
+      whatToCheck: [
+        "Etherscan 이벤트 페이지에서 최근 Transfer의 from/to 주소 확인",
+        "거래소성 주소인지, 커스터디/운영성 주소인지 라벨 확인",
+        "KGLD 콘텐츠에는 외부 금 토큰 참고 신호로만 표현"
+      ],
+      kgldImpact: tokenName === "KGLD"
+        ? "KGLD 운영 관련 주소와 거래 목적을 확인한 뒤 운영 대응 필요성을 판단하세요."
+        : "외부 금 토큰 흐름은 카테고리 참고 신호이며, KGLD의 직접 수요나 성과로 해석하지 않습니다.",
+      evidence: [`largeTransferDetected: true`, `sample size: ${token.transferCount || 0}`],
+      source: [tokenSourceLink(tokenName), { title: "Alchemy Ethereum mainnet", url: "https://dashboard.alchemy.com/" }],
+      detectedAt: narrative.generatedAt
+    });
+  }
+
+  const marketChange = isMeaningfulMarketChange(narrative, history);
+  candidates.push({
+    candidate: "7-day market signal change",
+    meaningful: marketChange.meaningful,
+    reason: marketChange.reason
+  });
+  if (marketChange.meaningful) {
+    insights.push({
+      type: "market_change",
+      severity: "notable",
+      headline: "최근 기록과 비교해 새로운 대형 이동 신호가 확인되었습니다.",
+      whyImportant: "단일 조회 결과가 아니라 이전 narrative history와 비교해 달라진 지점입니다.",
+      interpretation: "반복되는 패턴인지, 하루짜리 이벤트인지 확인하면 콘텐츠 톤과 운영 모니터링 강도를 정할 수 있습니다.",
+      whatToCheck: [
+        "narrative-history.json에서 직전 스냅샷과 현재 스냅샷 비교",
+        "대형 이동이 어느 토큰에서 발생했는지 확인",
+        "동일 신호가 다음 스냅샷에서도 반복되는지 관찰"
+      ],
+      kgldImpact: "관련 거래와 주소를 확인한 뒤 운영 또는 콘텐츠 대응 필요성을 판단하세요.",
+      evidence: ["Narrative history comparison"],
+      source: [historySourceLink()],
+      detectedAt: narrative.generatedAt
+    });
+  }
+
+  const usedUrls = new Set((newsHistory?.entries || []).map((entry) => entry.url).filter(Boolean));
+  const verifiedNews = (newsContext?.items || [])
+    .filter((item) => isVerifiedNewsItem(item) && !usedUrls.has(item.url))
+    .filter((item, index, items) => items.findIndex((candidate) => candidate.url === item.url) === index)
+    .slice(0, 3);
+
+  candidates.push({
+    candidate: "verified project/RWA news",
+    meaningful: verifiedNews.length > 0,
+    reason: verifiedNews.length > 0 ? "verified_fresh_source" : "no_verified_fresh_source"
+  });
+
+  for (const item of verifiedNews) {
+    const tags = new Set(item.tags || []);
+    const isProjectNews = ["KGLD", "ITCEN", "KorDA", "LayerZero"].some((tag) => tags.has(tag));
+    insights.push({
+      type: isProjectNews ? "project_news" : "rwa_news_insight",
+      severity: isProjectNews ? "important" : "info",
+      headline: item.title,
+      whyImportant: item.summary || "최근 확인된 공개 자료입니다.",
+      interpretation: isProjectNews
+        ? "KGLD 사업 방향, 실물 금 기반 RWA, 멀티체인 확장 같은 메시지의 근거로 사용할 수 있습니다."
+        : "RWA 시장 분위기를 설명하는 보조 자료로만 사용하세요.",
+      whatToCheck: [
+        "기사 원문에서 보도 범위와 표현 수위 확인",
+        "완료/확정 표현인지 계획/추진 표현인지 구분",
+        "콘텐츠에 사용할 경우 출처 링크와 보수적 표현 유지"
+      ],
+      kgldImpact: isProjectNews
+        ? "공개 자료에서 확인되는 범위 안에서만 KGLD 사업 메시지에 반영할 수 있습니다."
+        : "KGLD와 직접 연결하지 말고 RWA 시장 참고 정보로만 사용하세요.",
+      evidence: [item.publisher, item.publishedAt],
+      source: [{ title: item.title, url: item.url }, ...(item.naverUrl ? [{ title: "Naver News result", url: item.naverUrl }] : [])],
+      detectedAt: item.publishedAt
+    });
+  }
+
+  const priority = {
+    regulatory_impact: 1,
+    project_news: 2,
+    tokenized_gold_event: 3,
+    rwa_news_insight: 4,
+    market_change: 5
+  };
+  const detectedInsights = insights
+    .sort((a, b) => (priority[a.type] || 99) - (priority[b.type] || 99))
+    .slice(0, 3);
+  const hasErrors = (narrative.diagnostics?.errors || []).length > 0;
+  const hasCoreData = narrative.source === "alchemy" && narrative.diagnostics?.usedFallback !== true;
+  const status = detectedInsights.length
+    ? "insight_detected"
+    : hasErrors
+      ? "error"
+      : hasCoreData
+        ? "no_change"
+        : "limited_data";
+  const primarySource = detectedInsights
+    .flatMap((insight) => insight.source || [])
+    .find((source) => typeof source === "object" && source.url) || null;
+
+  return {
+    brief: {
+      title: "Market Intelligence Brief",
+      status,
+      headline: detectedInsights.length
+        ? `${detectedInsights.length}개의 확인할 만한 외부 신호가 감지되었습니다.`
+        : "오늘 주목할 만한 외부 시장 변화는 확인되지 않았습니다.",
+      summary: detectedInsights.length
+        ? "대형 이동, 이전 기록 대비 변화, 검증된 공개 자료만 선별했습니다."
+        : "금 토큰, 스테이블코인, RWA 관련 신호는 기존 관찰 범위와 유사합니다.",
+      kgldImpact: detectedInsights.length
+        ? "각 신호의 근거 링크를 확인한 뒤 운영 대응, 콘텐츠 반영, 단순 관찰 중 어디에 둘지 판단하세요."
+        : "KGLD 운영 상태나 사업 방향에 즉시 반영할 외부 변화는 없습니다.",
+      nextStep: detectedInsights.length
+        ? "먼저 근거 링크를 열어 주소·기사 원문을 확인하고, 확인된 범위만 운영 노트나 콘텐츠 초안에 반영하세요."
+        : "오늘은 외부 신호보다 상단 KGLD 운영 지표와 준비자산·상환 메시지를 우선 유지하세요.",
+      watching: [
+        "금 토큰 대형 이동",
+        "신규 RWA 상품·공식 발표",
+        "규제·수탁·상환 정책 변화",
+        "KGLD/ITCEN/KorDA 관련 검증 뉴스"
+      ],
+      primarySource,
       detectedInsightCount: detectedInsights.length,
       lastGeneratedAt: narrative.generatedAt,
       confidence: hasCoreData ? "medium" : "low"
@@ -1725,7 +1898,7 @@ async function main() {
   const newsHistory = await readJsonFile(ROOT_NEWS_HISTORY_PATH, { updatedAt: "unknown", entries: [] });
   narrative.narrativeTrend = buildNarrativeTrendStrict(history);
   narrative = buildIntelligenceModels(narrative, history);
-  const intelligence = buildMarketIntelligence({
+  const intelligence = buildMarketIntelligenceEnhanced({
     narrative,
     history,
     newsContext,

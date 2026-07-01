@@ -351,6 +351,16 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => 
   "'": "&#39;"
 }[char]));
 
+const renderSourceLinks = (sources = []) => sources
+  .filter(Boolean)
+  .map((source) => {
+    if (typeof source === "object" && source.url) {
+      return `<a class="source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.title || source.url)}</a>`;
+    }
+    return `<small>${escapeHtml(String(source))}</small>`;
+  })
+  .join("");
+
 const tooltipCopy = {
   Issue: "발행된 KGLD 중 아직 사용자에게 배포되지 않고 Issue 컨트랙트에 보관 중인 물량입니다.",
   Redeem: "상환 절차와 관련해 Redeem 컨트랙트에 남아 있는 KGLD 잔액입니다. 실제 실물금 인도 완료 여부와는 별도입니다.",
@@ -730,6 +740,11 @@ const renderNarrativeCardsV2 = (narrative, loadMeta = {}) => {
       <span>KGLD Impact</span>
       <strong>${escapeHtml(brief.kgldImpact)}</strong>
     </div>
+    <div class="market-brief-next-step">
+      <span>Next Check</span>
+      <strong>${escapeHtml(brief.nextStep || "근거를 확인한 뒤 운영·콘텐츠 반영 여부를 판단하세요.")}</strong>
+      ${brief.primarySource?.url ? `<a class="source-link primary" href="${escapeHtml(brief.primarySource.url)}" target="_blank" rel="noreferrer">${escapeHtml(brief.primarySource.title || "Open source")}</a>` : ""}
+    </div>
     <div class="market-watch-list">
       <span>Watching</span>
       <div>${(brief.watching || []).map((item) => `<em>${escapeHtml(item)}</em>`).join("")}</div>
@@ -764,10 +779,23 @@ const renderNarrativeCardsV2 = (narrative, loadMeta = {}) => {
           </div>
           <h3>${escapeHtml(insight.headline || "확인할 신호가 감지되었습니다.")}</h3>
           <p>${escapeHtml(insight.whyImportant || "")}</p>
+          ${insight.interpretation ? `
+            <div class="insight-interpretation">
+              <span>Interpretation</span>
+              <strong>${escapeHtml(insight.interpretation)}</strong>
+            </div>
+          ` : ""}
+          ${Array.isArray(insight.whatToCheck) && insight.whatToCheck.length ? `
+            <div class="insight-checklist">
+              <span>What to check</span>
+              ${insight.whatToCheck.slice(0, 3).map((item) => `<em>${escapeHtml(item)}</em>`).join("")}
+            </div>
+          ` : ""}
           <div><span>KGLD Impact</span><strong>${escapeHtml(insight.kgldImpact || "")}</strong></div>
-          ${(insight.source || []).map((source) => typeof source === "object" && source.url
-            ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.title || source.url)}</a>`
-            : `<small>${escapeHtml(String(source))}</small>`).join("")}
+          <div class="insight-sources">
+            <span>Source</span>
+            ${renderSourceLinks(insight.source || [])}
+          </div>
         </article>
       `).join("")}
     </div>
