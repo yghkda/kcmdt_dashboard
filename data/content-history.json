@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-30 09:07:38 KST",
+  "updatedAt": "2026-07-01 09:07:39 KST",
   "entries": [
     {
       "usedAt": "2026-06-25 14:12:32 KST",
@@ -54,6 +54,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
       "normalizedContentHash": "f1d8d612"
+    },
+    {
+      "usedAt": "2026-07-01 09:07:39 KST",
+      "selectedAngle": "Market Context",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
+      "normalizedContentHash": "bbed64cb"
     }
   ]
 }
