@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-01 15:17:39 KST",
+  "generatedAt": "2026-07-02 09:07:38 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -26,22 +26,22 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Market Context",
-    "primaryAngle": "Market Context",
-    "contentAngle": "Market Context",
+    "selectedAngle": "Regulation",
+    "primaryAngle": "Regulation",
+    "contentAngle": "Regulation",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-07-01 15:17:39 KST",
+      "publishedAt": "2026-07-02 09:07:38 KST",
       "url": "",
       "sourceType": "derived"
     },
-    "previouslyUsed": true,
+    "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Market Context 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Regulation 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Market Context",
+      "Editorial angle: Regulation",
       "KGLD activity: quiet"
     ],
     "kgldMessage": "KGLD는 실물 금을 더 명확한 운영 맥락과 함께 온체인에서 설명하는 방식을 탐색합니다.",
@@ -165,13 +165,13 @@
     "usedFallback": false,
     "errors": [],
     "rpcChecks": {
-      "blockNumber": "ok",
       "gasPrice": "ok",
+      "blockNumber": "ok",
       "KGLD": "ok",
       "PAXG": "ok",
       "XAUT": "ok",
-      "USDT": "ok",
-      "USDC": "ok"
+      "USDC": "ok",
+      "USDT": "ok"
     },
     "meaningfulCandidates": [
       {
@@ -209,7 +209,7 @@
   "narrativeTrend": {
     "title": "External Signal Trend",
     "headline": "KGLD는 최근 며칠간 조용한 온체인 상태를 유지하고 있습니다. 금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다. 일부 대형 이동 관찰일이 포함되어 있습니다.",
-    "kgldQuietStreak": 4,
+    "kgldQuietStreak": 5,
     "goldTokenObservedDays": 7,
     "stablecoinObservedDays": 7,
     "gasLowDays": 7,
@@ -242,7 +242,7 @@
     ],
     "primarySource": null,
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-07-01 15:17:39 KST",
+    "lastGeneratedAt": "2026-07-02 09:07:38 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
