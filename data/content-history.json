@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-02 09:07:38 KST",
+  "updatedAt": "2026-07-03 09:07:42 KST",
   "entries": [
     {
       "usedAt": "2026-06-25 14:12:32 KST",
@@ -72,6 +72,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
       "normalizedContentHash": "e5c036f8"
+    },
+    {
+      "usedAt": "2026-07-03 09:07:42 KST",
+      "selectedAngle": "Reserve Transparency",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "for a gold backed rwa trust starts with reserves custody and a clear path to redemption",
+      "normalizedContentHash": "fa7852f6"
     }
   ]
 }
