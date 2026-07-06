@@ -11,6 +11,20 @@ const SCALE = 10n ** DECIMALS;
 const ERC20_TOTAL_SUPPLY = "0x18160ddd";
 const ERC20_BALANCE_OF = "0x70a08231";
 const TRANSFER_PAGE_SIZE = "0x3e8";
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+const APPROX_24H_BLOCKS = 8_000;
+const LOG_CHUNK_SIZE = 2_000;
+const RPC_MAX_ATTEMPTS = 5;
+
+class RpcError extends Error {
+  constructor(message, { method, status, detail } = {}) {
+    super(message);
+    this.name = "RpcError";
+    this.method = method;
+    this.status = status;
+    this.detail = detail;
+  }
+}
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -32,20 +46,54 @@ function getRpcUrl() {
 }
 
 async function rpc(method, params) {
-  const response = await fetch(getRpcUrl(), {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
-  });
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`RPC ${method} failed with HTTP ${response.status}: ${detail}`);
+  let lastError;
+  for (let attempt = 1; attempt <= RPC_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(getRpcUrl(), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
+      });
+      if (!response.ok) {
+        const detail = await response.text();
+        throw new RpcError(`RPC ${method} failed with HTTP ${response.status}: ${detail}`, {
+          method,
+          status: response.status,
+          detail
+        });
+      }
+      const payload = await response.json();
+      if (payload.error) {
+        throw new RpcError(`RPC ${method} error: ${payload.error.message}`, {
+          method,
+          status: payload.error.code,
+          detail: payload.error.message
+        });
+      }
+      return payload.result;
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableRpcError(error) || attempt === RPC_MAX_ATTEMPTS) break;
+      const delayMs = Math.min(30_000, 1_500 * 2 ** (attempt - 1));
+      console.warn(`[rpc] ${method} retry ${attempt}/${RPC_MAX_ATTEMPTS} after ${delayMs}ms: ${error.message}`);
+      await sleep(delayMs);
+    }
   }
-  const payload = await response.json();
-  if (payload.error) {
-    throw new Error(`RPC ${method} error: ${payload.error.message}`);
-  }
-  return payload.result;
+  throw lastError;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRetryableRpcError(error) {
+  const status = Number(error?.status);
+  const message = String(error?.message || "");
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504 || /rate-limited|timeout|temporarily/i.test(message);
+}
+
+function isRateLimitError(error) {
+  return Number(error?.status) === 429 || /rate-limited|HTTP 429/i.test(String(error?.message || ""));
 }
 
 function hexToBigInt(value) {
@@ -133,33 +181,91 @@ function parseTransferAmount(transfer) {
   return 0n;
 }
 
+function addressFromTopic(topic) {
+  return `0x${String(topic || "").slice(-40)}`.toLowerCase();
+}
+
+async function getLogsTransfers(fromBlock, toBlock) {
+  const logs = [];
+  for (let start = fromBlock; start <= toBlock; start += LOG_CHUNK_SIZE) {
+    const end = Math.min(toBlock, start + LOG_CHUNK_SIZE - 1);
+    const chunk = await rpc("eth_getLogs", [{
+      fromBlock: `0x${start.toString(16)}`,
+      toBlock: `0x${end.toString(16)}`,
+      address: TOKEN_ADDRESS,
+      topics: [TRANSFER_TOPIC]
+    }]);
+    logs.push(...chunk);
+  }
+
+  const blockTimestamps = new Map();
+  const transfers = [];
+  for (const log of logs) {
+    const blockNumber = Number(hexToBigInt(log.blockNumber));
+    if (!blockTimestamps.has(blockNumber)) {
+      const block = await getBlockByNumber(blockNumber);
+      blockTimestamps.set(blockNumber, Number(hexToBigInt(block.timestamp)));
+    }
+    const timestamp = blockTimestamps.get(blockNumber);
+    transfers.push({
+      from: addressFromTopic(log.topics?.[1]),
+      to: addressFromTopic(log.topics?.[2]),
+      hash: log.transactionHash,
+      rawContract: { value: log.data },
+      metadata: { blockTimestamp: new Date(timestamp * 1000).toISOString() },
+      blockNum: log.blockNumber
+    });
+  }
+  return transfers;
+}
+
 async function getAssetTransfers(fromBlock, toBlock) {
   const transfers = [];
   let pageKey;
 
-  while (true) {
-    const result = await rpc("alchemy_getAssetTransfers", [
-      {
-        fromBlock: `0x${fromBlock.toString(16)}`,
-        toBlock: `0x${toBlock.toString(16)}`,
-        category: ["erc20"],
-        contractAddresses: [TOKEN_ADDRESS],
-        withMetadata: true,
-        excludeZeroValue: false,
-        maxCount: TRANSFER_PAGE_SIZE,
-        order: "desc",
-        ...(pageKey ? { pageKey } : {})
+  try {
+    while (true) {
+      const result = await rpc("alchemy_getAssetTransfers", [
+        {
+          fromBlock: `0x${fromBlock.toString(16)}`,
+          toBlock: `0x${toBlock.toString(16)}`,
+          category: ["erc20"],
+          contractAddresses: [TOKEN_ADDRESS],
+          withMetadata: true,
+          excludeZeroValue: false,
+          maxCount: TRANSFER_PAGE_SIZE,
+          order: "desc",
+          ...(pageKey ? { pageKey } : {})
+        }
+      ]);
+
+      transfers.push(...(result.transfers || []));
+      if (!result.pageKey) {
+        break;
       }
-    ]);
-
-    transfers.push(...(result.transfers || []));
-    if (!result.pageKey) {
-      break;
+      pageKey = result.pageKey;
     }
-    pageKey = result.pageKey;
+    return { transfers, source: "alchemy_getAssetTransfers", degraded: false, error: "" };
+  } catch (error) {
+    console.warn(`[transfers] alchemy_getAssetTransfers failed, falling back to eth_getLogs: ${error.message}`);
+    try {
+      const logTransfers = await getLogsTransfers(fromBlock, toBlock);
+      return {
+        transfers: logTransfers,
+        source: "eth_getLogs",
+        degraded: isRateLimitError(error),
+        error: `alchemy_getAssetTransfers failed: ${error.message}`
+      };
+    } catch (fallbackError) {
+      console.warn(`[transfers] eth_getLogs fallback failed: ${fallbackError.message}`);
+      return {
+        transfers: [],
+        source: "unavailable",
+        degraded: true,
+        error: `Transfer lookup unavailable. primary=${error.message}; fallback=${fallbackError.message}`
+      };
+    }
   }
-
-  return transfers;
 }
 
 async function readChainData() {
@@ -174,8 +280,13 @@ async function readChainData() {
   const latestBlockData = await getBlockByNumber(latestBlock);
   const latestTimestamp = Number(hexToBigInt(latestBlockData.timestamp));
   const cutoffTimestamp = latestTimestamp - 24 * 60 * 60;
-  const startBlock = await findStartBlock(latestBlock, cutoffTimestamp);
-  const transfers = await getAssetTransfers(startBlock, latestBlock);
+  const startBlock = Math.max(0, latestBlock - APPROX_24H_BLOCKS);
+  const transferLookup = await getAssetTransfers(startBlock, latestBlock);
+  const transfers = transferLookup.transfers
+    .filter((transfer) => {
+      if (!transfer.metadata?.blockTimestamp) return true;
+      return Math.floor(new Date(transfer.metadata.blockTimestamp).getTime() / 1000) >= cutoffTimestamp;
+    });
 
   const totalSupply = hexToBigInt(totalSupplyHex);
   const issueBalance = hexToBigInt(issueBalanceHex);
@@ -234,7 +345,14 @@ async function readChainData() {
     issueOutbound,
     redeemInbound,
     redeemOutbound,
-    transactions: transactions.slice(0, 10)
+    transactions: transactions.slice(0, 10),
+    transferLookup: {
+      source: transferLookup.source,
+      degraded: transferLookup.degraded,
+      error: transferLookup.error,
+      fromBlock: startBlock,
+      toBlock: latestBlock
+    }
   };
 }
 
@@ -247,7 +365,12 @@ function buildStatus(data) {
   let status = "정상";
   let statusLevel = "normal";
 
-  if (data.transferCount === 0) {
+  if (data.transferLookup?.degraded) {
+    facts.push(`Transfer 이벤트 조회 제한 발생 (${data.transferLookup.source})`);
+    status = "데이터 제한";
+    statusLevel = "watch";
+    inferences.push("공급량과 Issue/Redeem 잔액은 최신 RPC로 갱신했지만, 최근 24시간 Transfer 활동은 Alchemy rate limit 때문에 보수적으로 미확정 처리합니다.");
+  } else if (data.transferCount === 0) {
     facts.push("Issue 및 Redeem 관련 신규 이동 없음");
   } else {
     facts.push(`Issue 유입 ${formatToken(data.issueInbound)} / 유출 ${formatToken(data.issueOutbound)} KGLD`);
@@ -255,10 +378,12 @@ function buildStatus(data) {
   }
 
   const issueShare = formatPercent(data.issueBalance, data.totalSupply);
-  if (issueShare >= 50) {
+  if (issueShare >= 50 && !data.transferLookup?.degraded) {
     status = "집중 관찰";
     statusLevel = "watch";
     inferences.push("Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다.");
+  } else if (issueShare >= 50) {
+    inferences.push("Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도는 계속 관찰합니다.");
   } else {
     inferences.push("Issue 잔액은 발행 자산 보관 및 배포 대기 물량을 포함할 수 있습니다.");
   }
@@ -282,6 +407,7 @@ function buildDashboardData(data) {
   const redeemPct = formatPercent(data.redeemBalance, data.totalSupply);
   const circulatingPct = formatPercent(data.circulatingBalance, data.totalSupply);
   const zeroChange = "0";
+  const transferLookupDegraded = Boolean(data.transferLookup?.degraded);
 
   return {
     updatedAt: data.updatedAt,
@@ -298,8 +424,8 @@ function buildDashboardData(data) {
     },
     kpis: [
       { label: "총공급량", value: formatToken(data.totalSupply), unit: "KGLD", change: zeroChange, tone: "neutral" },
-      { label: "24시간 전송", value: String(data.transferCount), unit: "건", change: zeroChange, tone: data.transferCount > 0 ? "watch" : "neutral" },
-      { label: "24시간 거래량", value: formatToken(data.volume), unit: "KGLD", change: zeroChange, tone: data.volume > 0n ? "watch" : "neutral" },
+      { label: "24시간 전송", value: transferLookupDegraded ? "확인 제한" : String(data.transferCount), unit: transferLookupDegraded ? "" : "건", change: zeroChange, tone: transferLookupDegraded || data.transferCount > 0 ? "watch" : "neutral" },
+      { label: "24시간 거래량", value: transferLookupDegraded ? "확인 제한" : formatToken(data.volume), unit: transferLookupDegraded ? "" : "KGLD", change: zeroChange, tone: transferLookupDegraded || data.volume > 0n ? "watch" : "neutral" },
       { label: "발행", value: formatToken(data.minted), unit: "KGLD", change: zeroChange, tone: data.minted > 0n ? "watch" : "neutral" },
       { label: "소각", value: formatToken(data.burned), unit: "KGLD", change: zeroChange, tone: data.burned > 0n ? "watch" : "neutral" },
       { label: "Issue 보관 비중", value: issuePct.toFixed(2), unit: "%", change: zeroChange, tone: issuePct >= 50 ? "watch" : "neutral" }
@@ -314,21 +440,28 @@ function buildDashboardData(data) {
         inbound: toNumberToken(data.issueInbound),
         outbound: toNumberToken(data.issueOutbound),
         count: data.transactions.filter((tx) => tx.type === "issue_in" || tx.type === "issue_out" || tx.type === "mint").length,
-        note: data.transferCount === 0 ? "발행 자산 보관 및 배포 흐름 변동 없음" : "발행 자산 보관 및 배포 흐름 관찰"
+        note: transferLookupDegraded ? "Transfer 조회 제한으로 24시간 유입·유출 미확정" : data.transferCount === 0 ? "발행 자산 보관 및 배포 흐름 변동 없음" : "발행 자산 보관 및 배포 흐름 관찰"
       },
       redeem: {
         inbound: toNumberToken(data.redeemInbound),
         outbound: toNumberToken(data.redeemOutbound),
         count: data.transactions.filter((tx) => tx.type === "redeem_in" || tx.type === "redeem_out" || tx.type === "burn").length,
-        note: data.transferCount === 0 ? "상환 관련 이동 없음" : "상환 관련 이동 관찰"
+        note: transferLookupDegraded ? "Transfer 조회 제한으로 상환 관련 이동 미확정" : data.transferCount === 0 ? "상환 관련 이동 없음" : "상환 관련 이동 관찰"
       }
     },
     transactions: data.transactions,
     risks: [
+      ...(transferLookupDegraded ? [{
+        level: "WATCH",
+        title: "Transfer 조회 제한",
+        detail: `관찰 사실: 공급량과 Issue/Redeem 잔액은 갱신됐지만 최근 24시간 Transfer 조회가 제한됐습니다. source=${data.transferLookup?.source || "unknown"}.`
+      }] : []),
       {
-        level: data.transferCount > 0 ? "WATCH" : "INFO",
+        level: transferLookupDegraded || data.transferCount > 0 ? "WATCH" : "INFO",
         title: "최근 24시간 전송",
-        detail: `관찰 사실: KGLD Transfer ${data.transferCount}건, 총 ${formatToken(data.volume)} KGLD 이동.`
+        detail: transferLookupDegraded
+          ? "관찰 사실: Transfer 이벤트 조회 제한으로 24시간 전송 수와 거래량은 미확정입니다."
+          : `관찰 사실: KGLD Transfer ${data.transferCount}건, 총 ${formatToken(data.volume)} KGLD 이동.`
       },
       {
         level: issuePct >= 50 ? "WATCH" : "INFO",
@@ -342,6 +475,7 @@ function buildDashboardData(data) {
       }
     ],
     actions: [
+      ...(transferLookupDegraded ? [{ priority: "P0", text: "Alchemy rate limit으로 Transfer 조회가 제한됨. 다음 실행에서 자동 재조회하며 필요 시 Alchemy 사용량·플랜 확인" }] : []),
       { priority: "P1", text: "Issue 컨트랙트의 보관 잔액과 외부 배포 흐름을 함께 추적" },
       { priority: "P2", text: "발행 또는 소각이 발생한 날에는 관련 트랜잭션 해시와 운영 사유를 대조" },
       { priority: "P3", text: "Redeem 유입·유출이 늘어날 경우 상환 수요 변화와 공급량 변동을 함께 점검" }
@@ -354,12 +488,55 @@ async function writeDashboardFile(data) {
   await fs.writeFile(DASHBOARD_PATH, serialized, "utf8");
 }
 
+async function readExistingDashboardFile() {
+  const content = await fs.readFile(DASHBOARD_PATH, "utf8");
+  const match = content.match(/window\.KGLD_DASHBOARD_DATA\s*=\s*([\s\S]*?);\s*$/);
+  if (!match) throw new Error("Could not parse existing dashboard-data.js");
+  return JSON.parse(match[1]);
+}
+
+function buildRateLimitedDashboardData(existing, error) {
+  const risks = Array.isArray(existing.risks) ? existing.risks : [];
+  const actions = Array.isArray(existing.actions) ? existing.actions : [];
+  return {
+    ...existing,
+    updatedAt: asKstString(new Date()),
+    status: "데이터 제한",
+    statusLevel: "watch",
+    statusMessage: "관찰 사실: Alchemy rate limit으로 최신 온체인 조회가 제한되었습니다. 추정: 기존 대시보드 값을 유지하고 다음 실행에서 자동 재조회합니다.",
+    risks: [
+      {
+        level: "WATCH",
+        title: "Alchemy 조회 제한",
+        detail: `관찰 사실: RPC rate limit으로 최신 조회가 실패했습니다. 기존 값을 유지합니다. error=${String(error.message || error).slice(0, 240)}`
+      },
+      ...risks.filter((risk) => risk.title !== "Alchemy 조회 제한")
+    ],
+    actions: [
+      {
+        priority: "P0",
+        text: "Alchemy rate limit으로 최신 조회가 보류됨. 다음 스케줄에서 자동 재시도하며 지속 시 Alchemy 사용량·플랜 확인"
+      },
+      ...actions.filter((action) => action.priority !== "P0")
+    ]
+  };
+}
+
 async function main() {
   requireEnv("TZ");
-  const chainData = await readChainData();
-  const dashboardData = buildDashboardData(chainData);
-  await writeDashboardFile(dashboardData);
-  console.log(`Updated dashboard at block ${chainData.latestBlock} with ${chainData.transferCount} transfers.`);
+  try {
+    const chainData = await readChainData();
+    const dashboardData = buildDashboardData(chainData);
+    await writeDashboardFile(dashboardData);
+    console.log(`Updated dashboard at block ${chainData.latestBlock} with ${chainData.transferCount} transfers.`);
+  } catch (error) {
+    if (!isRateLimitError(error)) throw error;
+    console.warn(`[dashboard] Rate limit fallback activated: ${error.message}`);
+    const existing = await readExistingDashboardFile();
+    const dashboardData = buildRateLimitedDashboardData(existing, error);
+    await writeDashboardFile(dashboardData);
+    console.log("Updated dashboard with rate-limit fallback data.");
+  }
 }
 
 main().catch((error) => {
