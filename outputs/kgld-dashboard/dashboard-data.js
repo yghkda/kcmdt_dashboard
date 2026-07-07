@@ -1,8 +1,8 @@
 window.KGLD_DASHBOARD_DATA = {
-  "updatedAt": "2026-07-06 09:45:09 KST",
+  "updatedAt": "2026-07-07 09:08:02 KST",
   "period": "최근 24시간",
   "network": "Ethereum Mainnet",
-  "latestBlock": 25469985,
+  "latestBlock": 25476980,
   "status": "데이터 제한",
   "statusLevel": "watch",
   "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 0건. 발행 0 KGLD, 소각 0 KGLD. Transfer 이벤트 조회 제한 발생 (unavailable). 추정: 공급량과 Issue/Redeem 잔액은 최신 RPC로 갱신했지만, 최근 24시간 Transfer 활동은 Alchemy rate limit 때문에 보수적으로 미확정 처리합니다. Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도는 계속 관찰합니다.",

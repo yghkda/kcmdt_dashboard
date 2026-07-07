@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06 09:45:10 KST",
+  "generatedAt": "2026-07-07 09:08:02 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -13,7 +13,7 @@
     "confidence": "medium",
     "marketState": "limited_data",
     "headline": "KGLD는 조용하고 외부 금 토큰·스테이블코인 신호도 제한적입니다. 오늘의 시장 맥락은 방향성 판단보다 운영 상태 확인에 가깝습니다.",
-    "whatChanged": "금 토큰 sample_full → unknown · stablecoin sample_full → unknown",
+    "whatChanged": "전일 대비 의미 있는 외부 신호 변화 없음",
     "marketInterpretation": "KGLD는 조용하고 외부 금 토큰·스테이블코인 신호도 제한적입니다. 오늘의 시장 맥락은 방향성 판단보다 운영 상태 확인에 가깝습니다.",
     "kgldImpact": "외부 신호는 KGLD 컨트랙트 정상 여부를 바꾸지 않으며, 사업·포지셔닝 참고 정보로만 사용합니다.",
     "watchNext": [
@@ -26,27 +26,27 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Project Progress",
-    "primaryAngle": "Project Progress",
-    "contentAngle": "Project Progress",
+    "selectedAngle": "Technology",
+    "primaryAngle": "Technology",
+    "contentAngle": "Technology",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-07-06 09:45:10 KST",
+      "publishedAt": "2026-07-07 09:08:02 KST",
       "url": "",
       "sourceType": "derived"
     },
     "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Project Progress 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Technology 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Project Progress",
+      "Editorial angle: Technology",
       "KGLD activity: quiet"
     ],
-    "kgldMessage": "프로젝트 진행은 기대보다 확인 가능한 사실을 중심으로 설명하는 편이 신뢰를 만듭니다.",
-    "xPostEnglish": "Build progress should be explained through what is verifiable, not what is merely expected.",
-    "xPostKorean": "프로젝트 진행은 기대보다 확인 가능한 사실을 중심으로 설명하는 편이 신뢰를 만듭니다.",
+    "kgldMessage": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
+    "xPostEnglish": "Good infrastructure is quiet: it makes verification, custody, and redemption easier to understand.",
+    "xPostKorean": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
     "internalNote": "Editorial Mode입니다. 신규 뉴스처럼 표현하지 말고 교육·설명형 콘텐츠로 사용하세요.",
     "landingCopy": "KGLD connects real-world gold with a focus on verifiable reserves, redemption context, and operational transparency.",
     "whyNow": "새 소식을 만들지 않고, 기존에 확인 가능한 KGLD/RWA 구조를 교육형 주제로 설명할 수 있습니다.",
@@ -162,20 +162,20 @@
     "hasAlchemyUrl": true,
     "usedFallback": false,
     "errors": [
-      "PAXG: RPC alchemy_getAssetTransfers failed with HTTP 429",
       "KGLD: RPC alchemy_getAssetTransfers failed with HTTP 429",
+      "PAXG: RPC alchemy_getAssetTransfers failed with HTTP 429",
       "XAUT: RPC alchemy_getAssetTransfers failed with HTTP 429",
-      "USDT: RPC alchemy_getAssetTransfers failed with HTTP 429",
-      "USDC: RPC alchemy_getAssetTransfers failed with HTTP 429"
+      "USDC: RPC alchemy_getAssetTransfers failed with HTTP 429",
+      "USDT: RPC alchemy_getAssetTransfers failed with HTTP 429"
     ],
     "rpcChecks": {
-      "blockNumber": "ok",
       "gasPrice": "ok",
-      "PAXG": "failed",
+      "blockNumber": "ok",
       "KGLD": "failed",
+      "PAXG": "failed",
       "XAUT": "failed",
-      "USDT": "failed",
-      "USDC": "failed"
+      "USDC": "failed",
+      "USDT": "failed"
     },
     "meaningfulCandidates": [
       {
@@ -214,20 +214,22 @@
     "title": "External Signal Trend",
     "headline": "금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다.",
     "kgldQuietStreak": 0,
-    "goldTokenObservedDays": 6,
-    "stablecoinObservedDays": 6,
+    "goldTokenObservedDays": 5,
+    "stablecoinObservedDays": 5,
     "gasLowDays": 7,
     "notableLargeTransferDays": 0,
     "trendMood": "building",
     "kgldImplication": "단일 전송 샘플보다 반복되는 준비자산·상환·운영 투명성 메시지의 일관성이 중요합니다. 온체인 실행 비용이 비교적 안정적인 구간입니다.",
     "confidence": "high",
-    "whatChanged": "금 토큰 sample_full → unknown · stablecoin sample_full → unknown",
-    "unchangedSignals": [],
-    "notableChanges": [
-      "금 토큰 sample_full → unknown · stablecoin sample_full → unknown"
+    "whatChanged": "전일 대비 의미 있는 외부 신호 변화 없음",
+    "unchangedSignals": [
+      "금 토큰 표본 상태",
+      "stablecoin 표본 상태",
+      "gas 상태"
     ],
+    "notableChanges": [],
     "nextTrigger": "외부 신호 상태 변화, 대형 이동 후보 또는 신규 뉴스가 확인될 때 상세 해석을 확장합니다.",
-    "isCompact": false
+    "isCompact": true
   },
   "marketIntelligenceBrief": {
     "title": "Market Intelligence Brief",
@@ -244,7 +246,7 @@
     ],
     "primarySource": null,
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-07-06 09:45:10 KST",
+    "lastGeneratedAt": "2026-07-07 09:08:02 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
@@ -253,7 +255,7 @@
     "status": "normal",
     "headline": "오늘은 Issue/Redeem 잔액 대사를 우선 확인하고, 외부 메시지는 검증 가능한 준비자산·상환 절차에 한정하세요.",
     "operationsAction": "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.",
-    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. 오늘의 콘텐츠 각도는 'Project Progress'로 정리할 수 있습니다.",
+    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. 오늘의 콘텐츠 각도는 'Technology'로 정리할 수 있습니다.",
     "riskAction": "대형 이동이나 관리자성 이벤트가 없으면 추가 조치는 필요하지 않습니다.",
     "doNotDo": [
       "미확인 상장/거래소명 언급",

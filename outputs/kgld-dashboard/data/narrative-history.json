@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-06 09:45:10 KST",
+  "updatedAt": "2026-07-07 09:08:02 KST",
   "snapshots": [
     {
       "generatedAt": "2026-06-18 23:22:39 KST",
@@ -383,6 +383,44 @@
     },
     {
       "generatedAt": "2026-07-06 09:45:10 KST",
+      "source": "alchemy",
+      "signals": {
+        "KGLD": {
+          "activity": "unknown",
+          "transferCount": 0,
+          "largeTransferDetected": false
+        },
+        "PAXG": {
+          "activity": "unknown",
+          "transferCount": 0,
+          "largeTransferDetected": false
+        },
+        "XAUT": {
+          "activity": "unknown",
+          "transferCount": 0,
+          "largeTransferDetected": false
+        },
+        "USDC": {
+          "status": "unknown",
+          "transferCount": 0
+        },
+        "USDT": {
+          "status": "unknown",
+          "transferCount": 0
+        },
+        "gas": {
+          "status": "low"
+        }
+      },
+      "summary": {
+        "marketWeather": "KGLD는 조용하고 외부 금 토큰·스테이블코인 신호도 제한적입니다. 오늘의 시장 맥락은 방향성 판단보다 운영 상태 확인에 가깝습니다.",
+        "tokenizedGoldMood": "unknown",
+        "rwaSectorMood": "limited_data",
+        "contentAngle": "Gold as a quiet onchain asset"
+      }
+    },
+    {
+      "generatedAt": "2026-07-07 09:08:02 KST",
       "source": "alchemy",
       "signals": {
         "KGLD": {
