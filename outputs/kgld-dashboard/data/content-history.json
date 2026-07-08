@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-07 09:08:02 KST",
+  "updatedAt": "2026-07-08 09:07:45 KST",
   "entries": [
     {
       "usedAt": "2026-06-25 14:12:32 KST",
@@ -99,6 +99,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "good infrastructure is quiet it makes verification custody and redemption easier to understand",
       "normalizedContentHash": "96032ead"
+    },
+    {
+      "usedAt": "2026-07-08 09:07:45 KST",
+      "selectedAngle": "Gold/RWA Education",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "tokenized gold connects a familiar asset with a more transparent operational record",
+      "normalizedContentHash": "a09ec827"
     }
   ]
 }
