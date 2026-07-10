@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-09 09:07:39 KST",
+  "updatedAt": "2026-07-10 09:07:43 KST",
   "entries": [
     {
       "usedAt": "2026-06-25 14:12:32 KST",
@@ -117,6 +117,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "a tokenized asset is only as understandable as its redemption path",
       "normalizedContentHash": "d7b3292d"
+    },
+    {
+      "usedAt": "2026-07-10 09:07:43 KST",
+      "selectedAngle": "Multichain",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
+      "normalizedContentHash": "f1d8d612"
     }
   ]
 }
