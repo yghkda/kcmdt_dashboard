@@ -1,11 +1,11 @@
 window.KGLD_DASHBOARD_DATA = {
-  "updatedAt": "2026-07-11 09:07:38 KST",
+  "updatedAt": "2026-07-12 09:07:41 KST",
   "period": "최근 24시간",
   "network": "Ethereum Mainnet",
-  "latestBlock": 25505678,
+  "latestBlock": 25512853,
   "status": "집중 관찰",
   "statusLevel": "watch",
-  "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 1건. 발행 0 KGLD, 소각 0 KGLD. Issue 유입 0 / 유출 0 KGLD. Redeem 유입 0 / 유출 0 KGLD. 추정: Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다.",
+  "statusMessage": "관찰 사실: 최근 24시간 KGLD Transfer 0건. 발행 0 KGLD, 소각 0 KGLD. Issue 및 Redeem 관련 신규 이동 없음. 추정: Issue 컨트랙트가 발행 자산의 과반을 보관 중이므로 운영 배포 흐름의 집중도가 높습니다.",
   "contracts": {
     "token": "0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE",
     "issue": "0xd5A62Dd28BF16229b4Dd9687DECC233548B9AA95",
@@ -21,17 +21,17 @@ window.KGLD_DASHBOARD_DATA = {
     },
     {
       "label": "24시간 전송",
-      "value": "1",
+      "value": "0",
       "unit": "건",
       "change": "0",
-      "tone": "watch"
+      "tone": "neutral"
     },
     {
       "label": "24시간 거래량",
-      "value": "0.001",
+      "value": "0",
       "unit": "KGLD",
       "change": "0",
-      "tone": "watch"
+      "tone": "neutral"
     },
     {
       "label": "발행",
@@ -77,30 +77,21 @@ window.KGLD_DASHBOARD_DATA = {
       "inbound": 0,
       "outbound": 0,
       "count": 0,
-      "note": "발행 자산 보관 및 배포 흐름 관찰"
+      "note": "발행 자산 보관 및 배포 흐름 변동 없음"
     },
     "redeem": {
       "inbound": 0,
       "outbound": 0,
       "count": 0,
-      "note": "상환 관련 이동 관찰"
+      "note": "상환 관련 이동 없음"
     }
   },
-  "transactions": [
-    {
-      "time": "2026-07-10 13:18:47 KST",
-      "type": "transfer",
-      "from": "0x79af9a57809fd8f5011aeb4ad43f02cf9fbe2001",
-      "to": "0x9b9e7a0000ab88d2bf9848bd5f62fcde03780cf0",
-      "amount": "0.001",
-      "hash": "0x160547b2f4648651a35ac80534f362fb60866c99f2469bd723bd89c288c62a5f"
-    }
-  ],
+  "transactions": [],
   "risks": [
     {
-      "level": "WATCH",
+      "level": "INFO",
       "title": "최근 24시간 전송",
-      "detail": "관찰 사실: KGLD Transfer 1건, 총 0.001 KGLD 이동."
+      "detail": "관찰 사실: KGLD Transfer 0건, 총 0 KGLD 이동."
     },
     {
       "level": "WATCH",
