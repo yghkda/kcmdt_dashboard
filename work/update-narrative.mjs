@@ -1143,12 +1143,13 @@ function buildMarketIntelligence({ narrative, history, newsContext, newsHistory 
   }
 
   const marketChange = isMeaningfulMarketChange(narrative, history);
+  const hasTokenizedGoldEvent = insights.some((insight) => insight.type === "tokenized_gold_event");
   candidates.push({
     candidate: "7-day market signal change",
-    meaningful: marketChange.meaningful,
-    reason: marketChange.reason
+    meaningful: marketChange.meaningful && !hasTokenizedGoldEvent,
+    reason: hasTokenizedGoldEvent && marketChange.meaningful ? "covered_by_tokenized_gold_event" : marketChange.reason
   });
-  if (marketChange.meaningful) {
+  if (marketChange.meaningful && !hasTokenizedGoldEvent) {
     insights.push({
       type: "market_change",
       severity: "notable",

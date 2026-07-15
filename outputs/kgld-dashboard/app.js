@@ -3,6 +3,7 @@ const appBaseUrl = new URL(".", document.currentScript?.src || window.location.h
 
 const shortAddress = (address) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 const etherscan = (type, value) => `https://etherscan.io/${type}/${value}`;
+const tokenEventsUrl = (address = data.contracts.token) => `${etherscan("address", address)}#events`;
 const formatToken = (value) => Number(value).toLocaleString("ko-KR", {
   minimumFractionDigits: 0,
   maximumFractionDigits: 8
@@ -28,6 +29,17 @@ const splitStatusMessage = (message) => {
 };
 
 const getKpi = (label) => data.kpis.find((item) => item.label === label);
+const withKpi = (label, extras = {}) => {
+  const item = getKpi(label);
+  return item ? { ...item, ...extras } : null;
+};
+const riskSourceUrl = (risk = {}) => {
+  const text = `${risk.title || ""} ${risk.detail || ""}`;
+  if (/Issue/i.test(text)) return etherscan("address", data.contracts.issue);
+  if (/Redeem|상환/i.test(text)) return etherscan("address", data.contracts.redeem);
+  if (/Transfer|전송|거래량|공급|발행|소각|Alchemy/i.test(text)) return tokenEventsUrl();
+  return etherscan("token", data.contracts.token);
+};
 const fallbackNarrative = {
   generatedAt: "unknown",
   source: "fallback",
@@ -224,33 +236,34 @@ copyButton.addEventListener("click", async () => {
 });
 
 const kpiDisplay = [
-  getKpi("24시간 거래량"),
-  getKpi("발행"),
-  getKpi("소각"),
-  { label: "Redeem 잔액", value: formatToken(data.balances.redeem.value), unit: "KGLD", change: "0", tone: data.balances.redeem.value > 0 ? "watch" : "neutral" },
-  { label: "기타 유통", value: formatToken(circulatingValue), unit: "KGLD", change: "0", tone: circulatingValue > 0 ? "watch" : "neutral" },
-  issueShare
+  withKpi("24시간 거래량", { note: "최근 24시간 합산", link: tokenEventsUrl() }),
+  withKpi("발행", { note: "최근 24시간 mint", link: tokenEventsUrl() }),
+  withKpi("소각", { note: "최근 24시간 burn", link: tokenEventsUrl() }),
+  { label: "Redeem 잔액", value: formatToken(data.balances.redeem.value), unit: "KGLD", note: "현재 컨트랙트 잔액", tone: data.balances.redeem.value > 0 ? "watch" : "neutral", link: etherscan("address", data.contracts.redeem) },
+  { label: "기타 유통", value: formatToken(circulatingValue), unit: "KGLD", note: "Issue/Redeem 외 보유량", tone: circulatingValue > 0 ? "watch" : "neutral", link: tokenEventsUrl() },
+  issueShare ? { ...issueShare, note: "현재 공급 분포", link: etherscan("address", data.contracts.issue) } : null
 ].filter(Boolean);
 
 document.getElementById("kpi-grid").innerHTML = kpiDisplay.map((kpi, index) => `
   <article class="kpi-card ${kpi.tone} ${index === 0 ? "primary" : ""}">
     <div class="kpi-label">${kpi.label}</div>
     <div class="kpi-value">${kpi.value}<span class="kpi-unit">${kpi.unit}</span></div>
-    <div class="kpi-change">${kpi.change === "0" ? "- 변동 없음" : kpi.change}</div>
+    <div class="kpi-change">${escapeHtml(kpi.change && kpi.change !== "0" ? kpi.change : kpi.note || "현재 관찰값")}</div>
+    ${kpi.link ? `<a class="inline-detail-link" href="${escapeHtml(kpi.link)}" target="_blank" rel="noreferrer">Etherscan</a>` : ""}
   </article>
 `).join("");
 
 const balanceConfig = [
-  ["Issue Contract · 발행 자산 보관", data.balances.issue, "var(--gold)"],
-  ["Redeem Contract", data.balances.redeem, "var(--mint)"],
-  ["기타 유통", data.balances.circulating, "#345048"]
+  ["Issue Contract · 발행 자산 보관", data.balances.issue, "var(--gold)", etherscan("address", data.contracts.issue)],
+  ["Redeem Contract", data.balances.redeem, "var(--mint)", etherscan("address", data.contracts.redeem)],
+  ["기타 유통", data.balances.circulating, "#345048", tokenEventsUrl()]
 ];
 
-document.getElementById("balance-list").innerHTML = balanceConfig.map(([name, item, color]) => `
+document.getElementById("balance-list").innerHTML = balanceConfig.map(([name, item, color, link]) => `
   <div class="balance-row">
     <span class="color-key" style="background:${color}"></span>
     <span class="balance-name">${name}</span>
-    <span class="balance-value">${formatToken(item.value)} KGLD<span>${item.percentage.toFixed(2)}% · 변동 없음</span></span>
+    <span class="balance-value">${formatToken(item.value)} KGLD<span>${item.percentage.toFixed(2)}% · 현재 잔액 기준</span><a class="inline-detail-link" href="${escapeHtml(link)}" target="_blank" rel="noreferrer">Etherscan</a></span>
   </div>
 `).join("");
 
@@ -283,17 +296,17 @@ donut.addEventListener("mouseleave", () => {
 });
 
 const activityConfig = [
-  ["Issue · 발행 자산 보관", data.activity.issue],
-  ["Redeem", data.activity.redeem]
+  ["Issue · 발행 자산 보관", data.activity.issue, etherscan("address", data.contracts.issue)],
+  ["Redeem", data.activity.redeem, etherscan("address", data.contracts.redeem)]
 ];
 
-document.getElementById("activity-list").innerHTML = activityConfig.map(([name, item]) => `
+document.getElementById("activity-list").innerHTML = activityConfig.map(([name, item, link]) => `
   <div class="activity-row">
     <div>
       <div class="activity-name">${name}</div>
       <div class="activity-meta">유입 ${formatToken(item.inbound)} · 유출 ${formatToken(item.outbound)} KGLD</div>
     </div>
-    <span class="activity-state">${item.note}</span>
+    <span class="activity-state">${item.note}<a class="inline-detail-link" href="${escapeHtml(link)}" target="_blank" rel="noreferrer">Etherscan</a></span>
   </div>
 `).join("");
 
@@ -303,6 +316,7 @@ document.getElementById("risk-list").innerHTML = data.risks.map((risk) => `
     <div>
       <div class="risk-title">${risk.title}</div>
       <div class="risk-detail">${risk.detail}</div>
+      <a class="inline-detail-link" href="${escapeHtml(riskSourceUrl(risk))}" target="_blank" rel="noreferrer">관련 온체인 보기</a>
     </div>
   </div>
 `).join("");
@@ -343,13 +357,15 @@ const intelligenceStatusLabel = {
   unknown: "데이터 제한"
 };
 
-const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
   "&": "&amp;",
   "<": "&lt;",
   ">": "&gt;",
   "\"": "&quot;",
   "'": "&#39;"
-}[char]));
+  }[char]));
+}
 
 const renderSourceLinks = (sources = []) => sources
   .filter(Boolean)
@@ -684,6 +700,19 @@ const renderNarrativeCards = (narrative, loadMeta = {}) => {
   `;
 };
 
+const dedupeDetectedInsights = (items = []) => {
+  const hasTokenizedGoldLargeMove = items.some((item) => item?.type === "tokenized_gold_event");
+  const seen = new Set();
+  return items.filter((item) => {
+    if (!item) return false;
+    if (hasTokenizedGoldLargeMove && item.type === "market_change") return false;
+    const key = `${item.type || "unknown"}|${item.headline || ""}|${item.detectedAt || ""}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
 const renderNarrativeCardsV2 = (narrative, loadMeta = {}) => {
   const actionBrief = buildOperationsBrief();
   const cacheTime = narrative.generatedAt || "unknown";
@@ -704,7 +733,7 @@ const renderNarrativeCardsV2 = (narrative, loadMeta = {}) => {
     lastGeneratedAt: cacheTime,
     confidence: "low"
   };
-  const detectedInsights = Array.isArray(narrative.detectedInsights) ? narrative.detectedInsights.slice(0, 3) : [];
+  const detectedInsights = Array.isArray(narrative.detectedInsights) ? dedupeDetectedInsights(narrative.detectedInsights).slice(0, 3) : [];
   const idea = narrative.contentIdea || fallbackNarrative.contentIdea;
   const diagnosticsErrors = Array.isArray(diagnostics.errors) ? diagnostics.errors.filter(Boolean) : [];
   const candidates = Array.isArray(diagnostics.meaningfulCandidates) ? diagnostics.meaningfulCandidates : [];
