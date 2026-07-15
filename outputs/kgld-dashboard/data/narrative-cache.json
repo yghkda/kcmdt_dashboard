@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-07-14 09:07:41 KST",
+  "generatedAt": "2026-07-15 09:07:51 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
     "stablecoinWeather": "sample_full",
-    "goldTokenWeather": "sample_full",
+    "goldTokenWeather": "notable",
     "rwaWeather": "limited_data",
     "gasWeather": "low",
-    "todayPositioning": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 quiet이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
-    "signalRead": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 quiet이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
+    "todayPositioning": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 operational이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
+    "signalRead": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 operational이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
     "contentAngle": "Gold as a quiet onchain asset",
     "confidence": "medium",
-    "marketState": "observed",
-    "headline": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 quiet이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
-    "whatChanged": "전일 대비 의미 있는 외부 신호 변화 없음",
-    "marketInterpretation": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 quiet이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
+    "marketState": "notable",
+    "headline": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 operational이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
+    "whatChanged": "금 토큰 sample_full → notable",
+    "marketInterpretation": "금 토큰과 스테이블코인 양쪽에서 전송 표본이 충분히 관찰되고 gas는 낮습니다. 온체인 이동을 실행하기 쉬운 환경이지만, KGLD activity는 operational이므로 외부 유동성 신호가 KGLD 이동으로 이어졌다고 보기는 어렵습니다.",
     "kgldImpact": "외부 신호는 KGLD 컨트랙트 정상 여부를 바꾸지 않으며, 사업·포지셔닝 참고 정보로만 사용합니다.",
     "watchNext": [
       "금 토큰 대형 이동 후보",
@@ -26,27 +26,27 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Project Progress",
-    "primaryAngle": "Project Progress",
-    "contentAngle": "Project Progress",
+    "selectedAngle": "Technology",
+    "primaryAngle": "Technology",
+    "contentAngle": "Technology",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-07-14 09:07:41 KST",
+      "publishedAt": "2026-07-15 09:07:51 KST",
       "url": "",
       "sourceType": "derived"
     },
     "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Project Progress 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Technology 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Project Progress",
-      "KGLD activity: quiet"
+      "Editorial angle: Technology",
+      "KGLD activity: operational"
     ],
-    "kgldMessage": "프로젝트 진행은 기대보다 확인 가능한 사실을 중심으로 설명하는 편이 신뢰를 만듭니다.",
-    "xPostEnglish": "Build progress should be explained through what is verifiable, not what is merely expected.",
-    "xPostKorean": "프로젝트 진행은 기대보다 확인 가능한 사실을 중심으로 설명하는 편이 신뢰를 만듭니다.",
+    "kgldMessage": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
+    "xPostEnglish": "Good infrastructure is quiet: it makes verification, custody, and redemption easier to understand.",
+    "xPostKorean": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
     "internalNote": "Editorial Mode입니다. 신규 뉴스처럼 표현하지 말고 교육·설명형 콘텐츠로 사용하세요.",
     "landingCopy": "KGLD connects real-world gold with a focus on verifiable reserves, redemption context, and operational transparency.",
     "whyNow": "새 소식을 만들지 않고, 기존에 확인 가능한 KGLD/RWA 구조를 교육형 주제로 설명할 수 있습니다.",
@@ -73,22 +73,22 @@
   },
   "tokenizedGoldRadar": {
     "title": "Tokenized Gold Signal",
-    "headline": "PAXG와 XAUT의 최근 전송 샘플이 확인되었고, KGLD는 조용한 상태입니다.",
-    "marketMood": "sample_full",
-    "kgldAngle": "KGLD는 외부 금 토큰 활동을 단순 추종하기보다, 실물 기반 신뢰와 상환 가능성을 차분히 설명하는 접근이 적합합니다.",
-    "interpretation": "외부 금 토큰에서는 전송이 이어지지만 KGLD는 같은 관찰 구간에서 움직임이 없습니다. 금 토큰 카테고리의 온체인 이동과 KGLD 운영 흐름이 현재는 분리되어 있다는 신호로 볼 수 있습니다.",
+    "headline": "일부 금 기반 토큰에서 대형 이동 기준에 해당하는 샘플이 확인됩니다.",
+    "marketMood": "notable",
+    "kgldAngle": "KGLD는 대형 이동의 의도를 단정하지 않고, 실물 기반 신뢰와 상환 가능성 중심의 안정적인 메시지를 유지하는 편이 적합합니다.",
+    "interpretation": "PAXG, XAUT에서 최대 조회 개수까지 전송 표본이 채워졌습니다. 여러 금 토큰에서 온체인 이동이 이어진다는 뜻이지만, 과거 기준선이 없어 활동 증가나 수요 방향으로 해석할 수는 없습니다.",
     "observations": [
-      "KGLD: 최근 관찰 범위 내 Transfer 없음",
+      "KGLD: 대형 이동 기준에 해당하는 샘플 확인",
       "PAXG/XAUT : 최근 전송 샘플 확인",
-      "대형 이동 기준에 해당하는 이벤트는 제한적"
+      "대형 이동 기준 해당: KGLD"
     ],
     "operatorAction": "시장 활성도를 단정하지 말고, 금 기반 토큰 카테고리의 관찰 신호로만 참고하세요.",
     "confidence": "medium",
     "tokens": {
       "KGLD": {
-        "activity": "quiet",
-        "transferCount": 0,
-        "largeTransferDetected": false
+        "activity": "notable",
+        "transferCount": 1,
+        "largeTransferDetected": true
       },
       "PAXG": {
         "activity": "sample_full",
@@ -101,10 +101,10 @@
         "largeTransferDetected": false
       }
     },
-    "signalState": "observed",
-    "relativeActivity": "PAXG/XAUT에서는 전송 표본이 확인되며 KGLD는 quiet 상태입니다.",
-    "largeFlowPresence": "대형 이동 후보는 제한적입니다.",
-    "marketMeaning": "외부 금 토큰에서는 전송이 이어지지만 KGLD는 같은 관찰 구간에서 움직임이 없습니다. 금 토큰 카테고리의 온체인 이동과 KGLD 운영 흐름이 현재는 분리되어 있다는 신호로 볼 수 있습니다.",
+    "signalState": "notable",
+    "relativeActivity": "PAXG/XAUT에서는 전송 표본이 확인되며 KGLD는 notable 상태입니다.",
+    "largeFlowPresence": "대형 이동 후보: KGLD",
+    "marketMeaning": "PAXG, XAUT에서 최대 조회 개수까지 전송 표본이 채워졌습니다. 여러 금 토큰에서 온체인 이동이 이어진다는 뜻이지만, 과거 기준선이 없어 활동 증가나 수요 방향으로 해석할 수는 없습니다.",
     "kgldReference": "외부 금 토큰 활동은 카테고리 참고 신호이며 KGLD 수요나 운영 위험으로 직접 연결하지 않습니다."
   },
   "rwaSectorPulse": {
@@ -114,7 +114,7 @@
     "kgldPositioning": "KGLD는 섹터 과열 신호보다 준비자산·상환 UX·운영 투명성 중심 메시지가 적합합니다.",
     "decisionGuide": "현재 샘플은 시장 강약 판단에 쓰지 말고, KGLD의 준비자산·상환 절차·운영 투명성을 설명하는 보조 맥락으로만 활용하세요.",
     "evidence": [
-      "Tokenized gold: sample_full sample signal",
+      "Tokenized gold: notable sample signal",
       "Stablecoins: sample_full sample signal (USDC 10, USDT 10)",
       "Gas condition: low"
     ],
@@ -122,7 +122,7 @@
     "confidence": "medium",
     "signals": {
       "tokenizedGold": {
-        "status": "sample_full",
+        "status": "notable",
         "source": "tokenizedGoldRadar"
       },
       "stablecoins": {
@@ -165,19 +165,19 @@
     "usedFallback": false,
     "errors": [],
     "rpcChecks": {
-      "gasPrice": "ok",
       "blockNumber": "ok",
+      "gasPrice": "ok",
       "KGLD": "ok",
       "PAXG": "ok",
       "XAUT": "ok",
-      "USDT": "ok",
-      "USDC": "ok"
+      "USDC": "ok",
+      "USDT": "ok"
     },
     "meaningfulCandidates": [
       {
         "candidate": "KGLD transfer activity",
-        "meaningful": false,
-        "reason": "quiet_without_change"
+        "meaningful": true,
+        "reason": "large_transfer_detected"
       },
       {
         "candidate": "PAXG transfer activity",
@@ -191,8 +191,8 @@
       },
       {
         "candidate": "7-day market signal change",
-        "meaningful": false,
-        "reason": "no_baseline_backed_change"
+        "meaningful": true,
+        "reason": "new_large_transfer_signal"
       },
       {
         "candidate": "verified project/RWA news",
@@ -202,57 +202,110 @@
     ]
   },
   "observed": {
-    "kgldTransferSampleSize": 0,
-    "kgldActivity": "quiet",
-    "kgldObservedVolume": "0 KGLD"
+    "kgldTransferSampleSize": 1,
+    "kgldActivity": "operational",
+    "kgldObservedVolume": "1210.999 KGLD"
   },
   "narrativeTrend": {
     "title": "External Signal Trend",
-    "headline": "KGLD는 최근 며칠간 조용한 온체인 상태를 유지하고 있습니다. 금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다.",
-    "kgldQuietStreak": 3,
+    "headline": "금 기반 토큰 카테고리의 전송 샘플은 꾸준히 관찰됩니다. 일부 대형 이동 관찰일이 포함되어 있습니다.",
+    "kgldQuietStreak": 0,
     "goldTokenObservedDays": 7,
     "stablecoinObservedDays": 7,
     "gasLowDays": 7,
-    "notableLargeTransferDays": 0,
-    "trendMood": "quiet",
-    "kgldImplication": "거래 활성도보다 준비자산·상환·운영 투명성 메시지를 유지하기 좋은 구간입니다. 온체인 실행 비용이 비교적 안정적인 구간입니다.",
+    "notableLargeTransferDays": 1,
+    "trendMood": "mixed",
+    "kgldImplication": "단일 전송 샘플보다 반복되는 준비자산·상환·운영 투명성 메시지의 일관성이 중요합니다. 온체인 실행 비용이 비교적 안정적인 구간입니다.",
     "confidence": "high",
-    "whatChanged": "전일 대비 의미 있는 외부 신호 변화 없음",
-    "unchangedSignals": [
-      "금 토큰 표본 상태",
-      "stablecoin 표본 상태",
-      "gas 상태"
+    "whatChanged": "금 토큰 sample_full → notable",
+    "unchangedSignals": [],
+    "notableChanges": [
+      "금 토큰 sample_full → notable"
     ],
-    "notableChanges": [],
     "nextTrigger": "외부 신호 상태 변화, 대형 이동 후보 또는 신규 뉴스가 확인될 때 상세 해석을 확장합니다.",
-    "isCompact": true
+    "isCompact": false
   },
   "marketIntelligenceBrief": {
     "title": "Market Intelligence Brief",
-    "status": "no_change",
-    "headline": "오늘 주목할 만한 외부 시장 변화는 확인되지 않았습니다.",
-    "summary": "금 토큰, 스테이블코인, RWA 관련 신호는 기존 관찰 범위와 유사합니다.",
-    "kgldImpact": "KGLD 운영 상태나 사업 방향에 즉시 반영할 외부 변화는 없습니다.",
-    "nextStep": "오늘은 외부 신호보다 상단 KGLD 운영 지표와 준비자산·상환 메시지를 우선 유지하세요.",
+    "status": "insight_detected",
+    "headline": "2개의 확인할 만한 외부 신호가 감지되었습니다.",
+    "summary": "대형 이동, 이전 기록 대비 변화, 검증된 공개 자료만 선별했습니다.",
+    "kgldImpact": "각 신호의 근거 링크를 확인한 뒤 운영 대응, 콘텐츠 반영, 단순 관찰 중 어디에 둘지 판단하세요.",
+    "nextStep": "먼저 근거 링크를 열어 주소·기사 원문을 확인하고, 확인된 범위만 운영 노트나 콘텐츠 초안에 반영하세요.",
     "watching": [
       "금 토큰 대형 이동",
       "신규 RWA 상품·공식 발표",
       "규제·수탁·상환 정책 변화",
       "KGLD/ITCEN/KorDA 관련 검증 뉴스"
     ],
-    "primarySource": null,
-    "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-07-14 09:07:41 KST",
+    "primarySource": {
+      "title": "KGLD contract events on Etherscan",
+      "url": "https://etherscan.io/address/0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE#events"
+    },
+    "detectedInsightCount": 2,
+    "lastGeneratedAt": "2026-07-15 09:07:51 KST",
     "confidence": "medium"
   },
-  "detectedInsights": [],
+  "detectedInsights": [
+    {
+      "type": "tokenized_gold_event",
+      "severity": "notable",
+      "headline": "KGLD에서 기준 이상의 대형 이동이 관찰되었습니다.",
+      "whyImportant": "단순 샘플 충족이 아니라 금 기반 토큰 카테고리에서 별도 확인할 만한 규모의 이동입니다.",
+      "interpretation": "KGLD 자체 이동이면 Issue/Redeem, 운영 지갑, 사용자 이동 중 무엇인지 먼저 구분해야 합니다.",
+      "whatToCheck": [
+        "Etherscan 이벤트 페이지에서 최근 Transfer의 from/to 주소 확인",
+        "거래소성 주소인지, 커스터디/운영성 주소인지 라벨 확인",
+        "KGLD 콘텐츠에는 외부 금 토큰 참고 신호로만 표현"
+      ],
+      "kgldImpact": "KGLD 운영 관련 주소와 거래 목적을 확인한 뒤 운영 대응 필요성을 판단하세요.",
+      "evidence": [
+        "largeTransferDetected: true",
+        "sample size: 1"
+      ],
+      "source": [
+        {
+          "title": "KGLD contract events on Etherscan",
+          "url": "https://etherscan.io/address/0xD1479fD673D9767E6c6E46eF6Bc640ff1F6Eb9CE#events"
+        },
+        {
+          "title": "Alchemy Ethereum mainnet",
+          "url": "https://dashboard.alchemy.com/"
+        }
+      ],
+      "detectedAt": "2026-07-15 09:07:51 KST"
+    },
+    {
+      "type": "market_change",
+      "severity": "notable",
+      "headline": "최근 기록과 비교해 새로운 대형 이동 신호가 확인되었습니다.",
+      "whyImportant": "단일 조회 결과가 아니라 이전 narrative history와 비교해 달라진 지점입니다.",
+      "interpretation": "반복되는 패턴인지, 하루짜리 이벤트인지 확인하면 콘텐츠 톤과 운영 모니터링 강도를 정할 수 있습니다.",
+      "whatToCheck": [
+        "narrative-history.json에서 직전 스냅샷과 현재 스냅샷 비교",
+        "대형 이동이 어느 토큰에서 발생했는지 확인",
+        "동일 신호가 다음 스냅샷에서도 반복되는지 관찰"
+      ],
+      "kgldImpact": "관련 거래와 주소를 확인한 뒤 운영 또는 콘텐츠 대응 필요성을 판단하세요.",
+      "evidence": [
+        "Narrative history comparison"
+      ],
+      "source": [
+        {
+          "title": "Narrative history JSON",
+          "url": "./data/narrative-history.json"
+        }
+      ],
+      "detectedAt": "2026-07-15 09:07:51 KST"
+    }
+  ],
   "todayActionBrief": {
     "title": "Today's Action Brief",
-    "status": "normal",
-    "headline": "오늘은 Issue/Redeem 잔액 대사를 우선 확인하고, 외부 메시지는 검증 가능한 준비자산·상환 절차에 한정하세요.",
+    "status": "watch",
+    "headline": "일부 대형 이동 관찰 신호가 있어 관련 TX와 주소 맥락 확인이 필요합니다.",
     "operationsAction": "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.",
-    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고하세요. 오늘의 콘텐츠 각도는 'Project Progress'로 정리할 수 있습니다.",
-    "riskAction": "대형 이동이나 관리자성 이벤트가 없으면 추가 조치는 필요하지 않습니다.",
+    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고하세요.",
+    "riskAction": "대형 이동 TX와 관련 주소 라벨을 확인하세요.",
     "doNotDo": [
       "미확인 상장/거래소명 언급",
       "거래량 우위 또는 시장 선도 표현",
