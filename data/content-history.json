@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-21 09:07:50 KST",
+  "updatedAt": "2026-07-22 09:07:50 KST",
   "entries": [
     {
       "usedAt": "2026-06-25 14:12:32 KST",
@@ -225,6 +225,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "for a gold backed rwa trust starts with reserves custody and a clear path to redemption",
       "normalizedContentHash": "fa7852f6"
+    },
+    {
+      "usedAt": "2026-07-22 09:07:50 KST",
+      "selectedAngle": "Project Progress",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "build progress should be explained through what is verifiable not what is merely expected",
+      "normalizedContentHash": "540a7a81"
     }
   ]
 }
