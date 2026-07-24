@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23 09:07:48 KST",
+  "generatedAt": "2026-07-24 09:08:08 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -26,27 +26,27 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Technology",
-    "primaryAngle": "Technology",
-    "contentAngle": "Technology",
+    "selectedAngle": "Gold/RWA Education",
+    "primaryAngle": "Gold/RWA Education",
+    "contentAngle": "Gold/RWA Education",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-07-23 09:07:48 KST",
+      "publishedAt": "2026-07-24 09:08:08 KST",
       "url": "",
       "sourceType": "derived"
     },
     "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Technology 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Gold/RWA Education 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Technology",
+      "Editorial angle: Gold/RWA Education",
       "KGLD activity: quiet"
     ],
-    "kgldMessage": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
-    "xPostEnglish": "Good infrastructure is quiet: it makes verification, custody, and redemption easier to understand.",
-    "xPostKorean": "좋은 인프라는 화려한 표현보다 검증·보관·상환 구조를 더 쉽게 이해하게 만듭니다.",
+    "kgldMessage": "토큰화된 금은 익숙한 실물 자산과 더 투명한 운영 기록을 연결합니다.",
+    "xPostEnglish": "Tokenized gold connects a familiar asset with a more transparent operational record.",
+    "xPostKorean": "토큰화된 금은 익숙한 실물 자산과 더 투명한 운영 기록을 연결합니다.",
     "internalNote": "Editorial Mode입니다. 신규 뉴스처럼 표현하지 말고 교육·설명형 콘텐츠로 사용하세요.",
     "landingCopy": "KGLD connects real-world gold with a focus on verifiable reserves, redemption context, and operational transparency.",
     "whyNow": "새 소식을 만들지 않고, 기존에 확인 가능한 KGLD/RWA 구조를 교육형 주제로 설명할 수 있습니다.",
@@ -167,9 +167,9 @@
     "rpcChecks": {
       "blockNumber": "ok",
       "gasPrice": "ok",
+      "XAUT": "ok",
       "KGLD": "ok",
       "PAXG": "ok",
-      "XAUT": "ok",
       "USDC": "ok",
       "USDT": "ok"
     },
@@ -242,7 +242,7 @@
     ],
     "primarySource": null,
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-07-23 09:07:48 KST",
+    "lastGeneratedAt": "2026-07-24 09:08:08 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
@@ -251,7 +251,7 @@
     "status": "normal",
     "headline": "오늘은 Issue/Redeem 잔액 대사를 우선 확인하고, 외부 메시지는 검증 가능한 준비자산·상환 절차에 한정하세요.",
     "operationsAction": "Issue/Redeem 잔액과 준비자산 대사 흐름을 계속 추적하세요.",
-    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고하세요. 오늘의 콘텐츠 각도는 'Technology'로 정리할 수 있습니다.",
+    "marketingAction": "거래량보다 실물 기반 신뢰, 상환 가능성, 운영 투명성 메시지를 강조하세요. PAXG/XAUT 전송 샘플은 tokenized gold 카테고리 관찰 신호로만 참고하세요. 오늘의 콘텐츠 각도는 'Gold/RWA Education'로 정리할 수 있습니다.",
     "riskAction": "대형 이동이나 관리자성 이벤트가 없으면 추가 조치는 필요하지 않습니다.",
     "doNotDo": [
       "미확인 상장/거래소명 언급",
