@@ -1,15 +1,6 @@
 {
-  "updatedAt": "2026-08-28 09:07:46 KST",
+  "updatedAt": "2026-08-29 09:07:49 KST",
   "entries": [
-    {
-      "usedAt": "2026-06-28 09:07:49 KST",
-      "selectedAngle": "Gold/RWA Education",
-      "contentMode": "editorial",
-      "sourceUrl": "",
-      "sourceTitle": "No new verified source today",
-      "normalizedText": "tokenized gold connects a familiar asset with a more transparent operational record",
-      "normalizedContentHash": "a09ec827"
-    },
     {
       "usedAt": "2026-06-29 12:34:48 KST",
       "selectedAngle": "Redemption UX",
@@ -540,6 +531,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
       "normalizedContentHash": "bbed64cb"
+    },
+    {
+      "usedAt": "2026-08-29 09:07:49 KST",
+      "selectedAngle": "Regulation",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
+      "normalizedContentHash": "e5c036f8"
     }
   ]
 }
