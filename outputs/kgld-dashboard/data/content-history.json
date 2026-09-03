@@ -1,15 +1,6 @@
 {
-  "updatedAt": "2026-09-02 09:08:07 KST",
+  "updatedAt": "2026-09-03 09:07:43 KST",
   "entries": [
-    {
-      "usedAt": "2026-07-03 09:07:42 KST",
-      "selectedAngle": "Reserve Transparency",
-      "contentMode": "editorial",
-      "sourceUrl": "",
-      "sourceTitle": "No new verified source today",
-      "normalizedText": "for a gold backed rwa trust starts with reserves custody and a clear path to redemption",
-      "normalizedContentHash": "fa7852f6"
-    },
     {
       "usedAt": "2026-07-06 09:45:10 KST",
       "selectedAngle": "Project Progress",
@@ -540,6 +531,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "tokenized gold connects a familiar asset with a more transparent operational record",
       "normalizedContentHash": "a09ec827"
+    },
+    {
+      "usedAt": "2026-09-03 09:07:43 KST",
+      "selectedAngle": "Redemption UX",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "a tokenized asset is only as understandable as its redemption path",
+      "normalizedContentHash": "d7b3292d"
     }
   ]
 }

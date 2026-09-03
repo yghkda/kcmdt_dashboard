@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02 09:08:07 KST",
+  "generatedAt": "2026-09-03 09:07:43 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -26,27 +26,27 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Gold/RWA Education",
-    "primaryAngle": "Gold/RWA Education",
-    "contentAngle": "Gold/RWA Education",
+    "selectedAngle": "Redemption UX",
+    "primaryAngle": "Redemption UX",
+    "contentAngle": "Redemption UX",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-09-02 09:08:07 KST",
+      "publishedAt": "2026-09-03 09:07:43 KST",
       "url": "",
       "sourceType": "derived"
     },
     "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Gold/RWA Education 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Redemption UX 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Gold/RWA Education",
+      "Editorial angle: Redemption UX",
       "KGLD activity: quiet"
     ],
-    "kgldMessage": "토큰화된 금은 익숙한 실물 자산과 더 투명한 운영 기록을 연결합니다.",
-    "xPostEnglish": "Tokenized gold connects a familiar asset with a more transparent operational record.",
-    "xPostKorean": "토큰화된 금은 익숙한 실물 자산과 더 투명한 운영 기록을 연결합니다.",
+    "kgldMessage": "토큰화 자산의 이해 가능성은 상환 경로가 얼마나 명확한지에 달려 있습니다.",
+    "xPostEnglish": "A tokenized asset is only as understandable as its redemption path.",
+    "xPostKorean": "토큰화 자산의 이해 가능성은 상환 경로가 얼마나 명확한지에 달려 있습니다.",
     "internalNote": "Editorial Mode입니다. 신규 뉴스처럼 표현하지 말고 교육·설명형 콘텐츠로 사용하세요.",
     "landingCopy": "KGLD connects real-world gold with a focus on verifiable reserves, redemption context, and operational transparency.",
     "whyNow": "새 소식을 만들지 않고, 기존에 확인 가능한 KGLD/RWA 구조를 교육형 주제로 설명할 수 있습니다.",
@@ -170,8 +170,8 @@
       "KGLD": "ok",
       "PAXG": "ok",
       "XAUT": "ok",
-      "USDC": "ok",
-      "USDT": "ok"
+      "USDT": "ok",
+      "USDC": "ok"
     },
     "meaningfulCandidates": [
       {
@@ -242,7 +242,7 @@
     ],
     "primarySource": null,
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-09-02 09:08:07 KST",
+    "lastGeneratedAt": "2026-09-03 09:07:43 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
