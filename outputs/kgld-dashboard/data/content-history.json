@@ -1,15 +1,6 @@
 {
-  "updatedAt": "2026-09-04 09:12:24 KST",
+  "updatedAt": "2026-09-05 09:07:42 KST",
   "entries": [
-    {
-      "usedAt": "2026-07-07 09:08:02 KST",
-      "selectedAngle": "Technology",
-      "contentMode": "editorial",
-      "sourceUrl": "",
-      "sourceTitle": "No new verified source today",
-      "normalizedText": "good infrastructure is quiet it makes verification custody and redemption easier to understand",
-      "normalizedContentHash": "96032ead"
-    },
     {
       "usedAt": "2026-07-08 09:07:45 KST",
       "selectedAngle": "Gold/RWA Education",
@@ -540,6 +531,15 @@
       "sourceTitle": "No new verified source today",
       "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
       "normalizedContentHash": "f1d8d612"
+    },
+    {
+      "usedAt": "2026-09-05 09:07:42 KST",
+      "selectedAngle": "Market Context",
+      "contentMode": "editorial",
+      "sourceUrl": "",
+      "sourceTitle": "No new verified source today",
+      "normalizedText": "kgld explores how real world gold can be represented with clearer operational context",
+      "normalizedContentHash": "bbed64cb"
     }
   ]
 }
