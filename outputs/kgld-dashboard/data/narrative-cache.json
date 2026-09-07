@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-07 09:07:37 KST",
+  "generatedAt": "2026-09-07 11:08:03 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -32,11 +32,11 @@
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-09-07 09:07:37 KST",
+      "publishedAt": "2026-09-07 11:08:03 KST",
       "url": "",
       "sourceType": "derived"
     },
-    "previouslyUsed": false,
+    "previouslyUsed": true,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
     "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Reserve Transparency 주제를 선택했습니다.",
     "usableFacts": [
@@ -242,7 +242,7 @@
     ],
     "primarySource": null,
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-09-07 09:07:37 KST",
+    "lastGeneratedAt": "2026-09-07 11:08:03 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
