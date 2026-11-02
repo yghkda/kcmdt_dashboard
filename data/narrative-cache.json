@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01 09:08:37 KST",
+  "generatedAt": "2026-11-02 09:07:38 KST",
   "source": "alchemy",
   "marketWeather": {
     "title": "Market Interpretation",
@@ -26,22 +26,22 @@
     "title": "Content Opportunities",
     "contentMode": "editorial",
     "freshness": "none",
-    "selectedAngle": "Multichain",
-    "primaryAngle": "Multichain",
-    "contentAngle": "Multichain",
+    "selectedAngle": "Market Context",
+    "primaryAngle": "Market Context",
+    "contentAngle": "Market Context",
     "primarySource": {
       "title": "No new verified source today",
       "publisher": "Editorial",
-      "publishedAt": "2026-11-01 09:08:37 KST",
+      "publishedAt": "2026-11-02 09:07:38 KST",
       "url": "",
       "sourceType": "derived"
     },
     "previouslyUsed": false,
     "oneLineInsight": "오늘 신규 KGLD/ITCEN 관련 기사는 확인되지 않았습니다.",
-    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Multichain 주제를 선택했습니다.",
+    "whyToday": "신규 검증 기사가 없어 최근 7일간 사용하지 않은 Market Context 주제를 선택했습니다.",
     "usableFacts": [
       "신규 검증 기사 없음",
-      "Editorial angle: Multichain",
+      "Editorial angle: Market Context",
       "KGLD activity: quiet"
     ],
     "kgldMessage": "KGLD는 실물 금을 더 명확한 운영 맥락과 함께 온체인에서 설명하는 방식을 탐색합니다.",
@@ -165,13 +165,13 @@
     "usedFallback": false,
     "errors": [],
     "rpcChecks": {
-      "gasPrice": "ok",
       "blockNumber": "ok",
-      "PAXG": "ok",
+      "gasPrice": "ok",
       "KGLD": "ok",
+      "PAXG": "ok",
       "XAUT": "ok",
-      "USDC": "ok",
-      "USDT": "ok"
+      "USDT": "ok",
+      "USDC": "ok"
     },
     "meaningfulCandidates": [
       {
@@ -242,7 +242,7 @@
     ],
     "primarySource": null,
     "detectedInsightCount": 0,
-    "lastGeneratedAt": "2026-11-01 09:08:37 KST",
+    "lastGeneratedAt": "2026-11-02 09:07:38 KST",
     "confidence": "medium"
   },
   "detectedInsights": [],
